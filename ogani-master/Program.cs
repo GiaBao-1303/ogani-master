@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ogani_master.Models;
 
 
 namespace ogani_master
@@ -8,7 +9,9 @@ namespace ogani_master
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            // Setting OganiMaterContext use the SQL Server
+            builder.Services.AddDbContext<OganiMaterContext>(options =>
+                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
             // Add services to the container.
             builder.Services.AddControllersWithViews();
 
@@ -30,6 +33,9 @@ namespace ogani_master
             app.UseAuthorization();
 
             app.UseStaticFiles();
+            app.MapControllerRoute(
+               name: "areas",
+               pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             app.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
