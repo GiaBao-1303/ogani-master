@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+
+
 namespace ogani_master
 {
     public class Program
