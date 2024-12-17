@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using ogani_master.Helpers
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -28,6 +29,10 @@
 
         #root section {
             flex: 1 !important;
+        }
+
+        .header__menu__dropdown li.active a {
+            color: #7fad39 !important;
         }
 
     </style>
@@ -86,20 +91,32 @@
                     <div class="col-lg-6">
                         <nav class="header__menu">
                             <ul>
-                                <li class="active"><a href="@Url.Action("Index", "Home")">Home</a></li>
-                                <li><a href="@Url.Action("Index", "ShopGrid")">Shop</a></li>
-                                <li>
+                                <li class="@Html.IsActive("Home", "Index")"><a href="@Url.Action("Index", "Home")">Home</a></li>
+                                <li class="@Html.IsActive("ShopGrid", "Index")"><a href="@Url.Action("Index", "ShopGrid")">Shop</a></li>
+                                <li class="@Html.IsParentActive("Checkout", "ShopingCart", "Product", "Blog")">
                                     <a href="#">Pages</a>
                                     <ul class="header__menu__dropdown">
-                                        <li><a href="./shop-details.html">Shop Details</a></li>
-                                        <li><a href="./shoping-cart.html">Shoping Cart</a></li>
-                                        <li><a href="@Url.Action("Index", "Checkout")">Check Out</a></li>
-                                        <li><a href="./blog-details.html">Blog Details</a></li>
+                                        <li class="@Html.IsActive("Product", "Index")">
+                                            <a href="@Url.Action("Index", "Product")">Product Details</a>
+                                        </li>
+
+                                        <li class="@Html.IsActive("ShopingCart", "Index")">
+                                            <a href="@Url.Action("Index", "ShopingCart")">Shopping Cart</a>
+                                        </li>
+
+                                        <li class="@Html.IsActive("Checkout", "Index")">
+                                            <a href="@Url.Action("Index", "Checkout")">Check Out</a>
+                                        </li>
+
+                                        <li class="@Html.IsActive("Blog", "Detail")">
+                                            <a href="@Url.Action("Detail", "Blog")">Blog Details</a>
+                                         </li>
                                     </ul>
                                 </li>
-                                <li><a href="@Url.Action("Index", "Blog")">Blog</a></li>
-                                <li><a href="@Url.Action("Index", "Contact")">Contact</a></li>
+                                <li class="@Html.IsActive("Blog", "Index")"><a href="@Url.Action("Index", "Blog")">Blog</a></li>
+                                <li class="@Html.IsActive("Contact", "Index")"><a href="@Url.Action("Index", "Contact")">Contact</a></li>
                             </ul>
+
                         </nav>
                     </div>
                     <div class="col-lg-3">
