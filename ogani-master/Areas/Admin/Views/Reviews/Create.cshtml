@@ -1,80 +1,106 @@
 ﻿@model ogani_master.Models.Review
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Create";
 }
+<div class="app-content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h4 class="card-title">Create New Review</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Create">
+                            <!-- Validation summary -->
+                            <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
-<!DOCTYPE html>
+                            <!-- Member ID Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="MEM_ID" class="control-label">Member</label>
+                                <select asp-for="MEM_ID" class="form-control" asp-items="ViewBag.MEM_ID">
+                                    <option value="">-- Select Member --</option>
+                                </select>
+                                <span asp-validation-for="MEM_ID" class="text-danger"></span>
+                            </div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Create</title>
-</head>
-<body>
+                            <!-- Product ID Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="PRO_ID" class="control-label">Product</label>
+                                <select asp-for="PRO_ID" class="form-control" asp-items="ViewBag.PRO_ID">
+                                    <option value="">-- Select Product --</option>
+                                </select>
+                                <span asp-validation-for="PRO_ID" class="text-danger"></span>
+                            </div>
 
-<h4>Review</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="MEM_ID" class="control-label"></label>
-                <select asp-for="MEM_ID" class ="form-control" asp-items="ViewBag.MEM_ID"></select>
+                            <!-- Rate Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="Rate" class="control-label">Rating</label>
+                                <input asp-for="Rate" class="form-control" type="number" min="1" max="5" />
+                                <span asp-validation-for="Rate" class="text-danger"></span>
+                            </div>
+
+                            <!-- Content Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="Content" class="control-label">Review Content</label>
+                                <textarea asp-for="Content" class="form-control" rows="4" placeholder="Write your review here"></textarea>
+                                <span asp-validation-for="Content" class="text-danger"></span>
+                            </div>
+
+                            <!-- Review Date Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="ReviewDate" class="control-label">Review Date</label>
+                                <input asp-for="ReviewDate" class="form-control" type="date" />
+                                <span asp-validation-for="ReviewDate" class="text-danger"></span>
+                            </div>
+
+                            <!-- Created Date Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="CreatedDate" class="control-label">Created Date</label>
+                                <input asp-for="CreatedDate" class="form-control" type="date" />
+                                <span asp-validation-for="CreatedDate" class="text-danger"></span>
+                            </div>
+
+                            <!-- Created By Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="CreatedBy" class="control-label">Created By</label>
+                                <input asp-for="CreatedBy" class="form-control" placeholder="Enter creator's name" />
+                                <span asp-validation-for="CreatedBy" class="text-danger"></span>
+                            </div>
+
+                            <!-- Updated Date Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="UpdatedDate" class="control-label">Updated Date</label>
+                                <input asp-for="UpdatedDate" class="form-control" type="date" />
+                                <span asp-validation-for="UpdatedDate" class="text-danger"></span>
+                            </div>
+
+                            <!-- Updated By Field -->
+                            <div class="form-group mb-3">
+                                <label asp-for="UpdatedBy" class="control-label">Updated By</label>
+                                <input asp-for="UpdatedBy" class="form-control" placeholder="Enter updater's name" />
+                                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
+                            </div>
+
+                            <!-- Submit and Back Buttons -->
+                            <div class="form-group mb-3">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-save me-1"></i> Save Review
+                                </button>
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-1"></i> Back to List
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="PRO_ID" class="control-label"></label>
-                <select asp-for="PRO_ID" class ="form-control" asp-items="ViewBag.PRO_ID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rate" class="control-label"></label>
-                <input asp-for="Rate" class="form-control" />
-                <span asp-validation-for="Rate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <input asp-for="Content" class="form-control" />
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ReviewDate" class="control-label"></label>
-                <input asp-for="ReviewDate" class="form-control" />
-                <span asp-validation-for="ReviewDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedDate" class="control-label"></label>
-                <input asp-for="CreatedDate" class="form-control" />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedBy" class="control-label"></label>
-                <input asp-for="CreatedBy" class="form-control" />
-                <span asp-validation-for="CreatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedDate" class="control-label"></label>
-                <input asp-for="UpdatedDate" class="form-control" />
-                <span asp-validation-for="UpdatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedBy" class="control-label"></label>
-                <input asp-for="UpdatedBy" class="form-control" />
-                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
-
-<div>
-    <a asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-</body>
-</html>
+

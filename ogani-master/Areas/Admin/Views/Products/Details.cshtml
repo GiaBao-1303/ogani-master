@@ -1,111 +1,113 @@
 ﻿@model ogani_master.Models.Product
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Product Details";
 }
 
-<!DOCTYPE html>
+<div class="container mt-3">
+    <!-- Page Header -->
+    <div class="row justify-content-center">
+        <div class="col-md-11">
+            <div class="card shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Product Details</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Avatar -->
+                    <div class="form-group mb-3">
+                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Avatar):</label>
+                        <p>@Html.DisplayFor(model => model.Avatar)</p>
+                    </div>
 
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
-</head>
-<body>
+                    <!-- Name -->
+                    <div class="form-group mb-3">
+                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Name):</label>
+                        <p>@Html.DisplayFor(model => model.Name)</p>
+                    </div>
 
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Avatar)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Avatar)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Intro)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Intro)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DiscountPrice)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DiscountPrice)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Unit)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Unit)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Details)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Details)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.CAT_ID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedBy)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedBy)
-        </dd>
-    </dl>
+                    <!-- Unit -->
+                    <div class="form-group mb-3">
+                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Unit):</label>
+                        <p>@Html.DisplayFor(model => model.Unit)</p>
+                    </div>
+
+                    <!-- Price and Discount Price -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Price):</label>
+                            <p class="text-success"><b>@Html.DisplayFor(model => model.Price)</b></p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">@Html.DisplayNameFor(model => model.DiscountPrice):</label>
+                            <p class="text-danger"><b>@Html.DisplayFor(model => model.DiscountPrice)</b></p>
+                        </div>
+                    </div>
+
+                    <!-- Intro and Rate -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Intro):</label>
+                            <p>@Html.DisplayFor(model => model.Intro)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Rate):</label>
+                            <p>@Html.DisplayFor(model => model.Rate)</p>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group mb-3">
+                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Description):</label>
+                        <p>@Html.DisplayFor(model => model.Description)</p>
+                    </div>
+
+                    <!-- Details -->
+                    <div class="form-group mb-3">
+                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Details):</label>
+                        <p>@Html.DisplayFor(model => model.Details)</p>
+                    </div>
+
+                    <!-- Category -->
+                    <div class="form-group mb-3">
+                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Category):</label>
+                        <p>@Html.DisplayFor(model => model.Category.CAT_ID)</p>
+                    </div>
+
+                    <!-- Created Date and By -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">@Html.DisplayNameFor(model => model.CreatedDate):</label>
+                            <p>@Html.DisplayFor(model => model.CreatedDate)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">@Html.DisplayNameFor(model => model.CreatedBy):</label>
+                            <p>@Html.DisplayFor(model => model.CreatedBy)</p>
+                        </div>
+                    </div>
+
+                    <!-- Updated Date and By -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label class="fw-bold">@Html.DisplayNameFor(model => model.UpdatedDate):</label>
+                            <p>@Html.DisplayFor(model => model.UpdatedDate)</p>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">@Html.DisplayNameFor(model => model.UpdatedBy):</label>
+                            <p>@Html.DisplayFor(model => model.UpdatedBy)</p>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-group text-center">
+                        <a asp-action="Edit" asp-route-id="@Model?.PRO_ID" class="btn btn-primary me-2">
+                            <i class="fas fa-edit"></i> Edit Product
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.PRO_ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-</body>
-</html>

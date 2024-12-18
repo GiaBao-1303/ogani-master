@@ -1,91 +1,79 @@
 ﻿@model IEnumerable<ogani_master.Models.Review>
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Index";
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Index</title>
-</head>
-<body>
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Rate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Content)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ReviewDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Member)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Product)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedBy)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UpdatedBy)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Content)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ReviewDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Member.MEM_ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Product.PRO_ID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UpdatedBy)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.REV_ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.REV_ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.REV_ID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
-</body>
-</html>
+<div class="app-content">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <!--begin::Row-->
+        <div class="row">
+            <div class="col-12">
+                <!-- Default box -->
+                <div class="card card-success card-outline">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md">
+                                <h3 class="card-title">Review List</h3>
+                            </div>
+                            <div class="col-md-auto">
+                                <a asp-action="Create" id="btnAdd" type="button" class="btn btn-success">
+                                    <i class="fa fa-plus me-1"></i> Add New
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="tbl" class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Rate)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Content)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().ReviewDate)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Member)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Product)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CreatedDate)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CreatedBy)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UpdatedDate)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UpdatedBy)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>@Html.DisplayFor(modelItem => item.Rate)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Content)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.ReviewDate)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Member.MEM_ID)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.Product.PRO_ID)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.UpdatedDate)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.UpdatedBy)</td>
+                                            <td>
+                                                <a asp-action="Edit" asp-route-id="@item.REV_ID" >
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a asp-action="Details" asp-route-id="@item.REV_ID" class="text-info ms-3">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@item.REV_ID" class="text-danger ms-3">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--end::Row-->
+    </div>
+    <!--end::Container-->
+</div>

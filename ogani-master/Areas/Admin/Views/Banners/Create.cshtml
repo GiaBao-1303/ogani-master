@@ -1,77 +1,180 @@
 ﻿@model ogani_master.Models.Banner
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Create";
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Create</title>
-</head>
-<body>
-
-<h4>Banner</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
+<div class="app-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Create Banner</h3>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Create">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="form-group">
+                                <label asp-for="Title" class="control-label"></label>
+                                <input asp-for="Title" class="form-control" />
+                                <span asp-validation-for="Title" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Image" class="control-label"></label>
+                                <input asp-for="Image" class="form-control" />
+                                <span asp-validation-for="Image" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="Url" class="control-label"></label>
+                                <input asp-for="Url" class="form-control" />
+                                <span asp-validation-for="Url" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="DisplayOrder" class="control-label"></label>
+                                <input asp-for="DisplayOrder" class="form-control" />
+                                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CreatedDate" class="control-label"></label>
+                                <input asp-for="CreatedDate" class="form-control" />
+                                <span asp-validation-for="CreatedDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="CreatedBy" class="control-label"></label>
+                                <input asp-for="CreatedBy" class="form-control" />
+                                <span asp-validation-for="CreatedBy" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UpdatedDate" class="control-label"></label>
+                                <input asp-for="UpdatedDate" class="form-control" />
+                                <span asp-validation-for="UpdatedDate" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="UpdatedBy" class="control-label"></label>
+                                <input asp-for="UpdatedBy" class="form-control" />
+                                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
+                            </div>
+                                <div class="form-group text-center">
+                                    <button type="submit" class="btn btn-success me-2 mt-2">
+                                        <i class="fas fa-save"></i> Create Products
+                                    </button>
+                                    <a asp-action="Index" class="btn btn-secondary mt-2">
+                                        <i class="fas fa-arrow-left"></i> Back to List
+                                    </a>
+                                </div>
+                                
+                        </form>
+                    </div>
+                </div>
+                
             </div>
-            <div class="form-group">
-                <label asp-for="Image" class="control-label"></label>
-                <input asp-for="Image" class="form-control" />
-                <span asp-validation-for="Image" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Url" class="control-label"></label>
-                <input asp-for="Url" class="form-control" />
-                <span asp-validation-for="Url" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DisplayOrder" class="control-label"></label>
-                <input asp-for="DisplayOrder" class="form-control" />
-                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedDate" class="control-label"></label>
-                <input asp-for="CreatedDate" class="form-control" />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedBy" class="control-label"></label>
-                <input asp-for="CreatedBy" class="form-control" />
-                <span asp-validation-for="CreatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedDate" class="control-label"></label>
-                <input asp-for="UpdatedDate" class="form-control" />
-                <span asp-validation-for="UpdatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedBy" class="control-label"></label>
-                <input asp-for="UpdatedBy" class="form-control" />
-                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+
+@section Header {
+    <link rel="stylesheet" href="~/Admin/plugins/ckeditor5/ckeditor5.css">
+}
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script type="importmap">
+        {
+            "imports": {
+                "ckeditor5": "/Admin/plugins/ckeditor5/ckeditor5.js",
+                "ckeditor5/": "/Admin/plugins/ckeditor5/"
+            }
+        }
+    </script>
+    <script type="module">
+        import {
+            ClassicEditor,
+            Essentials,
+            Paragraph,
+            Bold,
+            Italic,
+            Font,
+            Heading,
+            Alignment,
+            BlockQuote,
+            Link,
+            List,
+            Table,
+            TableToolbar,
+            Image,
+            ImageToolbar,
+            ImageCaption,
+            ImageStyle,
+            ImageResize,
+            MediaEmbed,
+            CodeBlock,
+            HorizontalLine,
+            Highlight
+        } from 'ckeditor5';
+
+        ClassicEditor
+            .create(document.querySelector('#Title',), {
+                plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
+                    BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
+                    ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
+                    HorizontalLine, Highlight],
+                toolbar: [
+                     'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                    'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
+                    '|', 'bulletedList', 'numberedList', '|',
+                    'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+                    'imageUpload'
+                ],
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                },
+                image: {
+                    toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                    resizeUnit: 'px',
+                    styles: ['full', 'side']
+                }
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+             ClassicEditor
+            .create(document.querySelector('#Description1',), {
+                plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
+                    BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
+                    ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
+                    HorizontalLine, Highlight],
+                toolbar: [
+                     'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                    'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
+                    '|', 'bulletedList', 'numberedList', '|',
+                    'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+                    'imageUpload'
+                ],
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                },
+                image: {
+                    toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                    resizeUnit: 'px',
+                    styles: ['full', 'side']
+                }
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
 }
-</body>
-</html>
+

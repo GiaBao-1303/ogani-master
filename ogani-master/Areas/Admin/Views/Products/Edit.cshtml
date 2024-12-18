@@ -1,108 +1,243 @@
 ﻿@model ogani_master.Models.Product
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Edit";
 }
 
 <!DOCTYPE html>
-
-<html>
+<html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Edit</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Edit Product</title>
 </head>
-<body>
+<body class="bg-light">
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow-lg">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">Edit Product</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="Edit">
+                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                            <input type="hidden" asp-for="PRO_ID" />
 
-<h4>Product</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="PRO_ID" />
-            <div class="form-group">
-                <label asp-for="CAT_ID" class="control-label"></label>
-                <select asp-for="CAT_ID" class="form-control" asp-items="ViewBag.CAT_ID"></select>
-                <span asp-validation-for="CAT_ID" class="text-danger"></span>
+                            <!-- Category -->
+                            <div class="mb-3">
+                                <label asp-for="CAT_ID" class="form-label fw-bold">Category</label>
+                                <select asp-for="CAT_ID" class="form-select" asp-items="ViewBag.CAT_ID"></select>
+                                <span asp-validation-for="CAT_ID" class="text-danger"></span>
+                            </div>
+
+                            <!-- Avatar -->
+                            <div class="mb-3">
+                                <label asp-for="Avatar" class="form-label fw-bold">Avatar</label>
+                                <input asp-for="Avatar" class="form-control" />
+                                <span asp-validation-for="Avatar" class="text-danger"></span>
+                            </div>
+
+                            <!-- Name -->
+                            <div class="mb-3">
+                                <label asp-for="Name" class="form-label fw-bold">Name</label>
+                                <input asp-for="Name" class="form-control" />
+                                <span asp-validation-for="Name" class="text-danger"></span>
+                            </div>
+
+                            <!-- Intro -->
+                            <div class="mb-3">
+                                <label asp-for="Intro" class="form-label fw-bold">Introduction</label>
+                                <input asp-for="Intro" class="form-control" />
+                                <span asp-validation-for="Intro" class="text-danger"></span>
+                            </div>
+
+                            <!-- Price & Discount Price -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="Price" class="form-label fw-bold">Price</label>
+                                    <input asp-for="Price" class="form-control" />
+                                    <span asp-validation-for="Price" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price</label>
+                                    <input asp-for="DiscountPrice" class="form-control" />
+                                    <span asp-validation-for="DiscountPrice" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Unit -->
+                            <div class="mb-3">
+                                <label asp-for="Unit" class="form-label fw-bold">Unit</label>
+                                <input asp-for="Unit" class="form-control" />
+                                <span asp-validation-for="Unit" class="text-danger"></span>
+                            </div>
+
+                            <!-- Rate -->
+                            <div class="mb-3">
+                                <label asp-for="Rate" class="form-label fw-bold">Rate</label>
+                                <input asp-for="Rate" class="form-control" />
+                                <span asp-validation-for="Rate" class="text-danger"></span>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-3">
+                                <label asp-for="Description" class="form-label fw-bold">Description</label>
+                                <textarea asp-for="Description" class="form-control"></textarea>
+                                <span asp-validation-for="Description" class="text-danger"></span>
+                            </div>
+
+                            <!-- Details -->
+                            <div class="mb-3">
+                                <label asp-for="Details" class="form-label fw-bold">Details</label>
+                                <textarea asp-for="Details" class="form-control"></textarea>
+                                <span asp-validation-for="Details" class="text-danger"></span>
+                            </div>
+
+                            <!-- Created & Updated Info -->
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="CreatedDate" class="form-label fw-bold">Created Date</label>
+                                    <input asp-for="CreatedDate" class="form-control" />
+                                    <span asp-validation-for="CreatedDate" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="UpdatedDate" class="form-label fw-bold">Updated Date</label>
+                                    <input asp-for="UpdatedDate" class="form-control" />
+                                    <span asp-validation-for="UpdatedDate" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="CreatedBy" class="form-label fw-bold">Created By</label>
+                                    <input asp-for="CreatedBy" class="form-control" />
+                                    <span asp-validation-for="CreatedBy" class="text-danger"></span>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label asp-for="UpdatedBy" class="form-label fw-bold">Updated By</label>
+                                    <input asp-for="UpdatedBy" class="form-control" />
+                                    <span asp-validation-for="UpdatedBy" class="text-danger"></span>
+                                </div>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="d-flex justify-content-end">
+                                <button type="submit" class="btn btn-success me-2">
+                                    <i class="fas fa-save"></i> Save
+                                </button>
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left"></i> Back to List
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="Avatar" class="control-label"></label>
-                <input asp-for="Avatar" class="form-control" />
-                <span asp-validation-for="Avatar" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Intro" class="control-label"></label>
-                <input asp-for="Intro" class="form-control" />
-                <span asp-validation-for="Intro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" />
-                <span asp-validation-for="Price" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="DiscountPrice" class="control-label"></label>
-                <input asp-for="DiscountPrice" class="form-control" />
-                <span asp-validation-for="DiscountPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Unit" class="control-label"></label>
-                <input asp-for="Unit" class="form-control" />
-                <span asp-validation-for="Unit" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Rate" class="control-label"></label>
-                <input asp-for="Rate" class="form-control" />
-                <span asp-validation-for="Rate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Details" class="control-label"></label>
-                <input asp-for="Details" class="form-control" />
-                <span asp-validation-for="Details" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedDate" class="control-label"></label>
-                <input asp-for="CreatedDate" class="form-control" />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedBy" class="control-label"></label>
-                <input asp-for="CreatedBy" class="form-control" />
-                <span asp-validation-for="CreatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedDate" class="control-label"></label>
-                <input asp-for="UpdatedDate" class="form-control" />
-                <span asp-validation-for="UpdatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="UpdatedBy" class="control-label"></label>
-                <input asp-for="UpdatedBy" class="form-control" />
-                <span asp-validation-for="UpdatedBy" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
 
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+    @section Header {
+        <link rel="stylesheet" href="~/Admin/plugins/ckeditor5/ckeditor5.css">
+    }
+
+
+    @section Scripts {
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+    }
+        <script type="importmap">
+            {
+                "imports": {
+                    "ckeditor5": "/Admin/plugins/ckeditor5/ckeditor5.js",
+                    "ckeditor5/": "/Admin/plugins/ckeditor5/"
+                }
+            }
+        </script>
+        <script type="module">
+            import {
+                ClassicEditor,
+                Essentials,
+                Paragraph,
+                Bold,
+                Italic,
+                Font,
+                Heading,
+                Alignment,
+                BlockQuote,
+                Link,
+                List,
+                Table,
+                TableToolbar,
+                Image,
+                ImageToolbar,
+                ImageCaption,
+                ImageStyle,
+                ImageResize,
+                MediaEmbed,
+                CodeBlock,
+                HorizontalLine,
+                Highlight
+            } from 'ckeditor5';
+
+            ClassicEditor
+                .create(document.querySelector('#Intro1',), {
+                    plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
+                        BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
+                        ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
+                        HorizontalLine, Highlight],
+                    toolbar: [
+                         'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                        'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
+                        '|', 'bulletedList', 'numberedList', '|',
+                        'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+                        'imageUpload'
+                    ],
+                    table: {
+                        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                    },
+                    image: {
+                        toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                        resizeUnit: 'px',
+                        styles: ['full', 'side']
+                    }
+                })
+                .then(editor => {
+                    window.editor = editor;
+                }) 
+                .catch(error => {
+                    console.error(error);
+                });
+                 ClassicEditor
+                .create(document.querySelector('#Description',), {
+                    plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
+                        BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
+                        ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
+                        HorizontalLine, Highlight],
+                    toolbar: [
+                         'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                        'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
+                        '|', 'bulletedList', 'numberedList', '|',
+                        'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+                        'imageUpload'
+                    ],
+                    table: {
+                        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                    },
+                    image: {
+                        toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                        resizeUnit: 'px',
+                        styles: ['full', 'side']
+                    }
+                })
+                .then(editor => {
+                    window.editor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        </script>
+
+    }
 </body>
 </html>

@@ -111,11 +111,37 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-header">Banner</li>
                         <li class="nav-item">
-                            <a href="#" class="nav-link">
-                                <i class="nav-icon bi bi-circle-fill"></i>
-                                <p>Level 1</p>
+                            <a asp-area="Admin" asp-controller="Banners" asp-action="Index" class="nav-link">
+                                <i class="fa-light fa-images"></i>
+                                <p>
+                                    Banner
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Reviews" asp-action="Index" class="nav-link">
+                                <i class="fa-thin fa-star-sharp"></i>
+                                <p>
+                                    Reviews
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Menus" asp-action="Index" class="nav-link">
+                                <i class="fa-duotone fa-thin fa-bars"></i>
+                                <p>
+                                    Menus
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-header">Setting</li>
+                        <li class="nav-item">
+                            <a asp-area="Admin" asp-controller="Settings" asp-action="Index" class="nav-link">
+                                <i class="fa-thin fa-gear"></i>
+                                <p>
+                                    Settings
+                                </p>
                             </a>
                         </li>
                     </ul>

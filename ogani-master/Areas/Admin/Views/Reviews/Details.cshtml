@@ -1,81 +1,84 @@
 ﻿@model ogani_master.Models.Review
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Details";
 }
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Details</title>
-</head>
-<body>
-
-<div>
-    <h4>Review</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Rate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Rate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Content)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Content)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ReviewDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ReviewDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Member)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Member.MEM_ID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Product)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Product.PRO_ID)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedBy)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedBy)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedBy)
-        </dd>
-    </dl>
+<div class="app-content">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card card-info">
+                    <div class="card-header">
+                        <h4 class="card-title">Review Details</h4>
+                    </div>
+                    <div class="card-body">
+                        <dl class="row">
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.Rate)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.Rate)
+                            </dd>
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.Content)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.Content)
+                            </dd>
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.ReviewDate)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.ReviewDate)
+                            </dd>
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.Member)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.Member.MEM_ID)
+                            </dd>
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.Product)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.Product.PRO_ID)
+                            </dd>
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.CreatedDate)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.CreatedDate)
+                            </dd>
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.CreatedBy)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.CreatedBy)
+                            </dd>
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.UpdatedDate)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.UpdatedDate)
+                            </dd>
+                            <dt class="col-sm-4 text-muted">
+                                @Html.DisplayNameFor(model => model.UpdatedBy)
+                            </dt>
+                            <dd class="col-sm-8">
+                                @Html.DisplayFor(model => model.UpdatedBy)
+                            </dd>
+                        </dl>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between">
+                        <a asp-action="Edit" asp-route-id="@Model?.REV_ID" class="btn btn-success">
+                            <i class="fas fa-edit me-1"></i> Edit
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.REV_ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
-</body>
-</html>
