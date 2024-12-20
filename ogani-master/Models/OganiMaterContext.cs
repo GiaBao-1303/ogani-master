@@ -17,5 +17,9 @@ namespace ogani_master.Models
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Setting> Settings { get; set; }
+        public DbSet<UserBehaviorLog> UserBehaviorLogs { get; set; }
+
+
+
     }
 }

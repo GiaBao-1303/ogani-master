@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using ogani_master.Middlewares;
 using ogani_master.Models;
 
 
@@ -12,10 +13,23 @@ namespace ogani_master
             // Setting OganiMaterContext use the SQL Server
             builder.Services.AddDbContext<OganiMaterContext>(options =>
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-            // Add services to the container.
+           
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;                
+                options.Cookie.IsEssential = true;             
+            });
+
+
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+
+            app.UseSession();
+
+            app.UseMiddleware<UserBehaviorLoggingMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
