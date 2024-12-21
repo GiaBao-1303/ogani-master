@@ -1,0 +1,90 @@
+﻿@model ogani_master.dto.UserRegistrationV1Dto;
+
+@{
+	Layout = null;
+}
+
+<!doctype html>
+<html lang="en">
+<head>
+	<title>SignUp</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@fontsource/source-sans-3@5.0.12/index.css" />
+
+	<link rel="stylesheet" href="~/User/css/style.css">
+
+</head>
+<body class="img js-fullheight" style="background-image: url(@Url.Content("~/User/images/bg-signUp.jpg")); filter: drop-shadow(2px 4px 6px black);">
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-2">
+					<h2 class="heading-section">SignUp</h2>
+				</div>
+			</div>
+			<div class="row justify-content-center">
+				<div class="col-md-6 col-lg-4">
+					<div class="login-wrap p-0">
+						<h3 class="mb-4 text-center">Basic information</h3>
+						<form asp-controller="Auth" asp-action="VerifySignUpV1" method="post" class="signin-form">
+							<div class="form-group">
+								<input asp-for="FirstName" type="text" class="form-control" placeholder="FirstName" required>
+								<span asp-validation-for="FirstName" class="text-danger"></span>
+							</div>
+							<div class="form-group">
+								<input asp-for="LastName" type="text" class="form-control" placeholder="LastName" required>
+								<span asp-validation-for="LastName" class="text-danger"></span>
+							</div>
+							<div class="form-group">
+								<input asp-for="Address" type="text" class="form-control" placeholder="Address" required>
+								<span asp-validation-for="Address" class="text-danger"></span>
+							</div>
+							<div class="form-group">
+								<input asp-for="Email" type="email" class="form-control" placeholder="Email" required>
+								<span asp-validation-for="Email" class="text-danger"></span>
+							</div>
+							<div class="form-group">
+								<input asp-for="Phone" type="text" class="form-control" placeholder="Phone" required>
+								<span asp-validation-for="Phone" class="text-danger"></span>
+							</div>
+
+							<div class="form-group">
+								<select asp-for="Gender" class="form-control">
+									<option value="1" style="background: #000">Male</option>
+									<option value="0" style="background: #000">Female</option>
+								</select>
+								<span asp-validation-for="Gender" class="text-danger"></span>
+							</div>
+
+
+							<div class="form-group">
+								<button type="submit" class="form-control btn btn-primary submit px-3">NEXT</button>
+							</div>
+							
+						</form>
+						<div class="d-flex justify-content-end">
+							<label>
+								You have an account?
+							</label>
+							<a asp-controller="Auth" asp-action="SignIn" style="color: #ff0000">SignIn</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<script src="~/js/jquery.min.js"></script>
+	<script src="~/js/popper.min.js"></script>
+	<script src="~/js/bootstrap.min.js"></script>
+	<script src="~/User/js/main.js"></script>
+
+</body>
+</html>
+

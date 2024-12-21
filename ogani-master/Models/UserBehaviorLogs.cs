@@ -22,8 +22,5 @@ namespace ogani_master.Models
         [Required] 
         [StringLength(255)] 
         public string Page { get; set; }
-
-        [ForeignKey("UserId")]
-        public virtual Member? Member { get; set; }
     }
 }

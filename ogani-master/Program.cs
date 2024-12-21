@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ogani_master.Middlewares;
 using ogani_master.Models;
+using DotNetEnv;
 
 
 namespace ogani_master
@@ -9,13 +10,17 @@ namespace ogani_master
     {
         public static void Main(string[] args)
         {
-            var builder = WebApplication.CreateBuilder(args);
-            // Setting OganiMaterContext use the SQL Server
-            builder.Services.AddDbContext<OganiMaterContext>(options =>
-                options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-           
+			Env.Load();
+			var builder = WebApplication.CreateBuilder(args);
+            builder.Configuration.AddUserSecrets<Program>();
+			// Setting OganiMaterContext use the SQL Server
+			builder.Services.AddDbContext<OganiMaterContext>(options =>
+				options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"),
+					sqlOptions => sqlOptions.EnableRetryOnFailure()));
 
-            builder.Services.AddSession(options =>
+
+
+			builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
                 options.Cookie.HttpOnly = true;                
@@ -29,7 +34,7 @@ namespace ogani_master
 
             app.UseSession();
 
-            app.UseMiddleware<UserBehaviorLoggingMiddleware>();
+            //app.UseMiddleware<UserBehaviorLoggingMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
@@ -46,8 +51,11 @@ namespace ogani_master
 
             app.UseAuthorization();
 
-            app.UseStaticFiles();
-            app.MapControllerRoute(
+			app.MapControllers();
+
+			app.UseStaticFiles();
+
+			app.MapControllerRoute(
                name: "areas",
                pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}");
             app.MapControllerRoute(

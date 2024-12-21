@@ -1,8 +1,6 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@using Microsoft.AspNetCore.Http;
+@using ogani_master.Helpers;
 
-@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,6 +21,13 @@
     <link rel="stylesheet" href="~/Admin/plugins/font-awesome/css/all.css" />
     <link rel="stylesheet" href="~/Admin/css/adminlte.css" />
     <link rel="stylesheet" href="~/Admin/css/custom.css" />
+
+    <style>
+        .sidebar-menu .nav-item.active .nav-link {
+            color: var(--lte-sidebar-hover-color) !important;
+            background-color: var(--lte-sidebar-hover-bg) !important;
+        }
+    </style>
    
     @await RenderSectionAsync("Header", required: false)
 </head>
@@ -88,7 +93,7 @@
                 <nav class="mt-2">
                     <!--begin::Sidebar Menu-->
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item">
+                        <li class="nav-item @Html.IsActive("Home", "Index")">
                             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">
                                 <i class="nav-icon bi bi-speedometer"></i>
                                 <p>
@@ -96,7 +101,7 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item @Html.IsActive("Categories", "Index")">
                             <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="nav-link">
                                 <i class="nav-icon fa-light fa-layer-group">
                                 </i>
@@ -105,7 +110,7 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item @Html.IsActive("Products", "Index")">
                             <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="nav-link">
                                 <i class="nav-icon bi bi-box-seam-fill"></i>
                                 <p>
@@ -113,7 +118,7 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item @Html.IsActive("Banners", "Index")">
                             <a asp-area="Admin" asp-controller="Banners" asp-action="Index" class="nav-link">
                                 <i class="fa-light fa-images"></i>
                                 <p>
@@ -121,7 +126,7 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item @Html.IsActive("Reviews", "Index")">
                             <a asp-area="Admin" asp-controller="Reviews" asp-action="Index" class="nav-link">
                                 <i class="fa-thin fa-star-sharp"></i>
                                 <p>
@@ -129,7 +134,7 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item @Html.IsActive("Menus", "Index")">
                             <a asp-area="Admin" asp-controller="Menus" asp-action="Index" class="nav-link">
                                 <i class="fa-duotone fa-thin fa-bars"></i>
                                 <p>
@@ -138,7 +143,7 @@
                             </a>
                         </li>
                         <li class="nav-header">Setting</li>
-                        <li class="nav-item">
+                        <li class="nav-item @Html.IsActive("Settings", "Index")">
                             <a asp-area="Admin" asp-controller="Settings" asp-action="Index" class="nav-link">
                                 <i class="fa-thin fa-gear"></i>
                                 <p>

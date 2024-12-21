@@ -20,8 +20,5 @@ namespace ogani_master.Models
         public string? Note { get; set; }
         public int Status { get; set; }
 
-        [ForeignKey("MEM_ID")]
-        public virtual Member? Member { get; set; }
-
     }
 }

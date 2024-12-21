@@ -15,10 +15,10 @@ namespace ogani_master.Models
         public required string Content { get; set; }
         public DateTime ReviewDate { get; set; }
 
-        [ForeignKey("MEM_ID")]
-        public virtual Member? Member { get; set; }
-
         [ForeignKey("PRO_ID")]
         public virtual Product? Product { get; set; }
+
+		[ForeignKey("MEM_ID")]
+		public virtual User User { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace ogani_master.Areas.Admin.Controllers
         // GET: Admin/Reviews
         public async Task<IActionResult> Index()
         {
-            var oganiMaterContext = _context.Reviews.Include(r => r.Member).Include(r => r.Product);
+            var oganiMaterContext = _context.Reviews.Include(r => r.User).Include(r => r.Product);
             return View(await oganiMaterContext.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace ogani_master.Areas.Admin.Controllers
             }
 
             var review = await _context.Reviews
-                .Include(r => r.Member)
+                .Include(r => r.User)
                 .Include(r => r.Product)
                 .FirstOrDefaultAsync(m => m.REV_ID == id);
             if (review == null)
@@ -47,9 +47,9 @@ namespace ogani_master.Areas.Admin.Controllers
         }
 
         // GET: Admin/Reviews/Create
-        public IActionResult Create()
+        public IActionResult Create()   
         {
-            ViewData["MEM_ID"] = new SelectList(_context.Members, "MEM_ID", "MEM_ID");
+            ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID");
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID");
             return View();
         }
@@ -64,10 +64,10 @@ namespace ogani_master.Areas.Admin.Controllers
             if (ModelState.IsValid)
             {
                 _context.Add(review);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();  
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MEM_ID"] = new SelectList(_context.Members, "MEM_ID", "MEM_ID", review.MEM_ID);
+            ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID", review.MEM_ID);
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID", review.PRO_ID);
             return View(review);
         }
@@ -85,7 +85,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-            ViewData["MEM_ID"] = new SelectList(_context.Members, "MEM_ID", "MEM_ID", review.MEM_ID);
+            ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID", review.MEM_ID);
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID", review.PRO_ID);
             return View(review);
         }
@@ -122,7 +122,7 @@ namespace ogani_master.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MEM_ID"] = new SelectList(_context.Members, "MEM_ID", "MEM_ID", review.MEM_ID);
+            ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID", review.MEM_ID);
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID", review.PRO_ID);
             return View(review);
         }
@@ -136,7 +136,7 @@ namespace ogani_master.Areas.Admin.Controllers
             }
 
             var review = await _context.Reviews
-                .Include(r => r.Member)
+                .Include(r => r.User)
                 .Include(r => r.Product)
                 .FirstOrDefaultAsync(m => m.REV_ID == id);
             if (review == null)

@@ -93,14 +93,13 @@ namespace ogani_master.Areas.Admin.Controllers
             DateTime now = DateTime.UtcNow;
             DateTime past24Hours = now.AddHours(-24);
 
-          
             var data = _context.UserBehaviorLogs
                 .Where(log => log.Timestamp >= past24Hours && log.Timestamp <= now)
                 .GroupBy(log => log.Timestamp.Hour)
                 .Select(group => new UserBehaviorSummary
                 {
-                    Hour = group.Key,         
-                    Count = group.Count()     
+                    Hour = group.Key, 
+                    Count = group.Count()
                 })
                 .OrderBy(g => g.Hour)       
                 .ToList();
@@ -111,7 +110,7 @@ namespace ogani_master.Areas.Admin.Controllers
         public IActionResult Index()
         {
             DatabaseSizeInfo databaseSizeInfo = this.GetDatabaseSize();
-            List<UserBehaviorSummary> userBehaviorSummaries = GetUserBehavior();
+            List<UserBehaviorSummary> userBehaviorSummaries = this.GetUserBehavior();
 
             ViewBag.userBehaviorSummaries = userBehaviorSummaries;
             ViewBag.databaseSizeInfo = databaseSizeInfo;
