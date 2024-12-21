@@ -33,9 +33,7 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().ReviewDate)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Member)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Product)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CreatedDate)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CreatedBy)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UpdatedDate)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UpdatedBy)</th>
                                         <th>Actions</th>
                                     </tr>
@@ -49,9 +47,7 @@
                                             <td>@Html.DisplayFor(modelItem => item.ReviewDate)</td>
                                             <td>@Html.DisplayFor(modelItem => item.Member.MEM_ID)</td>
                                             <td>@Html.DisplayFor(modelItem => item.Product.PRO_ID)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
                                             <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.UpdatedDate)</td>
                                             <td>@Html.DisplayFor(modelItem => item.UpdatedBy)</td>
                                             <td>
                                                 <a asp-action="Edit" asp-route-id="@item.REV_ID" >

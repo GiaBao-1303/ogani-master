@@ -16,7 +16,7 @@
                     <!-- Avatar -->
                     <div class="form-group mb-3">
                         <label class="fw-bold">@Html.DisplayNameFor(model => model.Avatar):</label>
-                        <p>@Html.DisplayFor(model => model.Avatar)</p>
+                        <p> <img src="@Url.Content("~/data/product/" + Model.Avatar)" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd;" /></p>
                     </div>
 
                     <!-- Name -->
@@ -106,6 +106,27 @@
                             <i class="fas fa-arrow-left"></i> Back to List
                         </a>
                     </div>
+                    @*==================================== Show IMG Products ======================================================  *@
+                    <script>
+                        window.onload = () => {
+                            document.getElementById("Avatar").onchange = (e) => {
+                                var preview = document.getElementById('imgPreview');
+                                var file = e.target.files[0];
+                                var reader  = new FileReader();
+
+                                reader.onloadend = function () {
+                                  preview.src = reader.result;
+                                }
+
+                                if (file) {
+                                  reader.readAsDataURL(file);
+                                } else {
+                                  preview.src = '';
+                                }
+                            };
+                        }
+                    </script>
+
                 </div>
             </div>
         </div>

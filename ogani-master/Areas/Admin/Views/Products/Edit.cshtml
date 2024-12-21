@@ -33,10 +33,14 @@
                             <!-- Avatar -->
                             <div class="mb-3">
                                 <label asp-for="Avatar" class="form-label fw-bold">Avatar</label>
-                                <input asp-for="Avatar" class="form-control" />
+                                <input asp-for="Avatar" class="form-control" type="file" accept="image/*" />
                                 <span asp-validation-for="Avatar" class="text-danger"></span>
                             </div>
-
+                            <div class="form-group">
+                                <div>
+                                    <img id="imgPreview" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; margin-top: 10px;" />
+                                </div>
+                            </div>
                             <!-- Name -->
                             <div class="mb-3">
                                 <label asp-for="Name" class="form-label fw-bold">Name</label>
@@ -127,6 +131,27 @@
                                 </a>
                             </div>
                         </form>
+                        @*==================================== Show IMG Products ======================================================  *@
+                        <script>
+                            window.onload = () => {
+                                document.getElementById("Avatar").onchange = (e) => {
+                                    var preview = document.getElementById('imgPreview');
+                                    var file = e.target.files[0];
+                                    var reader  = new FileReader();
+
+                                    reader.onloadend = function () {
+                                      preview.src = reader.result;
+                                    }
+
+                                    if (file) {
+                                      reader.readAsDataURL(file);
+                                    } else {
+                                      preview.src = '';
+                                    }
+                                };
+                            }
+                        </script>
+
                     </div>
                 </div>
             </div>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ogani_master.Areas.Admin.DTO;
 using ogani_master.Models;
 
 namespace ogani_master.Areas.Admin.Controllers
@@ -13,10 +14,13 @@ namespace ogani_master.Areas.Admin.Controllers
     public class ProductsController : Controller
     {
         private readonly OganiMaterContext _context;
+        private readonly IWebHostEnvironment _hostEnv;
 
-        public ProductsController(OganiMaterContext context)
+
+        public ProductsController(OganiMaterContext context, IWebHostEnvironment hostEnv)
         {
             _context = context;
+            _hostEnv = hostEnv;
         }
 
         // GET: Admin/Products
@@ -48,7 +52,7 @@ namespace ogani_master.Areas.Admin.Controllers
         // GET: Admin/Products/Create
         public IActionResult Create()
         {
-            ViewData["CAT_ID"] = new SelectList(_context.Categories, "CAT_ID", "CAT_ID");
+            ViewData["CAT_ID"] = new SelectList(_context.Categories.OrderBy(c => c.Name), "CAT_ID", "CAT_ID");
             return View();
         }
 
@@ -57,15 +61,42 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("PRO_ID,CAT_ID,Avatar,Name,Intro,Price,DiscountPrice,Unit,Rate,Description,Details,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Product product)
+        public async Task<IActionResult> Create([FromForm] ProductDTO request)
         {
+            var product = new Product
+            {
+                PRO_ID = request.PRO_ID,
+                CAT_ID = request.CAT_ID,
+                Name = request.Name,
+                Intro = request.Intro,
+                Price = request.Price,
+                DiscountPrice = request.DiscountPrice,
+                Unit = request.Unit,
+                Rate = request.Rate ,
+                Description = request.Description,
+                Details = request.Details,
+                CreatedBy = request.CreatedBy,
+                
+
+            };
             if (ModelState.IsValid)
             {
+                string? newImageFileName = null;
+                if (request.Avatar != null)
+                {
+                    var extension = Path.GetExtension(request.Avatar.FileName);
+                    newImageFileName = $"{Guid.NewGuid().ToString()}{extension}";
+                    var filePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", newImageFileName);
+                    request.Avatar.CopyTo(new FileStream(filePath, FileMode.Create));
+                }
+
+                if (newImageFileName != null) product.Avatar = newImageFileName;
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CAT_ID"] = new SelectList(_context.Categories, "CAT_ID", "CAT_ID", product.CAT_ID);
+            ViewData["CAT_ID"] = new SelectList(_context.Categories, "CAT_ID", "CAT_ID");
+
             return View(product);
         }
 
@@ -91,7 +122,7 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("PRO_ID,CAT_ID,Avatar,Name,Intro,Price,DiscountPrice,Unit,Rate,Description,Details,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Product product)
+        public async Task<IActionResult> Edit(int id, [FromForm] Product product)
         {
             if (id != product.PRO_ID)
             {

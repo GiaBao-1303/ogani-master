@@ -16,7 +16,7 @@ namespace ogani_master.Models
         public decimal Price { get; set; }
         public decimal DiscountPrice { get; set; }
         public string? Unit { get; set; }
-        public double Rate { get; set; }
+        public double? Rate { get; set; }
         public string? Description { get; set; }
         public string? Details { get; set; }
 

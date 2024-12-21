@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using ogani_master.Areas.Admin.DTO;
 using ogani_master.Models;
 
 namespace ogani_master.Areas.Admin.Controllers
@@ -12,11 +14,15 @@ namespace ogani_master.Areas.Admin.Controllers
     [Area("Admin")]
     public class BannersController : Controller
     {
+        private readonly IWebHostEnvironment _hostEnv;
+
         private readonly OganiMaterContext _context;
 
-        public BannersController(OganiMaterContext context)
+        public BannersController(OganiMaterContext context, IWebHostEnvironment hostEnv)
         {
             _context = context;
+            _hostEnv = hostEnv;
+
         }
 
         // GET: Admin/Banners
@@ -54,16 +60,35 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("BAN_ID,Title,Image,Url,DisplayOrder,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Banner banner)
+        public async Task<IActionResult> Create([FromForm] BannerDTO _banner)
         {
+            var banner = new Banner
+            {
+                BAN_ID = _banner.BAN_ID,
+                Title = _banner.Title,
+                Url = _banner.Url,
+                CreatedBy = _banner.CreatedBy,
+            };
             if (ModelState.IsValid)
             {
+                string? newImageFileName = null;
+                if (_banner.Image != null)
+                {
+                    var extension = Path.GetExtension(_banner.Image.FileName);
+                    //No_Reply file name
+                    newImageFileName = $"{Guid.NewGuid().ToString()}{extension}";
+                    var filePath = Path.Combine(_hostEnv.WebRootPath, "data", "banner", newImageFileName);
+                    _banner.Image.CopyTo(new FileStream(filePath, FileMode.Create));
+
+                }
+                if (newImageFileName != null) banner.Image = newImageFileName;
                 _context.Add(banner);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(banner);
         }
+        
 
         // GET: Admin/Banners/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -86,7 +111,7 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("BAN_ID,Title,Image,Url,DisplayOrder,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Banner banner)
+        public async Task<IActionResult> Edit(int id, [FromForm] Banner banner)
         {
             if (id != banner.BAN_ID)
             {

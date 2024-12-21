@@ -3,61 +3,80 @@
 @{
     ViewData["Title"] = "Product Details";
 }
-<div>
-    <h4>Banner</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Image)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Image)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Url)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Url)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DisplayOrder)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DisplayOrder)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedBy)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedBy)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedDate)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedDate)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UpdatedBy)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UpdatedBy)
-        </dd>
-    </dl>
-    <div>
-        <a asp-action="Edit" asp-route-id="@Model?.BAN_ID">Edit</a> |
-        <a asp-action="Index">Back to List</a>
+<div class="app-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-info card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Banner Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4>Banner Information</h4>
+                        <div class="table-responsive">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.Title)</th>
+                                        <td>@Html.DisplayFor(model => model.Title)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.Image)</th>
+                                        <td>
+                                            <img src="@Url.Content("~/data/banner/" + Model.Image)" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd;" />
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.Url)</th>
+                                        <td>@Html.DisplayFor(model => model.Url)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.CreatedDate)</th>
+                                        <td>@Html.DisplayFor(model => model.CreatedDate)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.CreatedBy)</th>
+                                        <td>@Html.DisplayFor(model => model.CreatedBy)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.UpdatedDate)</th>
+                                        <td>@Html.DisplayFor(model => model.UpdatedDate)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.UpdatedBy)</th>
+                                        <td>@Html.DisplayFor(model => model.UpdatedBy)</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div>
+                            <a asp-action="Edit" asp-route-id="@Model?.BAN_ID" class="btn btn-primary">Edit</a> |
+                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
+
+<script>
+    window.onload = () => {
+        document.getElementById("Image").onchange = (e) => {
+            var preview = document.getElementById('imgPreview');
+            var file = e.target.files[0];
+            var reader  = new FileReader();
+
+            reader.onloadend = function () {
+              preview.src = reader.result;
+            }
+
+            if (file) {
+              reader.readAsDataURL(file);
+            } else {
+              preview.src = '';
+            }
+        };
+    }
+</script>
