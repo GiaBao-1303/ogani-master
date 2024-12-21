@@ -1,0 +1,29 @@
+﻿
+
+.tooltip-view:hover .tooltip-view-detail {
+    display: block !important;
+    z-index: 999;
+    background-color: #000 !important;
+}
+
+.tooltip-view-detail {
+    right: -100%;
+    transform: translateX(-100%);
+    top: 0;
+    margin: 0;
+    padding: 0;
+}
+
+.tooltip-view-detail li {
+    list-style: none;
+    padding: 10px 12px;
+}
+
+.tooltip-view-detail li i {
+    color: yellow;
+}
+
+.tooltip-view-detail span {
+    display: inline-block;
+    margin-left: 6px;
+}

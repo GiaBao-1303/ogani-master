@@ -1,21 +1,39 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ogani_master.Models
 {
-    [Table("Users")]
+	[Table("Users")]
+	public class User : BaseModel
+	{
+		[Key]
+		public int UserId { get; set; }
 
-    public class User:BaseModel
-    {
-        public int Id { get; set; }
+		[Required]
+		[MaxLength(100)]
+		public string UserName { get; set; }
 
-        public required string Username { get; set; }
+		[Required]
+		[MaxLength(100)]
+		public string Password { get; set; }
 
-        public required string Password { get; set; }
+		[MaxLength(100)]
+		public string FirstName { get; set; }
 
-        public string? FullName { get; set; }
+		[MaxLength(100)]
+		public string LastName { get; set; }
 
-        public string? Email { get; set; }
+		public int Gender { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
-    }
+		[MaxLength(15)]
+		public string Phone { get; set; }
+
+		[MaxLength(200)]
+		public string Email { get; set; }
+
+		[MaxLength(300)]
+		public string Address { get; set; }
+
+		public int Status { get; set; }
+	}
 }

@@ -23,8 +23,6 @@ namespace ogani_master.Models
         [ForeignKey("CAT_ID")]
         public virtual Category? Category { get; set; }
 
-        public virtual ICollection<OrderDetail>? OrderDetail { get; set; }
-
         public virtual ICollection<Review>? Review { get; set; }
     }
 }

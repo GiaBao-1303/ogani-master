@@ -1,10 +1,266 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-    ViewData["tittle"] = "Home";
+﻿@{
+    ViewData["tittle"] = "Dashboard";
+    List<UserBehaviorSummary> userBehaviorSummaries = ViewBag.userBehaviorSummaries;
+    DatabaseSizeInfo databaseSizeInfo = ViewBag.databaseSizeInfo;
 }
 
-<div>
-    <h1 class="text-center text-primary bg-black font-bold display-1"> Welcome to Admin Dashboard</h1>
+@section Styles {
+    <link href="~/css/demo.css" rel="stylesheet" />
+    <link href="~/Admin/css/Dashboard.css" rel="stylesheet" />
+}
+
+
+<div class="wrapper ">
+    <div style="background: #f4f3ef;" class="">
+        <div class="content mt-0">
+            <div class="row mt-4">
+                <div class="col-lg-3 col-md-6 col-sm-6 position-relative tooltip-view">
+                    <ul class="position-absolute d-none tooltip-view-detail">
+                        @foreach (DatabaseSizeViewModel databaseSizeViewModel in @databaseSizeInfo.tableSizes)
+                        {
+                            <li class="text-white">
+                                <i class="fa-regular fa-database"></i>
+                                <span>@databaseSizeViewModel.TableName - @databaseSizeViewModel.Capacity GB</span>
+                            </li>
+                        }
+                    </ul>
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="col-5 col-md-4 d-flex justify-content-center align-items-center">
+                                    <div class="icon-big text-center icon-warning">
+                                        <i style="font-size: 36px; color: orange" class="fa-duotone fa-regular fa-globe"></i>
+                                    </div>
+                                </div>
+                                <div class="col-7 col-md-8">
+                                    <div class="numbers">
+                                        <p class="card-category">Capacity</p>
+                                        <p class="card-title">@databaseSizeInfo.Capacity GB<p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer ">
+                            <hr>
+                            <div class="stats">
+                                <i class="fa fa-refresh"></i>
+                                Update Now
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="col-5 col-md-4 d-flex justify-content-center align-items-center">
+                                    <div class="icon-big text-center icon-warning">
+                                        <i style="font-size: 30px; color: green" class="fa-sharp-duotone fa-solid fa-money-check-dollar"></i>
+                                    </div>
+                                </div>
+                                <div class="col-7 col-md-8">
+                                    <div class="numbers">
+                                        <p class="card-category">Revenue</p>
+                                        <p class="card-title">$ 1,345<p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer ">
+                            <hr>
+                            <div class="stats">
+                                <i class="fa fa-calendar-o"></i>
+                                Last day
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="col-5 col-md-4 d-flex justify-content-center align-items-center">
+                                    <div class="icon-big text-center icon-warning">
+                                        <i style="font-size: 30px; color: red" class="fa-regular fa-users-slash"></i>
+                                    </div>
+                                </div>
+                                <div class="col-7 col-md-8">
+                                    <div class="numbers">
+                                        <p class="card-category">Errors</p>
+                                        <p class="card-title">23<p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer ">
+                            <hr>
+                            <div class="stats">
+                                <i class="fa fa-clock-o"></i>
+                                In the last hour
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6 col-sm-6">
+                    <div class="card card-stats">
+                        <div class="card-body ">
+                            <div class="row">
+                                <div class="col-5 col-md-4 d-flex justify-content-center align-items-center">
+                                    <div class="icon-big text-center icon-warning ">
+                                        <i style="font-size: 30px; color: aqua" class="fa-regular fa-user-secret"></i>
+                                    </div>
+                                </div>
+                                <div class="col-7 col-md-8">
+                                    <div class="numbers">
+                                        <p class="card-category">Followers</p>
+                                        <p class="card-title">+45K<p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer ">
+                            <hr>
+                            <div class="stats">
+                                <i class="fa fa-refresh"></i>
+                                Update now
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row mt-4">
+                <div class="col-md-12">
+                    <div class="card ">
+                        <div class="card-header ">
+                            <h5 style="margin-right: 4px" class="card-title">Users Behavior</h5>
+                            <p class="card-category">24 Hours performance</p>
+                        </div>
+                        <div class="card-body ">
+                            <canvas id=userBehaviorChart width="400" height="500"></canvas>
+                        </div>
+                        <div class="card-footer ">
+                            <hr>
+                            <div class="stats">
+                                <i class="fa fa-history"></i> Updated
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+           
+        </div>
+    </div>
 </div>
+
+
+@section Scripts {
+    <script src="~/js/chartjs.min.js"></script>
+    <script src="~/js/bootstrap-notify.js"></script>
+    <script src="~/js/popper.min.js"></script>
+    <script src="~/js/perfect-scrollbar.jquery.min.js"></script>
+    <script src="~/js/demo.js"></script>
+
+    <script>
+        const userBehaviorData = @Html.Raw(Json.Serialize(@userBehaviorSummaries ?? []));
+        // const userBehaviorDataTest = [
+        //     { Hour: 0, Count: 15 },
+        //     { Hour: 1, Count: 1000 },
+        //     { Hour: 2, Count: 500 },
+        //     { Hour: 3, Count: 200 },
+        //     { Hour: 4, Count: 2005 },
+        //     { Hour: 5, Count: 300 },
+        //     { Hour: 6, Count: 4000 },
+        //     { Hour: 7, Count: 4005 },
+        //     { Hour: 8, Count: 5000 },
+        //     { Hour: 9, Count: 6000 },
+        //     { Hour: 10, Count: 55 },
+        //     { Hour: 11, Count: 45 },
+        //     { Hour: 12, Count: 3000 },
+        //     { Hour: 13, Count: 35 },
+        //     { Hour: 14, Count: 4000 },
+        //     { Hour: 15, Count: 500 },
+        //     { Hour: 16, Count: 6000 },
+        //     { Hour: 17, Count: 50005 },
+        //     { Hour: 18, Count: 4005 },
+        //     { Hour: 19, Count: 400 },
+        //     { Hour: 20, Count: 3000 },
+        //     { Hour: 21, Count: 205 },
+        //     { Hour: 22, Count: 2000 },
+        //     { Hour: 23, Count: 105 }
+        // ];
+
+        const labels = userBehaviorData.map(data => `${data.Hour}:00`);
+        const counts = userBehaviorData.map(data => data.Count);
+
+        const ctx = document.getElementById('userBehaviorChart').getContext('2d');
+
+        const colors = [
+            'rgba(34, 193, 195, 0.8)',
+            'rgba(28, 170, 237, 0.8)',
+            'rgba(54, 162, 235, 0.8)',
+            'rgba(24, 116, 165, 0.8)',
+            'rgba(44, 197, 215, 0.8)',
+            'rgba(0, 123, 255, 0.8)',
+            'rgba(33, 113, 184, 0.8)'
+        ];
+
+        const userBehaviorChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'User Actions (Last 24 Hours)',
+                    data: counts,
+                    backgroundColor: colors,
+                    borderColor: 'rgba(28, 170, 237, 1)',
+                    borderWidth: 2,
+                    hoverBackgroundColor: 'rgba(28, 170, 237, 1)',
+                    hoverBorderColor: 'rgba(28, 170, 237, 1)',
+                    borderRadius: 8,
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.2)',
+                        },
+                        ticks: {
+                            font: {
+                                family: 'Arial',
+                                size: 14,
+                            }
+                        }
+                    },
+                    x: {
+                        grid: {
+                            color: 'rgba(200, 200, 200, 0.2)',
+                        },
+                        ticks: {
+                            font: {
+                                family: 'Arial',
+                                size: 14,
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        displayColors: false,
+                        callbacks: {
+                            label: function (tooltipItem) {
+                                return `Actions: ${tooltipItem.raw}`;
+                            }
+                        }
+                    },
+                }
+            }
+        });
+    </script>
+}

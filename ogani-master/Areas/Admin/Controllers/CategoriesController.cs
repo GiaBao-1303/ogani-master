@@ -20,9 +20,18 @@ namespace ogani_master.Areas.Admin.Controllers
         }
 
         // GET: Admin/Categories
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 20)
         {
-            return View(await _context.Categories.ToListAsync());
+            pageSize = pageSize > 100 ? 100 : pageSize;
+
+            
+            var categories = await _context.Categories
+                                           .OrderBy(c => c.CAT_ID) 
+                                           .Skip((page - 1) * pageSize) 
+                                           .Take(pageSize) 
+                                           .ToListAsync();
+
+            return View(categories);
         }
 
         // GET: Admin/Categories/Details/5

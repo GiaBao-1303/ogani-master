@@ -31,7 +31,7 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Rate)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Content)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().ReviewDate)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Member)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().User)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Product)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CreatedBy)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UpdatedBy)</th>
@@ -45,7 +45,7 @@
                                             <td>@Html.DisplayFor(modelItem => item.Rate)</td>
                                             <td>@Html.DisplayFor(modelItem => item.Content)</td>
                                             <td>@Html.DisplayFor(modelItem => item.ReviewDate)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.Member.MEM_ID)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.User.UserId)</td>
                                             <td>@Html.DisplayFor(modelItem => item.Product.PRO_ID)</td>
                                             <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
                                             <td>@Html.DisplayFor(modelItem => item.UpdatedBy)</td>
