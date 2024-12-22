@@ -11,6 +11,18 @@ namespace ogani_master.Areas.Admin.Controllers
     {
         private readonly OganiMaterContext context = _context;
 
+        protected async Task<User?> GetCurrentUser()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (userId != null)
+            {
+                var user = await context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+                return user;
+            }
+            return null;
+        }
+
+
         private DatabaseSizeInfo GetDatabaseSize()
         {
             var command = context.Database.GetDbConnection().CreateCommand();
@@ -107,13 +119,23 @@ namespace ogani_master.Areas.Admin.Controllers
             return data;
         }
 
-        public IActionResult Index()
+        private int getNumberOfUsers()
+        {
+            int numberOfUsers =  this.context.users.Count();
+            return numberOfUsers;
+        }
+
+        public async Task<IActionResult> Index()
         {
             DatabaseSizeInfo databaseSizeInfo = this.GetDatabaseSize();
             List<UserBehaviorSummary> userBehaviorSummaries = this.GetUserBehavior();
+            int numberOfUsers = this.getNumberOfUsers();
+            
 
             ViewBag.userBehaviorSummaries = userBehaviorSummaries;
             ViewBag.databaseSizeInfo = databaseSizeInfo;
+            ViewBag.numberOfUsers = numberOfUsers;
+            ViewBag.CurrentUser = await this.GetCurrentUser();
 
             return View(databaseSizeInfo);
         }

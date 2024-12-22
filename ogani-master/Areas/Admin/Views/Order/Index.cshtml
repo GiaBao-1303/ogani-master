@@ -1,0 +1,101 @@
+﻿@{
+    ViewData["Title"] = "Orders";
+}
+<div class="app-content">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <!--begin::Row-->
+        <div class="row">
+            <div class="col-12">
+                <!-- Default box -->
+                <div class="card card-success card-outline">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md">
+                                <h3 class="card-title">Product List</h3>
+                            </div>
+                            <div class="col-md-auto">
+                                <a asp-action="Create" id="btnAdd"
+                                   type="button"
+                                   class="btn btn-success">
+                                    <i class="fa-light fa-add me-1"></i> Add new
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="tbl" class="table">
+                                <thead>
+                                  @*   <tr>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Avatar)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Name)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Price)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.DiscountPrice)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Rate)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.UpdatedBy)
+                                        </th>
+                                        <th>Actions</th>
+
+                                    </tr> *@
+                                </thead>
+                                <tbody>
+                                    @* @foreach (var item in Model)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Avatar)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Name)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Price)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.DiscountPrice)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.Rate)
+                                            </td>
+                                            <td>
+                                                @Html.DisplayFor(modelItem => item.UpdatedBy)
+                                            </td>
+                                            <td>
+                                                <a asp-action="Edit" asp-route-id="@item.PRO_ID">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a asp-action="Details" asp-route-id="@item.PRO_ID" class="text-info ms-3">
+                                                    <i class="fas fa-info-circle"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@item.PRO_ID " class="text-danger ms-3">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </a>
+                                            </td>
+
+                                        </tr>
+                                    } *@
+                                </tbody>
+                            </table>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+

@@ -18,11 +18,22 @@ namespace ogani_master.Areas.Admin.Controllers
         {
             _context = context;
         }
+        protected async Task<User?> GetCurrentUser()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (userId != null)
+            {
+                var user = await _context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+                return user;
+            }
+            return null;
+        }
 
         // GET: Admin/Products
         public async Task<IActionResult> Index()
         {
             var oganiMaterContext = _context.Products.Include(p => p.Category);
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(await oganiMaterContext.ToListAsync());
         }
 

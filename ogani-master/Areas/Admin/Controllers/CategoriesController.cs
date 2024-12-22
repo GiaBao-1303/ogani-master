@@ -19,11 +19,23 @@ namespace ogani_master.Areas.Admin.Controllers
             _context = context;
         }
 
+        protected async Task<User?> GetCurrentUser()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (userId != null)
+            {
+                var user = await _context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+                return user;
+            }
+            return null;
+        }
+
         // GET: Admin/Categories
         public async Task<IActionResult> Index(int page = 1, int pageSize = 20)
         {
             pageSize = pageSize > 100 ? 100 : pageSize;
 
+            ViewBag.CurrentUser = await GetCurrentUser();
             
             var categories = await _context.Categories
                                            .OrderBy(c => c.CAT_ID) 

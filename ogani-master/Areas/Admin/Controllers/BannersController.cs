@@ -14,6 +14,17 @@ namespace ogani_master.Areas.Admin.Controllers
     {
         private readonly OganiMaterContext _context;
 
+        protected async Task<User?> GetCurrentUser()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            if (userId != null)
+            {
+                var user = await _context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+                return user;
+            }
+            return null;
+        }
+
         public BannersController(OganiMaterContext context)
         {
             _context = context;
@@ -22,6 +33,8 @@ namespace ogani_master.Areas.Admin.Controllers
         // GET: Admin/Banners
         public async Task<IActionResult> Index()
         {
+            ViewBag.CurrentUser = await this.GetCurrentUser();
+
             return View(await _context.Banners.ToListAsync());
         }
 

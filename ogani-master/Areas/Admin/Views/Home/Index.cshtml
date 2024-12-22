@@ -2,6 +2,7 @@
     ViewData["tittle"] = "Dashboard";
     List<UserBehaviorSummary> userBehaviorSummaries = ViewBag.userBehaviorSummaries;
     DatabaseSizeInfo databaseSizeInfo = ViewBag.databaseSizeInfo;
+    int numberOfUsers = ViewBag.numberOfUsers;
 }
 
 @section Styles {
@@ -112,8 +113,8 @@
                                 </div>
                                 <div class="col-7 col-md-8">
                                     <div class="numbers">
-                                        <p class="card-category">Followers</p>
-                                        <p class="card-title">+45K<p>
+                                        <p class="card-category">Users</p>
+                                        <p class="card-title">@numberOfUsers<p>
                                     </div>
                                 </div>
                             </div>
@@ -122,7 +123,7 @@
                             <hr>
                             <div class="stats">
                                 <i class="fa fa-refresh"></i>
-                                Update now
+                                Updated
                             </div>
                         </div>
                     </div>
