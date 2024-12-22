@@ -9,7 +9,13 @@ namespace ogani_master.Models
 		[Key]
 		public int UserId { get; set; }
 
-		[Required]
+        [Required]
+        public string ProfilePictureUrl { get; set; }
+
+        [Required]
+        public int Role { get; set; }
+
+        [Required]
 		[MaxLength(100)]
 		public string UserName { get; set; }
 
@@ -23,7 +29,7 @@ namespace ogani_master.Models
 		[MaxLength(100)]
 		public string LastName { get; set; }
 
-		public int Gender { get; set; }
+		public bool Gender { get; set; }
 
 		[MaxLength(15)]
 		public string Phone { get; set; }

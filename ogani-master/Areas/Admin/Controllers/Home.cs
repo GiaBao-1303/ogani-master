@@ -98,7 +98,7 @@ namespace ogani_master.Areas.Admin.Controllers
                 .GroupBy(log => log.Timestamp.Hour)
                 .Select(group => new UserBehaviorSummary
                 {
-                    Hour = group.Key, 
+                    Hour = group.Key < 0 ? 0 : group.Key, 
                     Count = group.Count()
                 })
                 .OrderBy(g => g.Hour)       

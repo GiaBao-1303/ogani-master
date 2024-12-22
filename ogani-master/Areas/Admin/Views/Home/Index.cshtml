@@ -162,35 +162,45 @@
 
     <script>
         const userBehaviorData = @Html.Raw(Json.Serialize(@userBehaviorSummaries ?? []));
-        // const userBehaviorDataTest = [
-        //     { Hour: 0, Count: 15 },
-        //     { Hour: 1, Count: 1000 },
-        //     { Hour: 2, Count: 500 },
-        //     { Hour: 3, Count: 200 },
-        //     { Hour: 4, Count: 2005 },
-        //     { Hour: 5, Count: 300 },
-        //     { Hour: 6, Count: 4000 },
-        //     { Hour: 7, Count: 4005 },
-        //     { Hour: 8, Count: 5000 },
-        //     { Hour: 9, Count: 6000 },
-        //     { Hour: 10, Count: 55 },
-        //     { Hour: 11, Count: 45 },
-        //     { Hour: 12, Count: 3000 },
-        //     { Hour: 13, Count: 35 },
-        //     { Hour: 14, Count: 4000 },
-        //     { Hour: 15, Count: 500 },
-        //     { Hour: 16, Count: 6000 },
-        //     { Hour: 17, Count: 50005 },
-        //     { Hour: 18, Count: 4005 },
-        //     { Hour: 19, Count: 400 },
-        //     { Hour: 20, Count: 3000 },
-        //     { Hour: 21, Count: 205 },
-        //     { Hour: 22, Count: 2000 },
-        //     { Hour: 23, Count: 105 }
-        // ];
 
-        const labels = userBehaviorData.map(data => `${data.Hour}:00`);
-        const counts = userBehaviorData.map(data => data.Count);
+        const BehaviorData = [
+            { hour: 0, count: 0 },
+            { hour: 1, count: 0 },
+            { hour: 2, count: 0 },
+            { hour: 3, count: 0 },
+            { hour: 4, count: 0 },
+            { hour: 5, count: 0 },
+            { hour: 6, count: 0 },
+            { hour: 7, count: 0 },
+            { hour: 8, count: 0 },
+            { hour: 9, count: 0 },
+            { hour: 10, count: 0 },
+            { hour: 11, count: 0 },
+            { hour: 12, count: 0 },
+            { hour: 13, count: 0 },
+            { hour: 14, count: 0 },
+            { hour: 15, count: 0 },
+            { hour: 16, count: 0 },
+            { hour: 17, count: 0 },
+            { hour: 18, count: 0 },
+            { hour: 19, count: 0 },
+            { hour: 20, count: 0 },
+            { hour: 21, count: 0 },
+            { hour: 22, count: 0 },
+            { hour: 23, count: 0 },
+        ]
+
+        console.log("Chart Data: ", userBehaviorData);
+        const labels = BehaviorData.map(data => `${data.hour}:00`);
+        const counts = BehaviorData.map(data => {
+            const info = userBehaviorData.find(u => u.hour === data.hour)
+            if(!info) {
+                return 0;
+            }
+
+            return info.count;
+           
+        });
 
         const ctx = document.getElementById('userBehaviorChart').getContext('2d');
 
@@ -201,7 +211,10 @@
             'rgba(24, 116, 165, 0.8)',
             'rgba(44, 197, 215, 0.8)',
             'rgba(0, 123, 255, 0.8)',
-            'rgba(33, 113, 184, 0.8)'
+            'rgba(33, 113, 184, 0.8)',
+            'rgba(75, 192, 192, 0.8)',
+            'rgba(153, 102, 255, 0.8)',
+            'rgba(255, 159, 64, 0.8)'
         ];
 
         const userBehaviorChart = new Chart(ctx, {
@@ -212,11 +225,11 @@
                     label: 'User Actions (Last 24 Hours)',
                     data: counts,
                     backgroundColor: colors,
-                    borderColor: 'rgba(28, 170, 237, 1)',
-                    borderWidth: 2,
-                    hoverBackgroundColor: 'rgba(28, 170, 237, 1)',
-                    hoverBorderColor: 'rgba(28, 170, 237, 1)',
-                    borderRadius: 8,
+                    borderColor: colors.map(color => color.replace('0.8', '1')),
+                    borderWidth: 1,
+                    hoverBackgroundColor: colors.map(color => color.replace('0.8', '0.9')),
+                    hoverBorderColor: colors.map(color => color.replace('0.8', '1')),
+                    borderRadius: 5,
                 }]
             },
             options: {
@@ -232,7 +245,8 @@
                             font: {
                                 family: 'Arial',
                                 size: 14,
-                            }
+                            },
+                            stepSize: 1 
                         }
                     },
                     x: {
@@ -259,8 +273,19 @@
                             }
                         }
                     },
+                    legend: {
+                        labels: {
+                            font: {
+                                family: 'Arial',
+                                size: 14,
+                                style: 'bold',
+                                color: '#4A4A4A'
+                            }
+                        }
+                    }
                 }
             }
         });
     </script>
+
 }

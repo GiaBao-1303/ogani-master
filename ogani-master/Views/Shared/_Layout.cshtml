@@ -1,4 +1,9 @@
 ﻿@using ogani_master.Helpers
+
+@{
+    User CurrentUser = ViewBag.CurrentUser;
+}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,15 +61,15 @@
                                 </ul>
                             </div>
                         </div>
-                        <div class="col-lg-6 col-md-6">
-                            <div class="header__top__right">
-                                <div class="header__top__right__social">
+                        <div class="col-lg-6 col-md-6 d-flex justify-content-end">
+                            <div class="header__top__right d-flex align-items-center">
+                                <div class="header__top__right__social d-flex align-items-center">
                                     <a href="#"><i class="fa fa-facebook"></i></a>
                                     <a href="#"><i class="fa fa-twitter"></i></a>
                                     <a href="#"><i class="fa fa-linkedin"></i></a>
                                     <a href="#"><i class="fa fa-pinterest-p"></i></a>
                                 </div>
-                                <div class="header__top__right__language">
+                                <div class="header__top__right__language d-flex align-items-center">
                                     <img src="~/uploads/language.png" alt="" />
                                     <div>English</div>
                                     <span class="arrow_carrot-down"></span>
@@ -73,9 +78,25 @@
                                         <li><a href="#">English</a></li>
                                     </ul>
                                 </div>
-                                <div class="header__top__right__auth">
-                                    <a href="#"><i class="fa fa-user"></i> Login</a>
-                                </div>
+                                @if (CurrentUser != null)
+                                {
+                                    <div style="width: 30px; height: 30px;" class="header__top__right__auth dropdown show d-flex align-items-center justify-content-center">
+                                        <div style="border-radius: 100%; padding: 0" class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            <img style="object-fit: cover; border-radius: 100%;" class="w-100 h-100" src="~/@CurrentUser.ProfilePictureUrl" />
+                                        </div>
+
+                                        <div style="padding: 0" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                                            <form style="padding: 0 !important; margin-top: 6px" class="dropdown-item w-100" asp-controller="Auth" asp-action="Logout">
+                                                <button type="submit" class="btn btn-danger w-100">Logout</button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                } else {
+                                    <div class="header__top__right__auth">
+                                        <a asp-controller="Auth" asp-action="SignInPage"><i class="fa fa-user"></i> Login</a>
+                                    </div>
+                                }
+                               
                             </div>
                         </div>
                     </div>
@@ -282,6 +303,7 @@
     </main>
 
     <script src="~/js/jquery-3.3.1.min.js"></script>
+    <script src="~/js/popper.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
     <script src="~/js/jquery.nice-select.min.js"></script>
     <script src="~/js/jquery-ui.min.js"></script>
