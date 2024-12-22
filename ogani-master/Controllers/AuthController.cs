@@ -5,6 +5,9 @@ using ogani_master.dto;
 using ogani_master.Helpers;
 using ogani_master.Models;
 using BCrypt.Net;
+using Microsoft.EntityFrameworkCore;
+using ogani_master.enums;
+using Microsoft.AspNetCore.Http;
 
 
 namespace ogani_master.Controllers
@@ -17,16 +20,73 @@ namespace ogani_master.Controllers
 		}
 
 		[Route("SignIn")]
-		public IActionResult SignIn()
+		public IActionResult SignInPage()
 		{
+			var eixstingLogin = HttpContext.Session.Get("UserID");
+
+			if(eixstingLogin != null)
+			{
+				return Redirect("/");
+			}
+
 			return View("~/Views/SignIn/Index.cshtml");
+		}
+
+		[HttpPost]
+		[Route("v1/SignIn")]
+		public async Task<IActionResult> SignIn(UserSignInDto userSignInDto)
+		{
+			try
+			{
+
+				if (!ModelState.IsValid)
+				{
+					ViewBag.userSignInDto = userSignInDto;
+					return View("~/Views/SignIn/Index.cshtml");
+				}
+
+				var existingUser = await this.context.users.FirstOrDefaultAsync(u => u.UserName == userSignInDto.Username);
+
+				if (existingUser == null)
+				{
+					ViewBag.InvalidUserMessage = "The Username or password is not correct.";
+					return View("~/Views/SignIn/Index.cshtml");
+				}
+
+				bool isValidPassword = BCrypt.Net.BCrypt.Verify(userSignInDto.Password, existingUser.Password);
+
+				if(!isValidPassword)
+				{
+					ViewBag.InvalidUserMessage = "The Username or password is not correct.";
+					return View("~/Views/SignIn/Index.cshtml");
+				}
+
+				HttpContext.Session.SetInt32("UserID", existingUser.UserId);
+				HttpContext.Session.SetString("role", existingUser.Role == (int)UserRole.Admin ? "Admin" : "User");
+
+                return Redirect("/");
+
+			}
+			catch (Exception ex) {
+				return Json(new
+				{
+					Message = ex.Message,
+					StackTrace = ex.StackTrace
+				});
+			}
 		}
 
 		[HttpGet]
 		[Route("SignUp")]
 		public IActionResult SignUp()
 		{
-			return View("~/Views/SignUp/Index.cshtml");
+            var eixstingLogin = HttpContext.Session.Get("UserID");
+
+            if (eixstingLogin != null)
+            {
+                return Redirect("/");
+            }
+            return View("~/Views/SignUp/Index.cshtml");
 		}
 
 		[Route("SignUp/v1")]
@@ -94,7 +154,9 @@ namespace ogani_master.Controllers
 					Email = userRegistrationV1Dto.Email,
 					Address = userRegistrationV1Dto.Address,
 					Phone = userRegistrationV1Dto.Phone,
-					Gender = userRegistrationV1Dto.Gender,
+					Gender = userRegistrationV1Dto.Gender == 1,
+					Role = (int)UserRole.User,
+					ProfilePictureUrl = userRegistrationV1Dto.Gender == 1 ? "User/images/avatar-male-default.png" : "User/images/avatar-woman-default.png",
 					Status = 1,
 					CreatedBy = "User",
 					CreatedDate = DateTime.Now,
@@ -105,9 +167,10 @@ namespace ogani_master.Controllers
 				this.context.users.Add(user);
 				this.context.SaveChanges();
 
-				HttpContext.Session.SetString("UserId", user.UserId.ToString());
+				HttpContext.Session.SetInt32("UserID", user.UserId);
+                HttpContext.Session.SetString("role", user.Role == (int)UserRole.Admin ? "Admin" : "User");
 
-				return Redirect("/");
+                return Redirect("/");
 			}
 			catch (Exception ex) {
 
@@ -130,5 +193,13 @@ namespace ogani_master.Controllers
 			}
 			return View("~/Views/SignUp/v2.cshtml");
 		}
+
+		[Route("Logout")]
+		[HttpPost]
+		public IActionResult Logout()
+		{
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
+        }
 	}
 }

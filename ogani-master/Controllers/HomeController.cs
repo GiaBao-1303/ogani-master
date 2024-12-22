@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using ogani_master.Models;
 
 namespace ogani_master.Controllers
@@ -7,15 +8,29 @@ namespace ogani_master.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly OganiMaterContext context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, OganiMaterContext _context)
         {
             _logger = logger;
+            context = _context;
         }
 
-        public IActionResult Index()
+        protected async Task<User?> GetCurrentUser() 
+        { 
+            int? userId = HttpContext.Session.GetInt32("UserID"); 
+            if (userId != null) { 
+                var user = await context.users.FirstOrDefaultAsync(u => u.UserId == userId); 
+                return user; 
+            } 
+            return null; 
+        }
+
+        public async Task<IActionResult> Index()
         {
+            ViewBag.CurrentUser = await this.GetCurrentUser();
             return View();
+
         }
 
         public IActionResult Privacy()
