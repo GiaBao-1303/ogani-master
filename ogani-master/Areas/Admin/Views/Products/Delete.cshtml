@@ -13,7 +13,9 @@
                     <h5 class="mb-0">Delete Products</h5>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Delete" class="table" enctype="multipart/form-data">
+                    <form asp-area="Admin" asp-controller="Products" asp-action="Delete" method="post" class="table">
+
+                        <input type="hidden" asp-for="PRO_ID" value="@Model.PRO_ID" />
                         <div class="text-danger"></div>
 
                         <!-- Avatar -->
@@ -104,7 +106,6 @@
 
                         <!-- Action Buttons -->
                         <div class="form-group text-center">
-                            <input type="hidden" asp-for="PRO_ID" />
                             <button type="submit" class="btn btn-danger me-2">
                                 <i class="fas fa-trash-alt"></i> Delete Product
                             </button>

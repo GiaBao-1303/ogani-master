@@ -19,6 +19,8 @@ namespace ogani_master.Models
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Order> Orders { get; set; }
 
+        public DbSet<Blog> Blogs { get; set; }
+
 
     }
 }

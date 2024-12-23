@@ -1,0 +1,17 @@
+﻿@model ogani_master.Models.Blog
+
+@{
+    ViewData["Title"] = "Delete Blog";
+}
+
+<h2>Are you sure you want to delete this blog?</h2>
+
+<div>
+    <h4>@Model.Title</h4>
+    <p>Content: @Model.Content</p>
+</div>
+
+<form asp-action="Delete" method="post" asp-route-id="@Model.BlogId">
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</form>

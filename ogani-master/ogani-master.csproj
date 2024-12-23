@@ -25,6 +25,7 @@
     <Folder Include="Areas\Admin\dto\" />
     <Folder Include="Areas\Admin\Models\" />
     <Folder Include="wwwroot\Data\Banner\" />
+    <Folder Include="wwwroot\Data\Blog\" />
     <Folder Include="wwwroot\Data\Product\" />
   </ItemGroup>
 

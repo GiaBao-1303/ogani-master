@@ -116,6 +116,15 @@
                                 </p>
                             </a>
                         </li>
+                        <li class="nav-item @Html.IsActive("BlogAd", "Index")">
+                            <a asp-area="Admin" asp-controller="BlogAd" asp-action="Index" class="nav-link">
+                                <i class="nav-icon fa-light fa-layer-group">
+                                </i>
+                                <p>
+                                    Blogs
+                                </p>
+                            </a>
+                        </li>
                         <li class="nav-item @Html.IsActive("Products", "Index")">
                             <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="nav-link">
                                 <i class="nav-icon bi bi-box-seam-fill"></i>

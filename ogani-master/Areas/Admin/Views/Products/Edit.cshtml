@@ -19,7 +19,7 @@
                         <h4 class="mb-0">Edit Product</h4>
                     </div>
                     <div class="card-body">
-                        <form asp-action="Edit">
+                        <form asp-action="Edit" enctype="multipart/form-data">
                             <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                             <input type="hidden" asp-for="PRO_ID" />
 

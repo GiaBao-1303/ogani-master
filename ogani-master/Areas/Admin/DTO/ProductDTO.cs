@@ -20,4 +20,10 @@ namespace ogani_master.Areas.Admin.DTO
         public string? Description { get; set; }
         public string? Details { get; set; }
     }
+
+    public class DeleteProductViewModel
+    {
+        public int? PRO_ID { get; set; }
+    }
+
 }

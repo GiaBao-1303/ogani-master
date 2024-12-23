@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -136,35 +137,63 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [FromForm] Product product)
+        public async Task<IActionResult> Edit(int id, [FromForm] ProductDTO productdto)
         {
-            if (id != product.PRO_ID)
+            if (id != productdto.PRO_ID)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.PRO_ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+            Product? existingProduct = await this._context.Products.FirstOrDefaultAsync(p => p.PRO_ID == productdto.PRO_ID);
+
+            if (existingProduct == null) {
+                return NotFound();
             }
-            ViewData["CAT_ID"] = new SelectList(_context.Categories, "CAT_ID", "CAT_ID", product.CAT_ID);
-            return View(product);
+
+            if (!ModelState.IsValid)
+            {
+               return BadRequest(ModelState);
+            }
+
+            try
+            {
+                string? newImageFileName = null;
+                if (productdto.Avatar != null)
+                {
+                    var extension = Path.GetExtension(productdto.Avatar.FileName);
+                    newImageFileName = $"{Guid.NewGuid().ToString()}{extension}";
+                    var filePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", newImageFileName);
+                    productdto.Avatar.CopyTo(new FileStream(filePath, FileMode.Create));
+                    existingProduct.Avatar = newImageFileName;
+                   
+                }
+
+                existingProduct.Name = productdto.Name;
+                existingProduct.Intro = productdto.Intro;
+                existingProduct.Price = productdto.Price;
+                existingProduct.DiscountPrice = productdto.DiscountPrice;
+                existingProduct.Unit = productdto.Unit;
+                existingProduct.Rate = productdto.Rate;
+                existingProduct.Description = productdto.Description;
+                existingProduct.Details = productdto.Details;
+                existingProduct.CreatedBy = productdto.CreatedBy;
+                existingProduct.UpdatedBy = productdto.UpdatedBy;
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Products");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!ProductExists(productdto.PRO_ID))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw new Exception();
+                }
+            }
         }
 
         // GET: Admin/Products/Delete/5
@@ -186,18 +215,26 @@ namespace ogani_master.Areas.Admin.Controllers
             return View(product);
         }
 
-        // POST: Admin/Products/Delete/5
-        [HttpPost, ActionName("Delete")]
+        // POST: Admin/Products/Delete
+        [HttpPost]
+        [ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(DeleteProductViewModel deleteProduct)
         {
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
+            if(!ModelState.IsValid)
             {
-                _context.Products.Remove(product);
+                return BadRequest();
+            }
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.PRO_ID == deleteProduct.PRO_ID);
+
+            if (product == null)
+            {
+                return NotFound();
             }
 
+            _context.Products.Remove(product);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 
