@@ -51,7 +51,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(menu);
         }
 
@@ -90,6 +90,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(menu);
         }
 
@@ -142,7 +143,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(menu);
         }
 

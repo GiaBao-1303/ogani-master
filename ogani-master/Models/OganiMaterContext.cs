@@ -11,12 +11,13 @@ namespace ogani_master.Models
         public DbSet<Feature> Features { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Menu> Menus { get; set; }
-        public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Setting> Settings { get; set; }
         public DbSet<UserBehaviorLog> UserBehaviorLogs { get; set; }
         public DbSet<User> users { get; set; }
+        public DbSet<Cart> Carts { get; set; }
+        public DbSet<Order> Orders { get; set; }
 
 
     }

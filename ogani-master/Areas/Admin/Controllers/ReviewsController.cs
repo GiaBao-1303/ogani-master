@@ -54,15 +54,16 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(review);
         }
 
         // GET: Admin/Reviews/Create
-        public IActionResult Create()   
+        public async Task<IActionResult> Create()   
         {
-            ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID");
+            ViewData["MEM_ID"] = new SelectList(_context.users, "UserId", "UserId");
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID");
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View();
         }
 
@@ -99,6 +100,7 @@ namespace ogani_master.Areas.Admin.Controllers
             }
             ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID", review.MEM_ID);
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID", review.PRO_ID);
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(review);
         }
 
@@ -136,6 +138,7 @@ namespace ogani_master.Areas.Admin.Controllers
             }
             ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID", review.MEM_ID);
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID", review.PRO_ID);
+
             return View(review);
         }
 
@@ -156,6 +159,7 @@ namespace ogani_master.Areas.Admin.Controllers
                 return NotFound();
             }
 
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(review);
         }
 

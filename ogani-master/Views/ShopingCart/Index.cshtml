@@ -1,16 +1,41 @@
-﻿@{
+﻿@using ogani_master.enums;
+@using ogani_master.Extensions;
+
+@{
     ViewData["Title"] = "Shoping Cart Page";
+    List<Cart> carts = ViewBag.Carts;
+    List<Order> orders = ViewBag.Orders;
+}
+
+@section Styles {
+    <style>
+        .dec,
+        .inc {
+            display: none !important;
+        }
+    </style>
+}
+
+@foreach(Cart cart in carts)
+{
+    <form class="d-none" asp-controller="ShopingCart" asp-action="RemoveCart">
+        <button id="deleteCart-@cart.ORDD_ID" style="border: none; background: unset" type="submit">
+            <input type="hidden" name="cartId" value="@cart.ORDD_ID" />
+        </button>
+    </form>
 }
 
 <section class="shoping-cart spad">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
-                <div class="shoping__cart__table">
+                <form asp-controller="ShopingCart" asp-action="Order" method="post" class="shoping__cart__table">
+                    <button id="Order" type="submit" class="d-none"></button>
+                    @Html.AntiForgeryToken()
                     <table>
                         <thead>
                             <tr>
-                                <th class="shoping__product">Products</th>
+                                <th class="shoping__product">Carts</th>
                                 <th>Price</th>
                                 <th>Quantity</th>
                                 <th>Total</th>
@@ -18,60 +43,86 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td class="shoping__cart__item">
-                                   <img src="~/uploads/cart/cart-1.jpg" alt="" />
-                                    <h5>Vegetable’s Package</h5>
-                                </td>
-                                <td class="shoping__cart__price">$55.00</td>
-                                <td class="shoping__cart__quantity">
-                                    <div class="quantity">
-                                        <div class="pro-qty">
-                                            <input type="text" value="1" />
+                            @for (int i = 0; i < carts.Count; i++)
+                            {
+                                <tr>
+                                    <td class="shoping__cart__item">
+                                        <img style="width: 200px; object-fit: cover"
+                                             src="@Url.Content("~/data/Product/" + carts[i].Product.Avatar)"
+                                             alt="image/@carts[i].Product.Name" />
+                                        <h5>@carts[i].Product.Name</h5>
+                                    </td>
+                                    <td class="shoping__cart__price" id="price-@carts[i].ORDD_ID">$@carts[i].Product.Price</td>
+                                    <td class="shoping__cart__quantity">
+                                        <div class="quantity">
+                                            <div class="pro-qty">
+                                                <input name="orderDtos[@i].amount"
+                                                       class="quantity-input"
+                                                       type="number"
+                                                       value="@carts[i].Quantity"
+                                                       data-product-id="@carts[i].PRO_ID"
+                                                       data-cart-id="@carts[i].ORDD_ID" />
+                                                <input type="hidden" name="orderDtos[@i].ProdId" value="@carts[i].PRO_ID" />
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="shoping__cart__total">$110.00</td>
-                                <td class="shoping__cart__item__close">
-                                    <span class="icon_close"></span>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="shoping__cart__total" id="total-@carts[i].ORDD_ID">
+                                        @(@carts[i].Product.Price * carts[i].Quantity)
+                                    </td>
+                                   
+                                    <td class="shoping__cart__item__close">
+                                        <label for="deleteCart-@carts[i].ORDD_ID" style="border: none; background: unset">
+                                            <span class="icon_close"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="shoping__cart__table">
+                    <table>
+                        <thead>
                             <tr>
-                                <td class="shoping__cart__item">
-                                   <img src="~/uploads/cart/cart-2.jpg" alt="" />
-                                    <h5>Fresh Garden Vegetable</h5>
-                                </td>
-                                <td class="shoping__cart__price">$39.00</td>
-                                <td class="shoping__cart__quantity">
-                                    <div class="quantity">
-                                        <div class="pro-qty">
-                                            <input type="text" value="1" />
-                                        </div>
-                                    </div>
-                                </td>
-                                <td class="shoping__cart__total">$39.99</td>
-                                <td class="shoping__cart__item__close">
-                                    <span class="icon_close"></span>
-                                </td>
+                                <th class="shoping__product">Ordered</th>
+                                <th>Price</th>
+                                <th>Quantity</th>
+                                <th>Total</th>
+                                <th>Status</th>
+                                <th></th>
                             </tr>
-                            <tr>
-                                <td class="shoping__cart__item">
-                                   <img src="~/uploads/cart/cart-3.jpg" alt="" />
-                                    <h5>Organic Bananas</h5>
-                                </td>
-                                <td class="shoping__cart__price">$69.00</td>
-                                <td class="shoping__cart__quantity">
-                                    <div class="quantity">
-                                        <div class="pro-qty">
-                                            <input type="text" value="1" />
+                        </thead>
+                        <tbody>
+                            @foreach (Order order in orders)
+                            {
+                                var statusEnum = (OrderStatus)order.Status;
+                                var statusClass = statusEnum.GetCssClass();
+
+                                <tr>
+                                    <td class="shoping__cart__item">
+                                        <img style="width: 200px; object-fit: cover" src="@Url.Content("~/data/Product/" + @order.Product.Avatar)" alt="image/@order.Product.Name" />
+                                        <h5>@order.Product.Name</h5>
+                                    </td>
+                                    <td class="shoping__cart__price" id="price-@order.ORD_ID">$@order.Product.Price</td>
+                                    <td class="shoping__cart__quantity">
+                                        <div class="quantity">
+                                            <div class="pro-qty">
+                                                <input type="number" disabled value="@order.Quantity" data-product-id="@order.Product.PRO_ID" data-cart-id="@order.ORD_ID" />
+                                            </div>
                                         </div>
-                                    </div>
-                                </td>
-                                <td class="shoping__cart__total">$69.99</td>
-                                <td class="shoping__cart__item__close">
-                                    <span class="icon_close"></span>
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="shoping__cart__total" >
+                                        @(@order.Product.Price * @order.Quantity)
+                                    </td>
+                                    <td style="width: 150px">
+                                        <h5 class="@statusClass h-100 text-bold">@statusEnum.GetDisplayName()</h5>
+                                    </td>
+                                </tr>
+                            }
                         </tbody>
                     </table>
                 </div>
@@ -99,12 +150,57 @@
                 <div class="shoping__checkout">
                     <h5>Cart Total</h5>
                     <ul>
-                        <li>Subtotal <span>$454.98</span></li>
-                        <li>Total <span>$454.98</span></li>
+                        <li id="final-price">Total <span>$454.98</span></li>
                     </ul>
-                    <a href="#" class="primary-btn">PROCEED TO CHECKOUT</a>
+                    <label for="Order" class="primary-btn">ORDER</label>
                 </div>
             </div>
         </div>
     </div>
 </section>
+
+@section Scripts {
+    <script>
+        const finalPrice = document.querySelector("#final-price span");
+
+        document.querySelectorAll('.quantity-input').forEach(input => {
+            input.addEventListener('input', function () {
+                const cartId = this.getAttribute('data-cart-id');
+                const quantity = parseInt(this.value) || 0;
+
+                const priceElement = document.getElementById('price-' + cartId);
+                const totalElement = document.getElementById('total-' + cartId);
+
+                const price = parseFloat(priceElement.innerText.replace('$', '').trim());
+                const total = price * quantity;
+
+                totalElement.innerText = '$' + total.toFixed(2);
+
+                
+                updateFinalTotal();
+            });
+        });
+        updateFinalTotal()
+
+        function updateFinalTotal() {
+            let final_total = 0;
+
+            document.querySelectorAll('.quantity-input').forEach(input => {
+                const cartId = input.getAttribute('data-cart-id');
+                const priceElement = document.getElementById('price-' + cartId);
+                const totalElement = document.getElementById('total-' + cartId);
+                const quantity = parseInt(input.value) || 0;
+
+                const price = parseFloat(priceElement.innerText.replace('$', '').trim());
+                const total = price * quantity;
+
+                final_total += total;
+            });
+
+            
+            finalPrice.innerText = '$' + final_total.toFixed(2);
+        }
+
+      
+    </script>
+}

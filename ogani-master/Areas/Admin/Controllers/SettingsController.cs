@@ -51,13 +51,14 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(setting);
         }
 
         // GET: Admin/Settings/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View();
         }
 
@@ -90,6 +91,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(setting);
         }
 
@@ -142,7 +144,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(setting);
         }
 

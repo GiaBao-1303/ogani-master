@@ -17,6 +17,7 @@ namespace ogani_master.Areas.Admin.Controllers
         private readonly IWebHostEnvironment _hostEnv;
 
 
+
         public ProductsController(OganiMaterContext context, IWebHostEnvironment hostEnv)
         {
             _context = context;
@@ -56,14 +57,15 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(product);
         }
 
         // GET: Admin/Products/Create
-        public IActionResult Create()
+        public async  Task<IActionResult> Create()
         {
             ViewData["CAT_ID"] = new SelectList(_context.Categories.OrderBy(c => c.Name), "CAT_ID", "CAT_ID");
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View();
         }
 
@@ -125,6 +127,7 @@ namespace ogani_master.Areas.Admin.Controllers
                 return NotFound();
             }
             ViewData["CAT_ID"] = new SelectList(_context.Categories, "CAT_ID", "CAT_ID", product.CAT_ID);
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(product);
         }
 
@@ -179,7 +182,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(product);
         }
 

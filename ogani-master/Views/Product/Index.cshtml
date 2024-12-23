@@ -1,5 +1,8 @@
-﻿@{
+﻿@model ogani_master.dto.AddToCartDto;
+
+@{
     ViewData["Title"] = "Product Detail Page";
+    Product product = ViewBag.Product;
 }
 
 <section class="product-details spad">
@@ -9,7 +12,7 @@
                 <div class="product__details__pic">
                     <div class="product__details__pic__item">
                         <img class="product__details__pic__item--large"
-                            <img src="~/uploads/product/details/product-details-1.jpg"
+                        <img src="@Url.Content("~/Data/Product/" + @product.Avatar)"
                              alt="" />
                     </div>
                     <div class="product__details__pic__slider owl-carousel">
@@ -29,31 +32,30 @@
                 </div>
             </div>
             <div class="col-lg-6 col-md-6">
-                <div class="product__details__text">
-                    <h3>Vetgetable’s Package</h3>
+                <form asp-controller="ShopingCart" asp-action="AddToCart" method="post" class="product__details__text">
+
+                    <input class="d-none" asp-for="ProdID" type="number" value="@product.PRO_ID" />
+                    <h3>@product.Name</h3>
                     <div class="product__details__rating">
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star-half-o"></i>
-                        <span>(18 reviews)</span>
+                        <span>(@product.Review reviews)</span>
                     </div>
-                    <div class="product__details__price">$50.00</div>
+                    <div class="product__details__price">$@product.Price</div>
                     <p>
-                        Mauris blandit aliquet elit, eget tincidunt nibh pulvinar a.
-                        Vestibulum ac diam sit amet quam vehicula elementum sed sit amet
-                        dui. Sed porttitor lectus nibh. Vestibulum ac diam sit amet quam
-                        vehicula elementum sed sit amet dui. Proin eget tortor risus.
+                       @product.Description
                     </p>
                     <div class="product__details__quantity">
                         <div class="quantity">
                             <div class="pro-qty">
-                                <input type="text" value="1" />
+                                <input asp-for="amount" type="text" value="1" />
                             </div>
                         </div>
                     </div>
-                    <a href="#" class="primary-btn">ADD TO CARD</a>
+                    <button type="submit" class="primary-btn">ADD TO CARD<</button>/>
                     <a href="#" class="heart-icon">
                         <span class="icon_heart_alt"></span>
                     </a>
@@ -63,7 +65,7 @@
                             <b>Shipping</b>
                             <span>01 day shipping. <samp>Free pickup today</samp></span>
                         </li>
-                        <li><b>Weight</b> <span>0.5 kg</span></li>
+                        <li><b>Weight</b> <span>@product.Unit</span></li>
                         <li>
                             <b>Share on</b>
                             <div class="share">
@@ -74,7 +76,7 @@
                             </div>
                         </li>
                     </ul>
-                </div>
+                </form>
             </div>
             <div class="col-lg-12">
                 <div class="product__details__tab">

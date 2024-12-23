@@ -115,7 +115,7 @@ namespace ogani_master.Controllers
 		[Route("SignUp/v2")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult VerifySignUpV2(UserRegistrationV2Dto userRegistrationV2Dto)
+		public async Task<IActionResult> VerifySignUpV2(UserRegistrationV2Dto userRegistrationV2Dto)
 		{
 			try
 			{
@@ -125,7 +125,16 @@ namespace ogani_master.Controllers
 					return View("~/Views/SignUp/v2.cshtml");
 				}
 
-				string key = Environment.GetEnvironmentVariable("EncryptionKey");
+				User? existingUser = await this.context.users.FirstOrDefaultAsync(u => u.UserName == userRegistrationV2Dto.UserName);
+
+                if (existingUser != null)
+                {
+                    ModelState.AddModelError("UserName", "The username already exist. Please choose a different one");
+                    ViewBag.userRegistrationV2Dto = userRegistrationV2Dto;
+                    return View("~/Views/SignUp/v2.cshtml");
+                }
+
+                string key = Environment.GetEnvironmentVariable("EncryptionKey");
 				if (string.IsNullOrEmpty(key)) throw new Exception("The key is not available");
 
 				string dataEncrypted = HttpContext.Session.GetString("BasicInfo");

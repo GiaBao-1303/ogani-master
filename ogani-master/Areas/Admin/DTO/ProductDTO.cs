@@ -1,4 +1,6 @@
 ﻿using ogani_master.Models;
+using System.ComponentModel.DataAnnotations;
+using System.Configuration;
 
 namespace ogani_master.Areas.Admin.DTO
 {
@@ -11,7 +13,9 @@ namespace ogani_master.Areas.Admin.DTO
         public string? Intro { get; set; }
         public required decimal Price { get; set; }
         public required decimal DiscountPrice { get; set; }
-        public string? Unit { get; set; }
+        [Required]
+        [IntegerValidator(MinValue = 1)]
+        public string Unit { get; set; }
         public double? Rate { get; set; }
         public string? Description { get; set; }
         public string? Details { get; set; }

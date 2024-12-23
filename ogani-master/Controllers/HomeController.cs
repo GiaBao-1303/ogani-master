@@ -28,6 +28,10 @@ namespace ogani_master.Controllers
 
         public async Task<IActionResult> Index()
         {
+
+            List<Product> products = context.Products.ToList();
+
+            ViewBag.Products = products;
             ViewBag.CurrentUser = await this.GetCurrentUser();
             return View();
 

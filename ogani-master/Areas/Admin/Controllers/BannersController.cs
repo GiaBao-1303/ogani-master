@@ -63,8 +63,9 @@ namespace ogani_master.Areas.Admin.Controllers
         }
 
         // GET: Admin/Banners/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewBag.CurrentUser = await this.GetCurrentUser();
             return View();
         }
 
@@ -106,6 +107,7 @@ namespace ogani_master.Areas.Admin.Controllers
         // GET: Admin/Banners/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            ViewBag.CurrentUser = await this.GetCurrentUser();
             if (id == null)
             {
                 return NotFound();
@@ -157,6 +159,7 @@ namespace ogani_master.Areas.Admin.Controllers
         // GET: Admin/Banners/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+
             if (id == null)
             {
                 return NotFound();
@@ -168,6 +171,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            ViewBag.CurrentUser = await this.GetCurrentUser();
 
             return View(banner);
         }
@@ -189,6 +193,7 @@ namespace ogani_master.Areas.Admin.Controllers
 
         private bool BannerExists(int id)
         {
+
             return _context.Banners.Any(e => e.BAN_ID == id);
         }
     }
