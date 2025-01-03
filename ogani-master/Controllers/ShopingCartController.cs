@@ -49,6 +49,8 @@ namespace ogani_master.Controllers
                 .Where(o => o.MEM_ID == user.UserId)
                 .ToListAsync();
 
+           
+
             ViewBag.CurrentUser = user;
             ViewBag.Carts = carts;
             ViewBag.Orders = orders;
@@ -128,19 +130,65 @@ namespace ogani_master.Controllers
         public async Task<IActionResult> Order(OrderDto[] orderDtos)
         {
 
-            if (!ModelState.IsValid)
+            if (orderDtos == null || !orderDtos.Any())
             {
+                TempData["ErrorMessage"] = "No orders provided.";
                 return RedirectToAction("Index", "ShopingCart");
             }
 
+            var user = await GetCurrentUser();
             var role = HttpContext.Session.GetString("role");
-
-            User? user = await GetCurrentUser();
-
             if (user == null)
             {
                 return RedirectToAction("SignInPage", "Auth");
             }
+
+            var cartItems = await this.context.Carts
+                .Where(c => c.UserId == user.UserId)
+                .ToListAsync();
+
+            var productIds = orderDtos.Select(o => o.ProdId).ToList();
+            var products = await this.context.Products
+                .Where(p => productIds.Contains(p.PRO_ID))
+                .ToListAsync();
+
+            if (!cartItems.Any())
+            {
+                TempData["ErrorMessage"] = "Cart empty";
+                return RedirectToAction("Index", "ShopingCart");
+            }
+
+            foreach (var orderDto in orderDtos)
+            {
+                if (orderDto.amount == 0)
+                {
+                    TempData["ErrorMessage"] = "One or more products in your cart have an invalid quantity (0). Please update your cart and try again.";
+                    return RedirectToAction("Index", "ShopingCart");
+                }
+
+                var product = products.FirstOrDefault(p => p.PRO_ID == orderDto.ProdId);
+                if (product == null)
+                {
+
+                    TempData["ErrorMessage"] = $"Product with ID {orderDto.ProdId} does not exist.";
+                    return RedirectToAction("Index", "ShopingCart");
+                }
+
+
+                if (orderDto.amount > product.quantity)
+                {
+                    TempData["ErrorMessage"] = $"Not enough stock for product {product.Name}. Available: {product.quantity}.";
+                    return RedirectToAction("Index", "ShopingCart");
+                }
+
+                var cartItem = cartItems.FirstOrDefault(c => c.PRO_ID == orderDto.ProdId);
+                if (cartItem != null)
+                {
+                    cartItem.Quantity = orderDto.amount;
+                }
+            }
+
+            await this.context.SaveChangesAsync();
 
             List<MessageMailDto> messageMailDtos = new List<MessageMailDto>();
 
@@ -205,9 +253,10 @@ namespace ogani_master.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> OrderWithMomo(OrderDto[] orderDtos)
         {
-            if (!ModelState.IsValid)
+            if (orderDtos == null || !orderDtos.Any())
             {
-                return RedirectToAction("Index", "ShoppingCart");
+                TempData["ErrorMessage"] = "No orders provided.";
+                return RedirectToAction("Index", "ShopingCart");
             }
 
             var user = await GetCurrentUser();
@@ -220,10 +269,48 @@ namespace ogani_master.Controllers
                 .Where(c => c.UserId == user.UserId)
                 .ToListAsync();
 
+            var productIds = orderDtos.Select(o => o.ProdId).ToList();
+            var products = await this.context.Products
+                .Where(p => productIds.Contains(p.PRO_ID))
+                .ToListAsync();
+
             if (!cartItems.Any())
             {
-                return RedirectToAction("Index", "ShoppingCart");
+                TempData["ErrorMessage"] = "Cart empty";
+                return RedirectToAction("Index", "ShopingCart");
             }
+
+            foreach (var orderDto in orderDtos)
+            {
+                if(orderDto.amount == 0)
+                {
+                    TempData["ErrorMessage"] = "One or more products in your cart have an invalid quantity (0). Please update your cart and try again.";
+                    return RedirectToAction("Index", "ShopingCart");
+                }
+
+                var product = products.FirstOrDefault(p => p.PRO_ID == orderDto.ProdId);
+                if (product == null)
+                {
+                    
+                    TempData["ErrorMessage"] = $"Product with ID {orderDto.ProdId} does not exist.";
+                    return RedirectToAction("Index", "ShopingCart");
+                }
+
+
+                if (orderDto.amount > product.quantity)
+                {
+                    TempData["ErrorMessage"] = $"Not enough stock for product {product.Name}. Available: {product.quantity}.";
+                    return RedirectToAction("Index", "ShopingCart");
+                }
+
+                var cartItem = cartItems.FirstOrDefault(c => c.PRO_ID == orderDto.ProdId);
+                if (cartItem != null)
+                {
+                    cartItem.Quantity = orderDto.amount;
+                }
+            }
+
+            await this.context.SaveChangesAsync();
 
             decimal totalAmount = cartItems.Sum(item => item.Quantity * (item.DiscountPrice ?? item.Price));
 
@@ -238,7 +325,7 @@ namespace ogani_master.Controllers
 
             if (momoResponse == null || momoResponse.resultCode != 0)
             {
-                return RedirectToAction("Index", "ShoppingCart", new { error = "Thanh toán thất bại!" });
+                return RedirectToAction("Index", "ShopingCart", new { error = "Thanh toán thất bại!" });
             }
 
             return Redirect(momoResponse.payUrl);

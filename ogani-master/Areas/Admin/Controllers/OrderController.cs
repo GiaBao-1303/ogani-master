@@ -5,19 +5,30 @@ using ogani_master.enums;
 using ogani_master.Models;
 using ogani_master.utils;
 using System.ComponentModel.DataAnnotations;
+using ogani_master.configs;
+using ogani_master.Controllers;
 
 namespace ogani_master.Areas.Admin.Controllers
 {
     [Area("Admin")]
-    public class OrderController(OganiMaterContext _context) : Controller
+    public class OrderController : Controller
     {
-        private OganiMaterContext context = _context;
+        private OganiMaterContext context;
+        private ILogger<OrderController> logger;
+
+        public OrderController(OganiMaterContext context)
+        {
+            this.context = context;
+            var logger = GlobalLogger.CreateLogger<OrderController>();
+            this.logger = logger;
+        }
+
         protected async Task<User?> GetCurrentUser()
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
             if (userId != null)
             {
-                var user = await _context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+                var user = await context.users.FirstOrDefaultAsync(u => u.UserId == userId);
                 return user;
             }
             return null;
@@ -67,9 +78,12 @@ namespace ogani_master.Areas.Admin.Controllers
 
             ViewBag.CurrentUser = await GetCurrentUser();
 
-            Order? order = await this.context.Orders.FirstOrDefaultAsync(o => o.ORD_ID == uid);
+            Order? order = await this.context.Orders
+                .Include(o => o.User)
+                .Include (o => o.Product)
+                .FirstOrDefaultAsync(o => o.ORD_ID == uid);
 
-            if (order != null) return NotFound();
+            if (order == null) return NotFound();
 
             ViewBag.Order = order;
 
@@ -148,6 +162,45 @@ namespace ogani_master.Areas.Admin.Controllers
             }
 
             return RedirectToAction("Index", "Order");
+        }
+
+        [HttpPost]
+        [Route("/DeleteOrder")]
+        [AutoValidateAntiforgeryToken]
+        public async Task<IActionResult> DeleteOrder(int? orderId)
+        {
+
+            User? user = await this.GetCurrentUser();
+
+            if (user == null) return RedirectToAction("SignInPage", "Auth");
+
+            Order? existingOrder = await this.context.Orders.FirstOrDefaultAsync(o => o.ORD_ID == orderId);
+
+            this.logger.LogInformation($"Existing Order: {existingOrder?.ORD_ID}");
+
+
+            if (existingOrder == null) return NotFound();
+
+            int currentOrderStatus = existingOrder.Status;
+
+            bool isValid = currentOrderStatus == (int)OrderStatus.Returned || 
+                existingOrder.Status == (int)OrderStatus.Delivered || 
+                existingOrder.Status == (int)OrderStatus.Canceled || 
+                existingOrder.Status == (int)OrderStatus.Shipping;
+
+            if (isValid) {
+
+                this.context.Orders.Remove(existingOrder);
+
+                await this.context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Order");
+            }
+
+            TempData["ErrorMessage"] = "Cannot delete the order. Invalid order status.";
+
+            return RedirectToAction("DeletePage", "Order", new { uid = orderId });
+
         }
     }
 }

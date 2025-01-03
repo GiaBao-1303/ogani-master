@@ -19,17 +19,6 @@ namespace ogani_master.Payments.momo
 
         private readonly OganiMaterContext _dbContext;
 
-        private readonly string publicKey = @"
-            -----BEGIN PUBLIC KEY-----
-            MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAsvg2E/9yjMsjM7QwctU+
-            QsNWGXwfBWBhtUZkHzV4FFu7mSLlBtan9d08Tap91nw7CUBIeeT9zMSQjnnKAxvt
-            H2M688p9R3Rij43G7vVJjNGCjTjaikZ0T1q5IA7YTSyIILUWD3SBs+12QUZD1kg5
-            3MjtSVjrjTnuBrCMXmtfh1tNw6Z01+D3HJQ5qjcvhydS2ojsgpFiYSBhcrZWa51A
-            50luD0nsimFRiJALzSsGgXkf4yDBX88BTKimS6vCjOVoYFH3NewQLLd9CFPDlgYk
-            xGNct91MXRTz8kWgCATF/sm99cRr7guEo7i4W/RWN+vkUJDL9WO8IwJb2PJL2RBr
-            swIDAQAB
-            -----END PUBLIC KEY-----";
-
         public readonly string accessKey = "F8BBA842ECF85";
         public readonly string secretKey = "K951B6PE1waDMi640xX08PD3vg6EkVlz";
 

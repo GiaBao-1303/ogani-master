@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Configuration;
 
 namespace ogani_master.dto
 {
@@ -9,7 +8,7 @@ namespace ogani_master.dto
         public int ProdId { get; set; }
 
         [Required]
-        [IntegerValidator(MinValue = 1)]
+        [Range(1, int.MaxValue, ErrorMessage = "Amount must be at least 1.")]
         public int amount { get; set; }
     }
 }

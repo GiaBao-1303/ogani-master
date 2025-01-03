@@ -64,6 +64,11 @@ namespace ogani_master.Controllers
 				HttpContext.Session.SetInt32("UserID", existingUser.UserId);
 				HttpContext.Session.SetString("role", existingUser.Role == (int)UserRole.Admin ? "Admin" : "User");
 
+				if(existingUser.Role == (int)UserRole.Admin)
+				{
+					return Redirect("/Admin");
+				}
+
                 return Redirect("/");
 
 			}

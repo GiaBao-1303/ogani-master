@@ -1,5 +1,6 @@
 ﻿@using ogani_master.enums;
 @using ogani_master.Extensions;
+@using System.Globalization;
 
 @model ogani_master.Models.Order;
 
@@ -72,7 +73,7 @@
                                                 @o.Quantity
                                             </td>
                                             <td>
-                                               @o.TotalPrice
+                                                @o.TotalPrice.ToString("C0", new CultureInfo("en-US"))
                                             </td>
                                             <td>
                                                @o.PaymentMethod

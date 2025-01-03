@@ -1,6 +1,7 @@
 ﻿@model ogani_master.Models.Order;
 @using ogani_master.enums;
 @using ogani_master.Extensions;
+@using System.Globalization;
 
 @{
     ViewData["Title"] = "Details";
@@ -82,17 +83,17 @@
                         <div class="row mb-3">
                             <div class="col-sm-6">
                                 <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Price):</label>
-                                <p class="text-success"><b>@order.Product.Price</b></p>
+                                <p class="text-success"><b>@order.Product.Price.ToString("C0", new CultureInfo("en-US"))</b></p>
                             </div>
                             <div class="col-sm-6">
                                 <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.DiscountPrice):</label>
-                                <p class="text-danger"><b>@Html.DisplayFor(model => model.Product.DiscountPrice)</b></p>
+                                <p class="text-danger"><b>@order.Product.DiscountPrice.ToString("C0", new CultureInfo("en-US"))</b></p>
                             </div>
                         </div>
                         <div class="form-group mb-3 row">
                             <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.TotalPrice):</label>
                             <div class="col-sm-9">
-                                <p class="form-control-plaintext">@order.TotalPrice</p>
+                                <p class="form-control-plaintext">@order.TotalPrice.ToString("C0", new CultureInfo("en-US"))</p>
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -141,7 +142,8 @@
                         { 
                             @foreach (string orderStatusName in displayNames)
                             {
-                                var statusEnum = EnumExtensions.GetEnumFromDisplayName<OrderStatus>(orderStatusName); var statusClass = statusEnum.HasValue ? statusEnum.Value.GetCssClass() : "btn-default"; @if ((int)statusEnum > order.Status)
+                                var statusEnum = EnumExtensions.GetEnumFromDisplayName<OrderStatus>(orderStatusName); 
+                                var statusClass = statusEnum.HasValue ? statusEnum.Value.GetCssClass() : "btn-default"; @if ((int)statusEnum > order.Status)
                                 {
                                     <form asp-area="Admin" asp-controller="Order" asp-action="VerifyOrderStatus" class="d-inline-block mx-1"> 
                                         <input type="hidden" name="OrderId" value="@order.ORD_ID" /> 

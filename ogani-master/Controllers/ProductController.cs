@@ -34,7 +34,13 @@ namespace ogani_master.Controllers
                 return NotFound("Product not found.");
             }
 
+            List<Product> listNewProducts = await this.context.Products
+                    .OrderByDescending(p => p.CreatedDate)
+                    .Take(4)
+                    .ToListAsync();
             ViewBag.Product = product;
+            ViewBag.ListNewProducts = listNewProducts;
+
             return View();
         }
     }
