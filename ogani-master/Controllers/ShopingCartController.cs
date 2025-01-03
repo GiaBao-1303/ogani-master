@@ -1,15 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ogani_master.configs;
 using ogani_master.dto;
 using ogani_master.enums;
 using ogani_master.Models;
+using ogani_master.Payments.dto;
+using ogani_master.Payments.momo;
+using ogani_master.utils;
 
 namespace ogani_master.Controllers
 {
-    public class ShopingCartController(OganiMaterContext _context) : Controller
+    public class ShopingCartController : Controller
     {
+        private readonly ILogger<ShopingCartController> logger;
+        private OganiMaterContext context;
 
-        private OganiMaterContext context = _context;
+        public ShopingCartController(OganiMaterContext _context)
+        {
+            this.context = _context;
+            var logger = GlobalLogger.CreateLogger<ShopingCartController>();
+            this.logger = logger;
+        }
+
         protected async Task<User?> GetCurrentUser()
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
@@ -23,12 +35,6 @@ namespace ogani_master.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var userId = HttpContext.Session.GetInt32("UserID");
-
-            if(userId == null)
-            {
-                return RedirectToAction("SignInPage", "Auth");
-            }
 
             User? user = await GetCurrentUser();
 
@@ -75,15 +81,6 @@ namespace ogani_master.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddToCart(AddToCartDto addToCartDto)
         {
-            if (!ModelState.IsValid) return RedirectToAction("Index", "Home");
-
-            var userId = HttpContext.Session.GetInt32("UserID");
-            var role = HttpContext.Session.GetString("role");
-
-            if (userId == null)
-            {
-                return RedirectToAction("SignInPage", "Auth");
-            }
 
             User? user = await GetCurrentUser();
 
@@ -97,9 +94,10 @@ namespace ogani_master.Controllers
 
 
 
-            Cart? existingProductInCart = await this.context.Carts.FirstOrDefaultAsync(c => c.Product.PRO_ID == addToCartDto.ProdID);
+            Cart? existingProductInCart = await this.context.Carts.FirstOrDefaultAsync(c => c.PRO_ID == addToCartDto.ProdID && c.UserId == user.UserId);
 
-            if (existingProductInCart != null) {
+            if (existingProductInCart != null)
+            {
                 existingProductInCart.Quantity += addToCartDto.amount;
                 await this.context.SaveChangesAsync();
                 return RedirectToAction("Index", "ShopingCart");
@@ -111,10 +109,10 @@ namespace ogani_master.Controllers
                 PRO_ID = product.PRO_ID,
                 Quantity = addToCartDto.amount,
                 UserId = user.UserId,
-                CreatedBy = role,
+                CreatedBy = Enum.GetName(typeof(UserRole), user.Role),
                 CreatedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now,
-                UpdatedBy = role,
+                UpdatedBy = Enum.GetName(typeof(UserRole), user.Role),
             };
 
             this.context.Carts.Add(cart);
@@ -130,7 +128,7 @@ namespace ogani_master.Controllers
         public async Task<IActionResult> Order(OrderDto[] orderDtos)
         {
 
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return RedirectToAction("Index", "ShopingCart");
             }
@@ -144,10 +142,14 @@ namespace ogani_master.Controllers
                 return RedirectToAction("SignInPage", "Auth");
             }
 
-            foreach (OrderDto o in orderDtos) {
+            List<MessageMailDto> messageMailDtos = new List<MessageMailDto>();
+
+            foreach (OrderDto o in orderDtos)
+            {
                 Cart? existingProductInCart = await this.context.Carts.Include(c => c.Product).FirstOrDefaultAsync(c => c.PRO_ID == o.ProdId);
 
-                if (existingProductInCart == null) {
+                if (existingProductInCart == null)
+                {
                     return RedirectToAction("Index", "Home");
                 }
 
@@ -168,13 +170,125 @@ namespace ogani_master.Controllers
                     UpdatedDate = DateTime.Now,
                 };
 
+                MessageMailDto dataMail = new MessageMailDto
+                {
+                    companyName = "Ogani-master",
+                    customerName = user.LastName + " " + user.FirstName,
+                    Email = user.Email,
+                    price = (int)existingProductInCart.Product.Price,
+                    prodName = existingProductInCart.Product.Name,
+                    quantity = o.amount,
+                    totalPrice = o.amount * (int)existingProductInCart.Product.Price,
+                };
+
+                messageMailDtos.Add(dataMail);
                 this.context.Add(order);
                 this.context.Remove(existingProductInCart);
             }
 
             await this.context.SaveChangesAsync();
 
+
+
+            bool isSendMain = await MailUtils.SendMailGoogleSmtpAsync(user.Email, "Ogani-master", "", messageMailDtos);
+
+            if (!isSendMain)
+            {
+                throw new Exception("Send mail failed");
+            }
+
             return RedirectToAction("Index", "ShopingCart");
         }
+
+        [HttpPost]
+        [Route("/order-pay-via-momo")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> OrderWithMomo(OrderDto[] orderDtos)
+        {
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction("Index", "ShoppingCart");
+            }
+
+            var user = await GetCurrentUser();
+            if (user == null)
+            {
+                return RedirectToAction("SignInPage", "Auth");
+            }
+
+            var cartItems = await this.context.Carts
+                .Where(c => c.UserId == user.UserId)
+                .ToListAsync();
+
+            if (!cartItems.Any())
+            {
+                return RedirectToAction("Index", "ShoppingCart");
+            }
+
+            decimal totalAmount = cartItems.Sum(item => item.Quantity * (item.DiscountPrice ?? item.Price));
+
+
+            var momoService = new MomoService(this.context);
+
+            var request = HttpContext.Request;
+
+            string domain = $"{request.Scheme}://{request.Host}";
+
+            var momoResponse = await momoService.CreatePayment(user.UserId, domain);
+
+            if (momoResponse == null || momoResponse.resultCode != 0)
+            {
+                return RedirectToAction("Index", "ShoppingCart", new { error = "Thanh toán thất bại!" });
+            }
+
+            return Redirect(momoResponse.payUrl);
+        }
+
+        [Route("/momo-redirect")]
+        public async Task<IActionResult> MomoRedirect()
+        {
+            var queryString = Request.Query;
+            string resultCode = queryString["resultCode"];
+            string orderId = queryString["orderId"];
+            string partnerCode = queryString["partnerCode"];
+            string requestId = queryString["requestId"];
+
+            User? user = await this.GetCurrentUser();
+            if (user == null)
+            {
+                return RedirectToAction("SignInPage", "Auth");
+            }
+
+            var momoService = new MomoService(this.context);
+
+            MomoConfirmDto momoConfirmDto = new MomoConfirmDto
+            {
+                lang = "vi",
+                orderId = orderId,
+                partnerCode = partnerCode,
+                requestId = requestId,
+            };
+
+            if (resultCode == "0")
+            {
+                bool paymentConfirmed = await momoService.ConfirmPaymentFromMomo(user.UserId, momoConfirmDto, user);
+
+                if (paymentConfirmed)
+                {
+                    return Redirect("/ShopingCart");
+                }
+                else
+                {
+                    TempData["PaymentConfirmMessage"] = "Payment confirmation failed.";
+                    return RedirectToAction("Index", "ShopingCart");
+                }
+            }
+            else
+            {
+                TempData["PaymentConfirmMessage"] = "Payment confirmation failed.";
+                return RedirectToAction("Index", "ShopingCart");
+            }
+        }
+
     }
 }

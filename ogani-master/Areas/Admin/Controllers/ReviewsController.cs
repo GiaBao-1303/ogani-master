@@ -72,16 +72,32 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("REV_ID,MEM_ID,PRO_ID,Rate,Content,ReviewDate,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Review review)
+        public async Task<IActionResult> Create(Review review)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(review);
-                await _context.SaveChangesAsync();  
+                Review review1 = new Review
+                {
+                    CreatedBy = review.CreatedBy,
+                    Contents = review.Contents,
+                    MEM_ID = review.MEM_ID,
+                    PRO_ID = review.PRO_ID,
+                    CreatedDate = DateTime.Now,
+                    Rate = review.Rate,
+                    UpdatedBy = review.UpdatedBy,
+                    UpdatedDate = DateTime.Now,
+                    REV_ID = review.REV_ID,
+                    ReviewDate = DateTime.Now,
+                };
+
+                this._context.Reviews.Add(review1);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID", review.MEM_ID);
+            ViewData["MEM_ID"] = new SelectList(_context.users, "UserId", "UserId", review.MEM_ID);
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID", review.PRO_ID);
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(review);
         }
 
@@ -138,7 +154,7 @@ namespace ogani_master.Areas.Admin.Controllers
             }
             ViewData["MEM_ID"] = new SelectList(_context.users, "MEM_ID", "MEM_ID", review.MEM_ID);
             ViewData["PRO_ID"] = new SelectList(_context.Products, "PRO_ID", "PRO_ID", review.PRO_ID);
-
+            User CurrentUser = ViewBag.CurrentUser;
             return View(review);
         }
 

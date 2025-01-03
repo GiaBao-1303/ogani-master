@@ -39,7 +39,7 @@ namespace ogani_master.Models
         public decimal TotalPrice { get; set; }
 
         [Display(Name = "Discount (%)")]
-        public int? Discount { get; set; }
+        public decimal? Discount { get; set; }
 
         [Display(Name = "Payment Method")]
         public string? PaymentMethod { get; set; }
@@ -59,6 +59,6 @@ namespace ogani_master.Models
 
         [ForeignKey("MEM_ID")]
         [Display(Name = "User Details")]
-        public virtual User User { get; set; }
+        public virtual User? User { get; set; }
     }
 }

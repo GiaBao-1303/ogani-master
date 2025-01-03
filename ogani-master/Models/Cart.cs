@@ -22,14 +22,15 @@ namespace ogani_master.Models
 
         [Required]
         [Column(TypeName = "money")]
-        public decimal Price { get; set; } 
+        public decimal Price { get; set; }
 
         [Column(TypeName = "money")]
         public decimal? DiscountPrice { get; set; }
 
-
-
         [ForeignKey("PRO_ID")]
         public virtual Product? Product { get; set; }
+
+        [ForeignKey("UserId")]
+        public virtual User? User { get; set; }
     }
 }

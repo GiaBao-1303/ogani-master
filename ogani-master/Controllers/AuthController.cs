@@ -134,10 +134,10 @@ namespace ogani_master.Controllers
                     return View("~/Views/SignUp/v2.cshtml");
                 }
 
-                string key = Environment.GetEnvironmentVariable("EncryptionKey");
+                string? key = Environment.GetEnvironmentVariable("EncryptionKey");
 				if (string.IsNullOrEmpty(key)) throw new Exception("The key is not available");
 
-				string dataEncrypted = HttpContext.Session.GetString("BasicInfo");
+				string? dataEncrypted = HttpContext.Session.GetString("BasicInfo");
 				if (string.IsNullOrEmpty(dataEncrypted))
 				{
 					return RedirectToAction("SignUp");
@@ -145,9 +145,9 @@ namespace ogani_master.Controllers
 
 				var DecryptData = EncryptionHelper.Decrypt(dataEncrypted, key);
 
-				UserRegistrationV1Dto userRegistrationV1Dto = JsonConvert.DeserializeObject<UserRegistrationV1Dto>(DecryptData);
+				UserRegistrationV1Dto? userRegistrationV1Dto = JsonConvert.DeserializeObject<UserRegistrationV1Dto>(DecryptData);
 
-				if (!TryValidateModel(userRegistrationV1Dto))
+				if (userRegistrationV1Dto == null || !TryValidateModel(userRegistrationV1Dto))
 				{ 
 					return RedirectToAction("SignUp"); 
 				}

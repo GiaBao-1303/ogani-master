@@ -2,7 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using ogani_master.Middlewares;
 using ogani_master.Models;
 using DotNetEnv;
-
+using Microsoft.Extensions.Logging;
+using Microsoft.CodeAnalysis.Elfie.Diagnostics;
+using ogani_master.configs;
 
 namespace ogani_master
 {
@@ -26,6 +28,16 @@ namespace ogani_master
                 options.Cookie.HttpOnly = true;                
                 options.Cookie.IsEssential = true;             
             });
+
+            var loggerFactory = LoggerFactory.Create(
+                 builder => builder
+                     .AddConsole()
+                     .AddDebug()
+                     .SetMinimumLevel(LogLevel.Debug));
+
+            GlobalLogger.LoggerFactory = loggerFactory;
+
+            builder.Services.AddHttpContextAccessor();
 
 
             builder.Services.AddControllersWithViews();

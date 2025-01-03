@@ -8,166 +8,178 @@
     List<string> displayNames = ViewBag.DisplayNames;
 }
 
-<div class="container mt-3">
+<div class="container mt-5">
     <!-- Page Header -->
     <div class="row justify-content-center">
-        <div class="col-md-11">
-            <div class="card shadow-lg">
+        <div class="col-md-10">
+            <div class="card shadow-sm border-0">
                 <div class="card-header bg-success text-white">
                     <h5 class="mb-0">Product Details</h5>
                 </div>
-                <div class="card-body">
-                    <!-- Avatar -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.User.ProfilePictureUrl):</label>
-                        <p> <img src="@Url.Content("~/" + order.User.ProfilePictureUrl)" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd;" /></p>
-                    </div>
-
-                    <!-- Name -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.User.FirstName):</label>
-                        <p>@order.User.FirstName</p>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.User.Phone):</label>
-                        <p>@order.User.Phone</p>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.User.Email):</label>
-                        <p>@order.User.Email</p>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.User.LastName):</label>
-                        <p>@order.User.LastName</p>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.User.Address):</label>
-                        <p>@order.User.Address</p>
-                    </div>
-
-                    <script>
-                        window.onload = () => {
-                            document.getElementById("Avatar").onchange = (e) => {
-                                var preview = document.getElementById('imgPreview');
-                                var file = e.target.files[0];
-                                var reader = new FileReader();
-
-                                reader.onloadend = function () {
-                                    preview.src = reader.result;
-                                }
-
-                                if (file) {
-                                    reader.readAsDataURL(file);
-                                } else {
-                                    preview.src = '';
-                                }
-                            };
-                        }
-                    </script>
-
-                </div>
-                <div class="card-body">
-                    <!-- Avatar -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Avatar):</label>
-                        <p> <img src="@Url.Content("~/data/product/" + order.Product.Avatar)" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd;" /></p>
-                    </div>
-
-                    <!-- Name -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Name):</label>
-                        <p>@order.Product.Name</p>
-                    </div>
-
-                    <!-- Unit -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Quantity):</label>
-                        <p>@order.Quantity</p>
-                    </div>
-
-                    <!-- Price and Discount Price -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Price):</label>
-                            <p class="text-success"><b>@order.Product.Price</b></p>
+                <div class="card-body p-4">
+                    <!-- User Details Section -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary border-bottom pb-2">User Information</h6>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.User.ProfilePictureUrl):</label>
+                            <div class="col-sm-9">
+                                <img src="@Url.Content("~/" + order.User.ProfilePictureUrl)" class="img-thumbnail" style="max-width: 150px;" />
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.DiscountPrice):</label>
-                            <p class="text-danger"><b>@Html.DisplayFor(model => model.Product.DiscountPrice)</b></p>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.User.FirstName):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.User.FirstName</p>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.User.Phone):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.User.Phone</p>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.User.Email):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.User.Email</p>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.User.LastName):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.User.LastName</p>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.User.Address):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.User.Address</p>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.TotalPrice):</label>
-                        <p>@order.TotalPrice</p>
+                    <!-- Product Details Section -->
+                    <div class="mb-4">
+                        <h6 class="text-secondary border-bottom pb-2">Product Information</h6>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.Product.Avatar):</label>
+                            <div class="col-sm-9">
+                                <img src="@Url.Content("~/data/product/" + order.Product.Avatar)" class="img-thumbnail" style="max-width: 150px;" />
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.Product.Name):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.Product.Name</p>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.Quantity):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.Quantity</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-6">
+                                <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Price):</label>
+                                <p class="text-success"><b>@order.Product.Price</b></p>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.DiscountPrice):</label>
+                                <p class="text-danger"><b>@Html.DisplayFor(model => model.Product.DiscountPrice)</b></p>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.TotalPrice):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.TotalPrice</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-sm-6">
+                                <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Intro):</label>
+                                <p>@order.Product.Intro</p>
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Rate):</label>
+                                <p>@order.Product.Rate</p>
+                            </div>
+                        </div>
+                        <div class="form-group mb-3 row">
+                            <label class="col-sm-3 col-form-label fw-bold">@Html.DisplayNameFor(model => model.CreatedDate):</label>
+                            <div class="col-sm-9">
+                                <p class="form-control-plaintext">@order.CreatedDate</p>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Intro and Rate -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Intro):</label>
-                            <p>@order.Product.Intro</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Product.Rate):</label>
-                            <p>@order.Product.Rate</p>
-                        </div>
-                    </div>
-
-                   
-                    <!-- Created Date and By -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.CreatedDate):</label>
-                            <p>@order.CreatedDate</p>
-                        </div>
-                    </div>
-
-                    <!-- Action Buttons -->
-                    <div class="form-group text-center d-flex align-items-center justify-content-center my-2">
-                        @foreach (string orderStatusName in displayNames)
+                    <!-- Action Buttons Section -->
+                    <div class="text-center"> 
+                        @{
+                            var orderStatus = EnumExtensions.GetOrderStatus(order.Status);
+                        } 
+                        @if (EnumExtensions.IsFinalStatus(orderStatus))
                         {
-                            var statusEnum = EnumExtensions.GetEnumFromDisplayName<OrderStatus>(orderStatusName);
-                            var statusClass = statusEnum.HasValue ? statusEnum.Value.GetCssClass() : "btn-default";
-
-                            <form asp-area="Admin" asp-controller="Order" asp-action="VerifyOrderStatus" class="mx-2">
-                                <input type="hidden" name="OrderId" value="@order.ORD_ID" />
-                                <input type="hidden" name="typeStatus" value="@(((int)statusEnum.Value))" />
-                                <button type="submit" class="btn @statusClass">@orderStatusName</button>
-                            </form>
+                            <h3 class="@orderStatus.GetCssClass()"> 
+                                @{
+                                    switch (orderStatus)
+                                    {
+                                        case OrderStatus.Delivered:
+                                            <text>Delivered Successfully</text>
+                                            ; break;
+                                        case OrderStatus.Canceled:
+                                            <text>Order Canceled</text>
+                                            ; break;
+                                        case OrderStatus.Returned:
+                                            <text>Returned by Customer</text>
+                                            ; break;
+                                    }
+                                } 
+                            </h3>
                         }
-                        
+                        else
+                        { 
+                            @foreach (string orderStatusName in displayNames)
+                            {
+                                var statusEnum = EnumExtensions.GetEnumFromDisplayName<OrderStatus>(orderStatusName); var statusClass = statusEnum.HasValue ? statusEnum.Value.GetCssClass() : "btn-default"; @if ((int)statusEnum > order.Status)
+                                {
+                                    <form asp-area="Admin" asp-controller="Order" asp-action="VerifyOrderStatus" class="d-inline-block mx-1"> 
+                                        <input type="hidden" name="OrderId" value="@order.ORD_ID" /> 
+                                        <input type="hidden" name="typeStatus" value="@(((int)statusEnum.Value))" /> 
+                                        <button type="submit" class="btn @statusClass" style="border-radius: 30px; padding: 10px 20px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                                            @orderStatusName
+                                        </button> 
+                                    </form>
+                                }              
+                            }        
+                        } 
                     </div>
-                    <a asp-action="Index" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i> Back to List
-                    </a>
-                    @*==================================== Show IMG Products ======================================================  *@
-                    <script>
-                        window.onload = () => {
-                            document.getElementById("Avatar").onchange = (e) => {
-                                var preview = document.getElementById('imgPreview');
-                                var file = e.target.files[0];
-                                var reader = new FileReader();
 
-                                reader.onloadend = function () {
-                                    preview.src = reader.result;
-                                }
-
-                                if (file) {
-                                    reader.readAsDataURL(file);
-                                } else {
-                                    preview.src = '';
-                                }
-                            };
-                        }
-                    </script>
-
+                    <div class="text-center mt-4">
+                        <a asp-action="Index" class="btn btn-secondary" style="border-radius: 30px; padding: 10px 20px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    window.onload = () => {
+        document.getElementById("Avatar").onchange = (e) => {
+            var preview = document.getElementById('imgPreview');
+            var file = e.target.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                preview.src = reader.result;
+            };
+            if (file) {
+                reader.readAsDataURL(file);
+            } else {
+                preview.src = '';
+            }
+        };
+    };
+</script>

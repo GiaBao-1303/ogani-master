@@ -12,7 +12,7 @@
                         <h4 class="card-title">Create New Review</h4>
                     </div>
                     <div class="card-body">
-                        <form asp-action="Create">
+                        <form asp-area="Admin" asp-controller="Reviews" method="post" asp-action="Create">
                             <!-- Validation summary -->
                             <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
@@ -43,9 +43,9 @@
 
                             <!-- Content Field -->
                             <div class="form-group mb-3">
-                                <label asp-for="Content" class="control-label">Review Content</label>
-                                <textarea asp-for="Content" class="form-control" rows="4" placeholder="Write your review here"></textarea>
-                                <span asp-validation-for="Content" class="text-danger"></span>
+                                <label asp-for="Contents" class="control-label">Review Content</label>
+                                <textarea asp-for="Contents" class="form-control" rows="4" placeholder="Write your review here"></textarea>
+                                <span asp-validation-for="Contents" class="text-danger"></span>
                             </div>
 
                             <!-- Review Date Field -->

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using ogani_master.dto;
 using ogani_master.enums;
 using ogani_master.Models;
+using ogani_master.utils;
 using System.ComponentModel.DataAnnotations;
 
 namespace ogani_master.Areas.Admin.Controllers
@@ -75,6 +76,30 @@ namespace ogani_master.Areas.Admin.Controllers
             return View("~/Areas/Admin/Views/Order/Delete.cshtml");
         }
 
+        public static OrderStatus GetOrderStatus(int typeStatus)
+        {
+            return typeStatus switch
+            {
+                1 => OrderStatus.Pending,
+                2 => OrderStatus.Confirmed,
+                3 => OrderStatus.Preparing,
+                4 => OrderStatus.Shipping,
+                5 => OrderStatus.Delivered,
+                6 => OrderStatus.Canceled,
+                7 => OrderStatus.Returned,
+                _ => throw new ArgumentOutOfRangeException(nameof(typeStatus), "Invalid order status")
+            };
+        }
+
+        public static string GetTrackingLink(HttpContext httpContext, string orderId)
+        {
+            var request = httpContext.Request;
+            var host = request.Host.Value;
+            var scheme = request.Scheme;
+            var trackingLink = $"{scheme}://{host}/ShopingCart";
+            return trackingLink;
+        }
+
         [HttpPost]
         [Route("/VerifyOrder")]
         [AutoValidateAntiforgeryToken]
@@ -86,7 +111,9 @@ namespace ogani_master.Areas.Admin.Controllers
                 return BadRequest();
             }
 
-            Order? existingOrder = await this.context.Orders.FirstOrDefaultAsync(o => o.ORD_ID == verifyOrderStatusDto.OrderId);
+
+            Order? existingOrder = await this.context.Orders.Include(o => o.User).FirstOrDefaultAsync(o => o.ORD_ID == verifyOrderStatusDto.OrderId);
+
 
             if(existingOrder == null)
             {
@@ -98,14 +125,27 @@ namespace ogani_master.Areas.Admin.Controllers
                 return BadRequest();
             }
 
-
-
             existingOrder.Status = verifyOrderStatusDto.typeStatus;
             existingOrder.UpdatedDate = DateTime.UtcNow;
             existingOrder.UpdatedBy = "Admin";
 
             await this.context.SaveChangesAsync();
 
+            OrderStatus orderStatus = GetOrderStatus(verifyOrderStatusDto.typeStatus);
+
+            if (orderStatus == OrderStatus.Shipping || orderStatus == OrderStatus.Delivered || orderStatus == OrderStatus.Canceled || orderStatus == OrderStatus.Returned)
+            {
+                bool isSend = await MailUtils.SendMailGoogleSmtpOrderStatusAsync(
+                    existingOrder.User.Email,
+                    "Trạng thái đơn hàng",
+                    orderStatus,
+                    existingOrder.User.FirstName + " " + existingOrder.User.LastName,
+                    "Ogani-master",
+                    GetTrackingLink(HttpContext, existingOrder.ORD_ID.ToString())
+                );
+
+                if (!isSend) throw new Exception("Send mail failed");
+            }
 
             return RedirectToAction("Index", "Order");
         }

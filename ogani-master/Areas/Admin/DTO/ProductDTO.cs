@@ -8,6 +8,11 @@ namespace ogani_master.Areas.Admin.DTO
     {
         public int PRO_ID { get; set; }
         public int CAT_ID { get; set; }
+
+        [Required]
+        [IntegerValidator(MinValue = 1, MaxValue = 1000000)]
+        public int quantity { get; set; }
+
         public IFormFile? Avatar { get; set; }
         public required string Name { get; set; }
         public string? Intro { get; set; }

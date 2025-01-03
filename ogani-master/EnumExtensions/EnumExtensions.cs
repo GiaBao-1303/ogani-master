@@ -16,6 +16,16 @@ namespace ogani_master.Extensions
             return attribute?.Name ?? enumValue.ToString();
         }
 
+        public static OrderStatus GetOrderStatus(int status)
+        {
+            return (OrderStatus)status;
+        }
+
+        public static bool IsFinalStatus(OrderStatus status)
+        {
+            return status == OrderStatus.Delivered || status == OrderStatus.Canceled || status == OrderStatus.Returned;
+        }
+
         private static readonly Dictionary<OrderStatus, string> StatusColors = new()
         {
             { OrderStatus.Pending, "text-warning" },        

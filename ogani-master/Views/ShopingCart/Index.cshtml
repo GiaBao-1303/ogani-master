@@ -25,6 +25,17 @@
     </form>
 }
 
+<form id="momoForm" asp-controller="ShopingCart" asp-action="OrderWithMomo" method="post">
+    @Html.AntiForgeryToken()
+    @for (int i = 0; i < carts.Count; i++)
+    {
+        <input type="hidden" name="orderDtos[@i].amount" value="@carts[i].Quantity" />
+        <input type="hidden" name="orderDtos[@i].ProdId" value="@carts[i].PRO_ID" />
+    }
+    <button id="pay-via-momo" type="submit"></button>
+</form>
+
+
 <section class="shoping-cart spad">
     <div class="container">
         <div class="row">
@@ -52,7 +63,7 @@
                                              alt="image/@carts[i].Product.Name" />
                                         <h5>@carts[i].Product.Name</h5>
                                     </td>
-                                    <td class="shoping__cart__price" id="price-@carts[i].ORDD_ID">$@carts[i].Product.Price</td>
+                                    <td class="shoping__cart__price" id="price-@carts[i].ORDD_ID">$@carts[i].Product.Price.ToString("C0")</td>
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
                                             <div class="pro-qty">
@@ -79,6 +90,14 @@
                             }
                         </tbody>
                     </table>
+
+                    @if (TempData["PaymentConfirmMessage"] != null)
+                    {
+                        <div style="font-size: 18px" class="invalid-feedback d-block">
+                            @TempData["PaymentConfirmMessage"]
+                        </div>
+                    }
+                   
                 </form>
             </div>
         </div>
@@ -107,7 +126,7 @@
                                         <img style="width: 200px; object-fit: cover" src="@Url.Content("~/data/Product/" + @order.Product.Avatar)" alt="image/@order.Product.Name" />
                                         <h5>@order.Product.Name</h5>
                                     </td>
-                                    <td class="shoping__cart__price" id="price-@order.ORD_ID">$@order.Product.Price</td>
+                                    <td class="shoping__cart__price" id="price-@order.ORD_ID">$@order.Product.Price.ToString("C0")</td>
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
                                             <div class="pro-qty">
@@ -116,7 +135,7 @@
                                         </div>
                                     </td>
                                     <td class="shoping__cart__total" >
-                                        @(@order.Product.Price * @order.Quantity)
+                                        @((@order.Product.Price * @order.Quantity).ToString("C"))
                                     </td>
                                     <td style="width: 150px">
                                         <h5 class="@statusClass h-100 text-bold">@statusEnum.GetDisplayName()</h5>
@@ -150,9 +169,10 @@
                 <div class="shoping__checkout">
                     <h5>Cart Total</h5>
                     <ul>
-                        <li id="final-price">Total <span>$454.98</span></li>
+                        <li id="final-price">Total <span></span></li>
                     </ul>
-                    <label for="Order" class="primary-btn">ORDER</label>
+                    <label style="cursor: pointer" for="Order" class="primary-btn">Pay on Delivery</label>
+                    <label style="cursor: pointer" for="pay-via-momo" class="primary-btn">Pay via MoMo</label>
                 </div>
             </div>
         </div>
