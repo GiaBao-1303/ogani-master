@@ -185,7 +185,7 @@
                 <nav class="mt-2">
                     <!--begin::Sidebar Menu-->
                     <ul class="nav sidebar-menu flex-column" data-lte-toggle="treeview" role="menu" data-accordion="false">
-                        <li class="nav-item @Html.IsActive("Home", "Index")">
+                        <li class="nav-item @Html.IsParentActive([ new ControllerInfo{ action = "Index", controllerName = "Home" } ])">
                             <a asp-area="Admin" asp-controller="Home" asp-action="Index" class="nav-link">
                                 <i class="nav-icon bi bi-speedometer"></i>
                                 <p>
@@ -193,7 +193,14 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item @Html.IsActive("Categories", "Index")">
+                        <li class="nav-item @Html.IsParentActive([ 
+                                new ControllerInfo{ action = "Index", controllerName = "Categories" },
+                                new ControllerInfo{ action = "Create", controllerName = "Categories" },
+                                new ControllerInfo{ action = "Details", controllerName = "Categories" },
+                                new ControllerInfo{ action = "Edit", controllerName = "Categories" },
+                                new ControllerInfo{ action = "Delete", controllerName = "Categories" },
+                                
+                            ])">
                             <a asp-area="Admin" asp-controller="Categories" asp-action="Index" class="nav-link">
                                 <i class="nav-icon fa-light fa-layer-group">
                                 </i>
@@ -219,7 +226,11 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item @Html.IsActive("Order", "Index")">
+                        <li class="nav-item @Html.IsParentActive([
+                                 new ControllerInfo{ action = "Index", controllerName = "Order" },
+                                 new ControllerInfo{ action = "DetailsPage", controllerName = "Order" },
+                                 new ControllerInfo{ action = "DeletePage", controllerName = "Order" },
+                            ])">
                             <a asp-area="Admin" asp-controller="Order" asp-action="Index" class="nav-link">
                                 <i class="nav-icon bi bi-box-seam-fill"></i>
                                 <p>
