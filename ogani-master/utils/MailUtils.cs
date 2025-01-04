@@ -191,6 +191,71 @@ namespace ogani_master.utils
             };
         }
 
+        public static async Task<bool> SendMailGoogleSmtpPaymentSuccessAsync(
+            string to,
+            string subject,
+            string customerName,
+            string companyName,
+            string orderNumber,
+            string paymentMethod,
+            string amount,
+            DateTime paymentTime,
+            string currency = "VNĐ"
+        )
+        {
+            string? email = Environment.GetEnvironmentVariable("_gmailsend");
+            string? pwd = Environment.GetEnvironmentVariable("PWD_EMAIL");
+
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(pwd))
+                throw new Exception("Email credentials not available in environment variables.");
+
+            using (var client = new SmtpClient("smtp.gmail.com"))
+            {
+                client.Port = 587;
+                client.Credentials = new NetworkCredential(email, pwd);
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.EnableSsl = true;
+                client.Timeout = 20000;
+
+                string body = TemplatePaymentSuccess(customerName, companyName, orderNumber, paymentMethod, amount, paymentTime, currency);
+                return await SendMailPaymentSuccessAsync(email, to, subject, body, client);
+            }
+        }
+
+        private static async Task<bool> SendMailPaymentSuccessAsync(string from, string to, string subject, string body, SmtpClient client)
+        {
+            using (var message = CreateMailMessagePaymentSuccess(from, to, subject, body))
+            {
+                try
+                {
+                    await client.SendMailAsync(message);
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    LogError($"Failed to send payment success email: {ex.Message}");
+                    return false;
+                }
+            }
+        }
+
+        private static MailMessage CreateMailMessagePaymentSuccess(string from, string to, string subject, string body)
+        {
+            var message = new MailMessage
+            {
+                From = new MailAddress(from),
+                Subject = subject,
+                Body = body,
+                BodyEncoding = Encoding.UTF8,
+                SubjectEncoding = Encoding.UTF8,
+                IsBodyHtml = true,
+            };
+            message.To.Add(to);
+            message.ReplyToList.Add(new MailAddress(from));
+            message.Sender = new MailAddress(from);
+            return message;
+        }
+
         private static string TemplateOutForDelivery(string customerName, string companyName, string trackingLink)
         {
             return $@"
@@ -294,6 +359,61 @@ namespace ogani_master.utils
             <td style=""text-align: center; padding: 10px; background-color: #f9f9f9; color: #777; font-size: 12px;"">
                 <p>&copy; 2024 {companyName}. Tất cả các quyền được bảo lưu.</p>
                 <p>Bạn nhận được email này vì đã đặt hàng trên nền tảng của chúng tôi.</p>
+            </td>
+        </tr>
+    </table>";
+        }
+
+        private static string TemplatePaymentSuccess(string customerName, string companyName, string orderNumber, string paymentMethod, string amount, DateTime paymentTime, string currency = "VNĐ")
+        {
+            return $@"
+    <table style=""width: 100%; max-width: 600px; margin: 20px auto; background-color: #ffffff; border: 1px solid #dddddd; border-radius: 8px; overflow: hidden; font-family: Arial, sans-serif; color: #333;"">
+        <tr>
+            <td style=""background-color: #00c851; color: #ffffff; text-align: center; padding: 20px;"">
+                <h1 style=""margin: 0; font-size: 24px;"">🎉 Thanh Toán Thành Công</h1>
+            </td>
+        </tr>
+        <tr>
+            <td style=""padding: 20px; line-height: 1.6;"">
+                <p>Xin chào <strong>{customerName}</strong>,</p>
+                <p>Chúng tôi xin thông báo rằng thanh toán cho đơn hàng của bạn đã được xử lý thành công.</p>
+                
+                <div style=""background-color: #f8f9fa; border-radius: 8px; padding: 15px; margin: 20px 0;"">
+                    <h2 style=""color: #28a745; margin-top: 0; font-size: 18px;"">Chi Tiết Thanh Toán</h2>
+                    <table style=""width: 100%; border-collapse: collapse;"">
+                        <tr>
+                            <td style=""padding: 8px 0; border-bottom: 1px solid #dee2e6;"">Mã đơn hàng:</td>
+                            <td style=""padding: 8px 0; border-bottom: 1px solid #dee2e6; text-align: right;""><strong>#{orderNumber}</strong></td>
+                        </tr>
+                        <tr>
+                            <td style=""padding: 8px 0; border-bottom: 1px solid #dee2e6;"">Phương thức thanh toán:</td>
+                            <td style=""padding: 8px 0; border-bottom: 1px solid #dee2e6; text-align: right;""><strong>{paymentMethod}</strong></td>
+                        </tr>
+                        <tr>
+                            <td style=""padding: 8px 0; border-bottom: 1px solid #dee2e6;"">Thời gian thanh toán:</td>
+                            <td style=""padding: 8px 0; border-bottom: 1px solid #dee2e6; text-align: right;""><strong>{paymentTime:dd/MM/yyyy HH:mm}</strong></td>
+                        </tr>
+                        <tr>
+                            <td style=""padding: 8px 0; font-size: 18px;"">Số tiền:</td>
+                            <td style=""padding: 8px 0; text-align: right; font-size: 18px; color: #28a745;""><strong>{amount.Replace("$", "")} {currency}</strong></td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div style=""text-align: center; margin: 30px 0; padding: 20px; background-color: #e8f5e9; border-radius: 8px;"">
+                    <img src=""https://cdn-icons-png.flaticon.com/512/148/148767.png"" alt=""Success"" style=""width: 60px; height: 60px; margin-bottom: 10px;"">
+                    <p style=""margin: 0; color: #2e7d32; font-size: 16px;"">Giao dịch của bạn đã được xử lý an toàn và bảo mật</p>
+                </div>
+
+                <p>Bạn có thể theo dõi trạng thái đơn hàng của mình trong tài khoản cá nhân trên website của chúng tôi.</p>
+                <p>Nếu bạn có bất kỳ câu hỏi nào, đừng ngần ngại liên hệ với đội ngũ hỗ trợ của chúng tôi.</p>
+                <p style=""margin: 20px 0 0;"">Trân trọng,<br>Đội Ngũ <strong>{companyName}</strong></p>
+            </td>
+        </tr>
+        <tr>
+            <td style=""text-align: center; padding: 15px; background-color: #f9f9f9; color: #777; font-size: 12px;"">
+                <p style=""margin: 0;"">&copy; 2024 {companyName}. Tất cả các quyền được bảo lưu.</p>
+                <p style=""margin: 5px 0 0;"">Email này được gửi tự động. Vui lòng không trả lời email này.</p>
             </td>
         </tr>
     </table>";

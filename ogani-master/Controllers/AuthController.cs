@@ -8,23 +8,27 @@ using BCrypt.Net;
 using Microsoft.EntityFrameworkCore;
 using ogani_master.enums;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Primitives;
+using ogani_master.Areas.Admin.DTO;
 
 
 namespace ogani_master.Controllers
 {
-    public class AuthController : Controller
+	public class AuthController : Controller
 	{
 		private readonly OganiMaterContext context;
-		public AuthController(OganiMaterContext _context) {
+        private readonly IWebHostEnvironment _hostEnv;
+        public AuthController(OganiMaterContext _context, IWebHostEnvironment hostEnv) {
 			context = _context;
-		}
+            _hostEnv = hostEnv;
+        }
 
 		[Route("SignIn")]
 		public IActionResult SignInPage()
 		{
 			var eixstingLogin = HttpContext.Session.Get("UserID");
 
-			if(eixstingLogin != null)
+			if (eixstingLogin != null)
 			{
 				return Redirect("/");
 			}
@@ -55,7 +59,7 @@ namespace ogani_master.Controllers
 
 				bool isValidPassword = BCrypt.Net.BCrypt.Verify(userSignInDto.Password, existingUser.Password);
 
-				if(!isValidPassword)
+				if (!isValidPassword)
 				{
 					ViewBag.InvalidUserMessage = "The Username or password is not correct.";
 					return View("~/Views/SignIn/Index.cshtml");
@@ -64,12 +68,12 @@ namespace ogani_master.Controllers
 				HttpContext.Session.SetInt32("UserID", existingUser.UserId);
 				HttpContext.Session.SetString("role", existingUser.Role == (int)UserRole.Admin ? "Admin" : "User");
 
-				if(existingUser.Role == (int)UserRole.Admin)
+				if (existingUser.Role == (int)UserRole.Admin)
 				{
 					return Redirect("/Admin");
 				}
 
-                return Redirect("/");
+				return Redirect("/");
 
 			}
 			catch (Exception ex) {
@@ -85,13 +89,13 @@ namespace ogani_master.Controllers
 		[Route("SignUp")]
 		public IActionResult SignUp()
 		{
-            var eixstingLogin = HttpContext.Session.Get("UserID");
+			var eixstingLogin = HttpContext.Session.Get("UserID");
 
-            if (eixstingLogin != null)
-            {
-                return Redirect("/");
-            }
-            return View("~/Views/SignUp/Index.cshtml");
+			if (eixstingLogin != null)
+			{
+				return Redirect("/");
+			}
+			return View("~/Views/SignUp/Index.cshtml");
 		}
 
 		[Route("SignUp/v1")]
@@ -109,7 +113,7 @@ namespace ogani_master.Controllers
 				throw new Exception("The key is not available");
 			}
 
-			var encryptedBacsicInfo = EncryptionHelper.Encrypt(JsonConvert.SerializeObject(userRegistrationV1Dto), key); 
+			var encryptedBacsicInfo = EncryptionHelper.Encrypt(JsonConvert.SerializeObject(userRegistrationV1Dto), key);
 
 			HttpContext.Session.SetString("BasicInfo", encryptedBacsicInfo);
 			HttpContext.Session.SetString("Step", "v2");
@@ -132,14 +136,14 @@ namespace ogani_master.Controllers
 
 				User? existingUser = await this.context.users.FirstOrDefaultAsync(u => u.UserName == userRegistrationV2Dto.UserName);
 
-                if (existingUser != null)
-                {
-                    ModelState.AddModelError("UserName", "The username already exist. Please choose a different one");
-                    ViewBag.userRegistrationV2Dto = userRegistrationV2Dto;
-                    return View("~/Views/SignUp/v2.cshtml");
-                }
+				if (existingUser != null)
+				{
+					ModelState.AddModelError("UserName", "The username already exist. Please choose a different one");
+					ViewBag.userRegistrationV2Dto = userRegistrationV2Dto;
+					return View("~/Views/SignUp/v2.cshtml");
+				}
 
-                string? key = Environment.GetEnvironmentVariable("EncryptionKey");
+				string? key = Environment.GetEnvironmentVariable("EncryptionKey");
 				if (string.IsNullOrEmpty(key)) throw new Exception("The key is not available");
 
 				string? dataEncrypted = HttpContext.Session.GetString("BasicInfo");
@@ -153,8 +157,8 @@ namespace ogani_master.Controllers
 				UserRegistrationV1Dto? userRegistrationV1Dto = JsonConvert.DeserializeObject<UserRegistrationV1Dto>(DecryptData);
 
 				if (userRegistrationV1Dto == null || !TryValidateModel(userRegistrationV1Dto))
-				{ 
-					return RedirectToAction("SignUp"); 
+				{
+					return RedirectToAction("SignUp");
 				}
 
 				var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userRegistrationV2Dto.Password, 12);
@@ -182,9 +186,9 @@ namespace ogani_master.Controllers
 				this.context.SaveChanges();
 
 				HttpContext.Session.SetInt32("UserID", user.UserId);
-                HttpContext.Session.SetString("role", user.Role == (int)UserRole.Admin ? "Admin" : "User");
+				HttpContext.Session.SetString("role", user.Role == (int)UserRole.Admin ? "Admin" : "User");
 
-                return Redirect("/");
+				return Redirect("/");
 			}
 			catch (Exception ex) {
 
@@ -208,12 +212,105 @@ namespace ogani_master.Controllers
 			return View("~/Views/SignUp/v2.cshtml");
 		}
 
+		private async Task<User?> getCurrentUser()
+		{
+			var userId = HttpContext.Session.GetInt32("UserID");
+
+			User? user = await this.context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+
+			return user;
+
+		}
+
 		[Route("Logout")]
 		[HttpPost]
 		public IActionResult Logout()
 		{
-            HttpContext.Session.Clear();
-            return RedirectToAction("Index", "Home");
-        }
-	}
+			HttpContext.Session.Clear();
+			return RedirectToAction("Index", "Home");
+		}
+
+		[Route("/Profile")]
+		public async Task<IActionResult> ProfilePage()
+		{
+
+			User? user = await this.getCurrentUser();
+
+			if (user == null) return RedirectToAction("SignInPage", "Auth");
+
+			ViewBag.CurrentUser = user;
+
+			return View("~/Views/Profile/Index.cshtml");
+		}
+
+		[Route("/EditProfile")]
+		public async Task<IActionResult> EditProfilePage()
+		{
+			User? user = await this.getCurrentUser();
+
+			if (user == null) return RedirectToAction("SignInPage", "Auth");
+
+
+            ViewBag.CurrentUser = user;
+
+			return View("~/Views/Profile/EditProfile.cshtml");
+		}
+
+		[Route("/UpdateProfile")]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> UpdateProfile(UpdateProfileDto updateProfileDto)
+		{
+			try
+            {
+                User? currentUser = await this.getCurrentUser();
+
+                if (currentUser == null) return RedirectToAction("SignInPage", "Auth");
+
+                if (!ModelState.IsValid)
+                {
+					User? user = new User
+					{
+						ProfilePictureUrl = "",
+						Phone = updateProfileDto.Phone,
+						Address = updateProfileDto.Address,
+						Email = updateProfileDto.Email,
+						FirstName = updateProfileDto.FirstName,
+						LastName = updateProfileDto.LastName,
+						Gender = updateProfileDto.Gender == 1,
+						UserId = currentUser.UserId,
+					};
+
+                    ViewBag.CurrentUser = user;
+                    return View("~/Views/Profile/EditProfile.cshtml");
+                }
+
+
+				if(updateProfileDto.ProfilePictureUrl != null)
+				{
+					string? newPathImageAvatar = null;
+                    string extension = Path.GetExtension(updateProfileDto.ProfilePictureUrl.FileName);
+                    newPathImageAvatar = $"User/images/{Guid.NewGuid().ToString()}{extension}";
+                    var filePath = Path.Combine(_hostEnv.WebRootPath, newPathImageAvatar);
+					updateProfileDto.ProfilePictureUrl.CopyTo(new FileStream(filePath, FileMode.Create));
+
+                    currentUser.ProfilePictureUrl = newPathImageAvatar;
+                }
+
+                currentUser.Phone = updateProfileDto.Phone;
+				currentUser.Email = updateProfileDto.Email;
+				currentUser.Address = updateProfileDto.Address;
+				currentUser.FirstName = updateProfileDto.FirstName;
+				currentUser.LastName = updateProfileDto.LastName;
+				currentUser.Gender = updateProfileDto.Gender == 1;
+
+				await this.context.SaveChangesAsync();
+
+                return RedirectToAction("ProfilePage", "Auth");
+            }
+			catch (Exception ex) {
+				return RedirectToAction("Index", "Home");
+			}
+		}
+    }
 }

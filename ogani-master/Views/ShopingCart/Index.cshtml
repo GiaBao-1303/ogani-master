@@ -64,7 +64,23 @@
                                              alt="image/@carts[i].Product.Name" />
                                         <h5>@carts[i].Product.Name</h5>
                                     </td>
-                                    <td class="shoping__cart__price" id="price-@carts[i].ORDD_ID">@carts[i].Product.Price.ToString("C0", new CultureInfo("en-US"))</td>
+                                    <td class="shoping__cart__price" >
+                                        @if (carts[i].Product?.DiscountPrice != null)
+                                        {
+                                            <span style="text-decoration: line-through; color: gray;">
+                                                @(carts[i].Product.Price.ToString("C0", new CultureInfo("en-US")))
+                                            </span>
+                                            <span style="margin-left: 8px; color: red;" id="price-@carts[i].ORDD_ID">
+                                                @(carts[i].Product.DiscountPrice.ToString("C0", new CultureInfo("en-US")))
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="color: red;" id="price-@carts[i].ORDD_ID">
+                                                @(carts[i].Product.Price.ToString("C0", new CultureInfo("en-US")))
+                                            </span>
+                                        }
+                                    </td>
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
                                             <div class="pro-qty">
@@ -84,7 +100,7 @@
                                         </div>
                                     </td>
                                     <td class="shoping__cart__total" id="total-@carts[i].ORDD_ID">
-                                        @((@carts[i].Product.Price * carts[i].Quantity).ToString("C0", new CultureInfo("en-US")))
+                                        @(((carts[i].Product?.DiscountPrice ?? carts[i].Product.Price) * carts[i].Quantity).ToString("C0", new CultureInfo("en-US")))
                                     </td>
                                    
                                     <td class="shoping__cart__item__close">
@@ -140,7 +156,23 @@
                                         <img style="width: 200px; object-fit: cover" src="@Url.Content("~/data/Product/" + @order.Product.Avatar)" alt="image/@order.Product.Name" />
                                         <h5>@order.Product.Name</h5>
                                     </td>
-                                    <td class="shoping__cart__price" id="price-@order.ORD_ID">@order.Product.Price.ToString("C0", new CultureInfo("en-US"))</td>
+                                    <td class="shoping__cart__price">
+                                        @if (order.Product?.DiscountPrice != null)
+                                        {
+                                            <span style="text-decoration: line-through; color: gray;">
+                                                @(order.Product.Price.ToString("C0", new CultureInfo("en-US")))
+                                            </span>
+                                            <span style="margin-left: 8px; color: red;">
+                                                @(order.Product.DiscountPrice.ToString("C0", new CultureInfo("en-US")))
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span style="color: red;">
+                                                @(order.Product.Price.ToString("C0", new CultureInfo("en-US")))
+                                            </span>
+                                        }
+                                    </td>
                                     <td class="shoping__cart__quantity">
                                         <div class="quantity">
                                             <div class="pro-qty d-flex align-items-center justify-content-center">
@@ -149,7 +181,7 @@
                                         </div>
                                     </td>
                                     <td class="shoping__cart__total" >
-                                        @((@order.Product.Price * @order.Quantity).ToString("C0", new CultureInfo("en-US")))
+                                        @(((@order.Product?.DiscountPrice ?? @order.Product.Price) * @order.Quantity).ToString("C0", new CultureInfo("en-US")))
                                     </td>
                                     <td style="width: 150px">
                                         <h5 style="font-weight: bold" class="@statusClass h-100 text-bold">@statusEnum.GetDisplayName()</h5>

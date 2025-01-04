@@ -40,6 +40,148 @@
             color: #7fad39 !important;
         }
 
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-trigger:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .profile-image {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .fa-chevron-down {
+            font-size: 12px;
+            color: #666;
+            margin-right: 5px;
+        }
+
+        .profile-menu {
+            width: 250px;
+            padding: 0;
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            margin-top: 10px;
+            animation: fadeIn 0.2s ease-in-out;
+        }
+
+        .dropdown-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            background-color: #f8f9fa;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .menu-profile-image {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-info h6 {
+            margin: 0;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .user-info small {
+            color: #666;
+        }
+
+        .dropdown-item {
+            padding: 12px 15px;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+            color: #007bff;
+        }
+
+        .dropdown-item i {
+            width: 16px;
+            text-align: center;
+            color: #666;
+        }
+
+        .dropdown-item:hover i {
+            color: #007bff;
+        }
+
+        .logout-form {
+            padding: 0;
+            margin: 0;
+        }
+
+        .logout-button {
+            width: 100%;
+            padding: 12px 15px;
+            background: none;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #dc3545;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-button:hover {
+            background-color: #fff1f1;
+        }
+
+        .logout-button i {
+            width: 16px;
+            text-align: center;
+        }
+
+        keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        media (max-width: 768px) {
+            .profile-menu {
+                width: 200px;
+            }
+        }
+
     </style>
 
 </head>
@@ -80,15 +222,34 @@
                                 </div>
                                 @if (CurrentUser != null)
                                 {
-                                    <div style="width: 30px; height: 30px;" class="header__top__right__auth dropdown show d-flex align-items-center justify-content-center">
-                                        <div style="border-radius: 100%; padding: 0" class="btn btn-secondary dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <img style="object-fit: cover; border-radius: 100%;" class="w-100 h-100" src="~/@CurrentUser.ProfilePictureUrl" />
-                                        </div>
+                                    <div class="profile-dropdown">
+                                        <div class="dropdown">
+                                            <div class="profile-trigger" role="button" id="profileDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                <img src="~/@CurrentUser.ProfilePictureUrl" alt="Profile" class="profile-image">
+                                                <i class="fas fa-chevron-down"></i>
+                                            </div>
 
-                                        <div style="padding: 0" class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                                            <form style="padding: 0 !important; margin-top: 6px" class="dropdown-item w-100" asp-controller="Auth" asp-action="Logout">
-                                                <button type="submit" class="btn btn-danger w-100">Logout</button>
-                                            </form>
+                                            <div class="dropdown-menu profile-menu" aria-labelledby="profileDropdown">
+                                                <div class="dropdown-header">
+                                                    <img src="~/@CurrentUser.ProfilePictureUrl" alt="Profile" class="menu-profile-image">
+                                                    <div class="user-info">
+                                                        <h6>@CurrentUser.LastName @CurrentUser.FirstName</h6>
+                                                        <small>@(CurrentUser.Role == 1 ? "Admin" : "User")</small>
+                                                    </div>
+                                                </div>
+
+                                                <div class="dropdown-divider"></div>
+
+                                                <a class="dropdown-item" asp-controller="Auth" asp-action="ProfilePage">
+                                                    <i class="fas fa-user"></i> My Profile
+                                                </a>
+
+                                                <form class="dropdown-item logout-form" asp-controller="Auth" asp-action="Logout">
+                                                    <button type="submit" class="logout-button">
+                                                        <i class="fas fa-sign-out-alt"></i> Logout
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </div>
                                     </div>
                                 } else {

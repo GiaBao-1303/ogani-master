@@ -32,7 +32,7 @@ namespace ogani_master.Payments.momo
 
         public async Task<MomoResponse?> CreatePayment(int userId, string domain)
         {
-            List<Cart> cartItems = await this._dbContext.Carts.Where(c => c.UserId == userId).ToListAsync();
+            List<Cart> cartItems = await this._dbContext.Carts.Include(c => c.Product).Where(c => c.UserId == userId).ToListAsync();
 
             if (cartItems.Count == 0)
             {
@@ -43,7 +43,7 @@ namespace ogani_master.Payments.momo
                 throw new Exception("The accessKey or secretkey not available");
             }
 
-            decimal totalAmount = cartItems.Sum(item => item.Quantity * (item.DiscountPrice ?? item.Price));
+            decimal totalAmount = cartItems.Sum(item => item.Quantity * (item.Product?.DiscountPrice ?? item.Price));
 
             Guid myuuid = Guid.NewGuid();
             string orderId = myuuid.ToString();
@@ -127,7 +127,7 @@ namespace ogani_master.Payments.momo
 
                 this.logger.LogInformation($"Momo response Code: {resMomo?.resultCode}");
                 this.logger.LogInformation($"Momo response orderId: {resMomo?.orderId}");
-                if (resMomo.resultCode == 0 && resMomo.orderId == momoConfirmDto.orderId) return true;
+                if (resMomo?.resultCode == 0 && resMomo.orderId == momoConfirmDto.orderId) return true;
 
 
                 return false;
@@ -140,27 +140,32 @@ namespace ogani_master.Payments.momo
 
         }
 
-        public async Task<bool> ConfirmPaymentFromMomo(int userId, MomoConfirmDto momoConfirmDto, User user)
+        public async Task<ConfirmPaymentResultDto> ConfirmPaymentFromMomo(int userId, MomoConfirmDto momoConfirmDto, User user)
         {
             try
             {
                 bool isSuccess = await this.CheckTransactionStatusFromMomo(momoConfirmDto);
 
-                if (!isSuccess) return false;
+                if (!isSuccess) return new ConfirmPaymentResultDto { IsSuccess = false, Amount = 0 };
 
-                List<Cart> cartItems = await this._dbContext.Carts.Where(c => c.UserId == userId).ToListAsync();
+                List<Cart> cartItems = await this._dbContext.Carts
+                    .Include(c => c.Product)
+                    .Where(c => c.UserId == userId).ToListAsync();
 
-                if(cartItems.Count == 0) return false;
+                if(cartItems.Count == 0) return new ConfirmPaymentResultDto { IsSuccess = false, Amount = 0 };
+
+                decimal amount = 0;
 
                 foreach (Cart item in cartItems)
                 {
+                    amount += item.Quantity * (item.Product?.DiscountPrice ?? item.Price);
                     Order newOrder = new Order
                     {
                         MEM_ID = user.UserId,
                         PROD_ID = item.PRO_ID,
                         Quantity = item.Quantity,
                         OrderDate = DateTime.UtcNow,
-                        TotalPrice = item.Quantity * (item.DiscountPrice ?? item.Price),
+                        TotalPrice = item.Quantity * (item.Product?.DiscountPrice ?? item.Price),
                         Status = (int)OrderStatus.Confirmed,
                         IsPaid = true,
                         PaymentMethod = "MoMo",
@@ -179,12 +184,12 @@ namespace ogani_master.Payments.momo
                 this._dbContext.Carts.RemoveRange(cartItems);
                 await this._dbContext.SaveChangesAsync();
 
-                return true;
+                return new ConfirmPaymentResultDto { Amount = amount, IsSuccess = true};
             }
             catch (Exception ex) {
                 this.logger.LogError($"Error ConfirmPaymentFromMomo: {ex.Message}");
                 this.logger.LogError($"Error ConfirmPaymentFromMomo track : {ex.StackTrace}");
-                return false;
+                return new ConfirmPaymentResultDto { IsSuccess = false, Amount = 0 };
             }
         }
 

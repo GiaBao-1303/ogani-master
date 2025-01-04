@@ -7,7 +7,7 @@ namespace ogani_master.dto
     public class AddToCartDto
     {
         [Required]
-        [IntegerValidator(MinValue = 1)]
+        [Range(1, int.MaxValue, ErrorMessage = "Amount must be at least 1.")]
         public int amount { get; set; }
 
         [Required]

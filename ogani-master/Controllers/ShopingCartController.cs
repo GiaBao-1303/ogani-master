@@ -7,6 +7,7 @@ using ogani_master.Models;
 using ogani_master.Payments.dto;
 using ogani_master.Payments.momo;
 using ogani_master.utils;
+using System.Globalization;
 
 namespace ogani_master.Controllers
 {
@@ -84,6 +85,15 @@ namespace ogani_master.Controllers
         public async Task<IActionResult> AddToCart(AddToCartDto addToCartDto)
         {
 
+            if(!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = string.Join("<br>", ModelState.Values
+               .SelectMany(v => v.Errors)
+               .Select(e => e.ErrorMessage));
+
+                return RedirectToAction("Index", "Product", new { uid = addToCartDto.ProdID });
+            }
+
             User? user = await GetCurrentUser();
 
             if (user == null) return RedirectToAction("SignInPage", "Auth");
@@ -94,7 +104,11 @@ namespace ogani_master.Controllers
 
             ViewBag.CurrentUser = user;
 
-
+            if(addToCartDto.amount > product.quantity)
+            {
+                TempData["ErrorMessage"] = $"Not enough stock for product {product.Name}. Available: {product.quantity}.";
+                return RedirectToAction("Index", "Product", new { uid = addToCartDto.ProdID });
+            }
 
             Cart? existingProductInCart = await this.context.Carts.FirstOrDefaultAsync(c => c.PRO_ID == addToCartDto.ProdID && c.UserId == user.UserId);
 
@@ -194,7 +208,7 @@ namespace ogani_master.Controllers
 
             foreach (OrderDto o in orderDtos)
             {
-                Cart? existingProductInCart = await this.context.Carts.Include(c => c.Product).FirstOrDefaultAsync(c => c.PRO_ID == o.ProdId);
+                Cart existingProductInCart = await this.context.Carts.Include(c => c.Product).FirstOrDefaultAsync(c => c.PRO_ID == o.ProdId);
 
                 if (existingProductInCart == null)
                 {
@@ -214,7 +228,7 @@ namespace ogani_master.Controllers
                     Quantity = o.amount,
                     CreatedBy = role,
                     CreatedDate = DateTime.Now,
-                    TotalPrice = existingProductInCart.Product.Price * o.amount,
+                    TotalPrice = (existingProductInCart.Product?.DiscountPrice ?? existingProductInCart.Product.Price) * o.amount,
                     UpdatedDate = DateTime.Now,
                 };
 
@@ -266,6 +280,7 @@ namespace ogani_master.Controllers
             }
 
             var cartItems = await this.context.Carts
+                .Include(c => c.Product)
                 .Where(c => c.UserId == user.UserId)
                 .ToListAsync();
 
@@ -312,9 +327,6 @@ namespace ogani_master.Controllers
 
             await this.context.SaveChangesAsync();
 
-            decimal totalAmount = cartItems.Sum(item => item.Quantity * (item.DiscountPrice ?? item.Price));
-
-
             var momoService = new MomoService(this.context);
 
             var request = HttpContext.Request;
@@ -325,7 +337,7 @@ namespace ogani_master.Controllers
 
             if (momoResponse == null || momoResponse.resultCode != 0)
             {
-                return RedirectToAction("Index", "ShopingCart", new { error = "Thanh toán thất bại!" });
+                return RedirectToAction("Index", "ShopingCart", new { error = "Payment failed" });
             }
 
             return Redirect(momoResponse.payUrl);
@@ -358,10 +370,21 @@ namespace ogani_master.Controllers
 
             if (resultCode == "0")
             {
-                bool paymentConfirmed = await momoService.ConfirmPaymentFromMomo(user.UserId, momoConfirmDto, user);
+                ConfirmPaymentResultDto paymentConfirmed = await momoService.ConfirmPaymentFromMomo(user.UserId, momoConfirmDto, user);
 
-                if (paymentConfirmed)
+                if (paymentConfirmed.IsSuccess)
                 {
+                   
+                    string subject = "Bạn đã thanh toán thành công với đơn hàng tại - Ogani-master";
+                    string customerName = $"{user.FirstName} {user.LastName}";
+                    string companyName = "Ogani-master";
+                    DateTime nowUtc = DateTime.UtcNow;
+                    TimeZoneInfo vietnamTimeZone = TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time");
+                    DateTime vietnamTime = TimeZoneInfo.ConvertTimeFromUtc(nowUtc, vietnamTimeZone);
+                    string amount = paymentConfirmed.Amount.ToString("C0", new CultureInfo("en-US"));
+
+                    await MailUtils.SendMailGoogleSmtpPaymentSuccessAsync(user.Email, subject, customerName, companyName, momoConfirmDto.orderId, "MoMo", amount, vietnamTime);
+
                     return Redirect("/ShopingCart");
                 }
                 else
