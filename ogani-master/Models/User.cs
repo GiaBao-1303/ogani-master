@@ -40,6 +40,9 @@ namespace ogani_master.Models
 		[MaxLength(300)]
 		public string Address { get; set; }
 
+		public string? token { get; set; }
+		public DateTime? token_expired { get; set; }
+
 		public int Status { get; set; }
 	}
 }

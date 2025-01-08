@@ -46,7 +46,59 @@ namespace ogani_master.utils
             }
         }
 
-        private static async Task<bool> SendMailOrderStatusAsync(string from, string to, string subject, string body, SmtpClient client)
+		public static async Task<bool> SendMailGoogleSmtpForgotPasswordAsync(
+	        string to,
+	        string subject,
+	        string customerName,
+	        string secretUrl,
+            string? ttl = "3 phút"
+        )
+		{
+			string? email = Environment.GetEnvironmentVariable("_gmailsend");
+			string? pwd = Environment.GetEnvironmentVariable("PWD_EMAIL");
+
+			if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(pwd))
+				throw new Exception("Email credentials not available in environment variables.");
+
+			using (var client = new SmtpClient("smtp.gmail.com"))
+			{
+				client.Port = 587;
+				client.Credentials = new NetworkCredential(email, pwd);
+				client.DeliveryMethod = SmtpDeliveryMethod.Network;
+				client.EnableSsl = true;
+				client.Timeout = 20000;
+
+				string body = TemplateForgotPassword(customerName, secretUrl, ttl);
+				return await SendMailForgotPasswordAsync(email, to, subject, body, client);
+			}
+		}
+
+
+		private static async Task<bool> SendMailForgotPasswordAsync(
+			string from,
+			string to,
+			string subject,
+			string body,
+			SmtpClient client)
+		{
+			try
+			{
+				using (var message = new MailMessage(from, to))
+				{
+					message.Subject = subject;
+					message.Body = body;
+					message.IsBodyHtml = true;
+					await client.SendMailAsync(message);
+				}
+				return true;
+			}
+			catch (Exception)
+			{
+				return false;
+			}
+		}
+
+		private static async Task<bool> SendMailOrderStatusAsync(string from, string to, string subject, string body, SmtpClient client)
         {
             using (var message = CreateMailMessageOrderStatus(from, to, subject, body))
             {
@@ -222,7 +274,52 @@ namespace ogani_master.utils
             }
         }
 
-        private static async Task<bool> SendMailPaymentSuccessAsync(string from, string to, string subject, string body, SmtpClient client)
+		public static string TemplateForgotPassword(string customerName, string resetUrl, string ttl)
+		{
+			return $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <title>Reset Password</title>
+</head>
+<body style='margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;'>
+    <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>
+        <div style='text-align: center; padding: 20px;'>
+            <h1 style='color: #333333; margin-bottom: 20px;'>Yêu Cầu Đặt Lại Mật Khẩu</h1>
+        </div>
+        
+        <div style='padding: 20px; color: #666666; font-size: 16px; line-height: 1.5;'>
+            <p>Xin chào {customerName},</p>
+            
+            <p>Chúng tôi nhận được yêu cầu đặt lại mật khẩu cho tài khoản của bạn. Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này.</p>
+            
+            <p>Để đặt lại mật khẩu, vui lòng nhấp vào nút bên dưới:</p>
+            
+            <div style='text-align: center; margin: 30px 0;'>
+                <a href='{resetUrl}' style='background-color: #4CAF50; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; font-weight: bold; display: inline-block;'>Đặt Lại Mật Khẩu</a>
+            </div>
+            
+            <p>Hoặc copy đường link sau vào trình duyệt:</p>
+            <p style='background-color: #f8f8f8; padding: 10px; border-radius: 3px; word-break: break-all;'>{resetUrl}</p>
+            
+            <p>Lưu ý: Link này chỉ có hiệu lực trong vòng {ttl}.</p>
+            
+            <p>Nếu bạn gặp bất kỳ vấn đề gì, vui lòng liên hệ với chúng tôi để được hỗ trợ.</p>
+            
+            <div style='margin-top: 30px; padding-top: 20px; border-top: 1px solid #eeeeee;'>
+                <p style='color: #999999; font-size: 14px;'>
+                    Trân trọng,<br>
+                    Team Support
+                </p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>";
+		}
+
+		private static async Task<bool> SendMailPaymentSuccessAsync(string from, string to, string subject, string body, SmtpClient client)
         {
             using (var message = CreateMailMessagePaymentSuccess(from, to, subject, body))
             {

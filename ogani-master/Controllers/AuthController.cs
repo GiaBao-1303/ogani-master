@@ -10,6 +10,8 @@ using ogani_master.enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using ogani_master.Areas.Admin.DTO;
+using ogani_master.utils;
+using Microsoft.AspNetCore.DataProtection;
 
 
 namespace ogani_master.Controllers
@@ -34,6 +36,53 @@ namespace ogani_master.Controllers
 			}
 
 			return View("~/Views/SignIn/Index.cshtml");
+		}
+
+		[Route("SignIn/forgot-password")]
+		public IActionResult ForgotPasswordPage()
+		{
+			return View("~/Views/SignIn/ForgotPassword.cshtml");
+		}
+
+		[HttpPost]
+		[Route("SignIn/forgot-password")]
+		public async Task<IActionResult> ForgotPassword(ForgotPasswordDto forgotPasswordDto)
+		{
+			if(!ModelState.IsValid)
+			{
+				return View("~/Views/SignIn/ForgotPassword.cshtml", forgotPasswordDto);
+			}
+
+
+			User? user = await this.context.users.FirstOrDefaultAsync(u => u.UserName == forgotPasswordDto.Username && u.Email == forgotPasswordDto.email);
+
+			if (user == null) {
+				ViewData["ErrorMessage"] = "Username or email is incorrect.";
+				return View("~/Views/SignIn/ForgotPassword.cshtml", forgotPasswordDto);
+			}
+
+			var request = HttpContext.Request;
+
+			Guid newGuid = Guid.NewGuid();
+
+			string domain = $"{request.Scheme}://{request.Host}";
+
+			string secretUrl = $"{domain}/Confirm?token={newGuid.ToString()}";
+
+			user.token = newGuid.ToString();
+			user.token_expired = DateTime.Now.AddMinutes(3);
+
+			await this.context.SaveChangesAsync();
+
+			bool isSuccess = await MailUtils.SendMailGoogleSmtpForgotPasswordAsync(user.Email, "Thay đổi mật khẩu", user.FirstName + " " + user.LastName, secretUrl);
+
+			if (!isSuccess) {
+				ViewData["ErrorMessage"] = "There was an issue sending the password reset email. Please try again later.";
+				return View("~/Views/SignIn/ForgotPassword.cshtml", forgotPasswordDto);
+			}
+
+			ViewData["SuccessMessage"] = "A confirmation email has been sent. Please check your email.";
+			return View("~/Views/SignIn/ForgotPassword.cshtml", forgotPasswordDto);
 		}
 
 		[HttpPost]

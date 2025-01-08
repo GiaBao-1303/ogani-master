@@ -143,6 +143,16 @@ namespace ogani_master.Areas.Admin.Controllers
             existingOrder.UpdatedDate = DateTime.UtcNow;
             existingOrder.UpdatedBy = "Admin";
 
+            OrderStatus currentOrderStatus = (OrderStatus)existingOrder.Status;
+
+
+			if (currentOrderStatus == OrderStatus.Returned || currentOrderStatus == OrderStatus.Canceled)
+            {
+                Product? product = await this.context.Products.FirstOrDefaultAsync(p => p.PRO_ID == existingOrder.PROD_ID);
+                if(product == null) return NotFound();
+                product.quantity = product.quantity + existingOrder.Quantity;
+            }
+
             await this.context.SaveChangesAsync();
 
             OrderStatus orderStatus = GetOrderStatus(verifyOrderStatusDto.typeStatus);

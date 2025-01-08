@@ -200,6 +200,8 @@ namespace ogani_master.Controllers
                 {
                     cartItem.Quantity = orderDto.amount;
                 }
+
+                product.quantity = product.quantity - orderDto.amount;
             }
 
             await this.context.SaveChangesAsync();
@@ -208,7 +210,7 @@ namespace ogani_master.Controllers
 
             foreach (OrderDto o in orderDtos)
             {
-                Cart existingProductInCart = await this.context.Carts.Include(c => c.Product).FirstOrDefaultAsync(c => c.PRO_ID == o.ProdId);
+                Cart? existingProductInCart = await this.context.Carts.Include(c => c.Product).FirstOrDefaultAsync(c => c.PRO_ID == o.ProdId);
 
                 if (existingProductInCart == null)
                 {
@@ -323,7 +325,9 @@ namespace ogani_master.Controllers
                 {
                     cartItem.Quantity = orderDto.amount;
                 }
-            }
+
+				product.quantity = product.quantity - orderDto.amount;
+			}
 
             await this.context.SaveChangesAsync();
 
