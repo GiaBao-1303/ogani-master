@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Index";
+    var menuTitles = ViewBag.MenuTitles as Dictionary<int, string>;
 }
 <div class="app-content">
     <!--begin::Container-->
@@ -28,6 +29,7 @@
                             <table id="tbl" class="table table-striped">
                                 <thead>
                                     <tr>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().PARENT_ID)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Title)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Url)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CreatedBy)</th>
@@ -38,15 +40,63 @@
                                 <tbody>
                                     @foreach (var item in Model)
                                     {
+
                                         <tr>
-                                            <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.Url)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.CreatedDate)</td>
+
+                                            <!-- Hiển thị tên menu cha -->
+                                            <td>
+                                                @if (item.PARENT_ID != null && menuTitles.ContainsKey(item.PARENT_ID.Value))
+                                                {
+                                                    @menuTitles[item.PARENT_ID.Value]
+                                                    // Hiển thị tên menu cha từ menuTitles
+                                                }
+                                                else
+                                                {
+                                                    @("No Parent")
+                                                    // Nếu không có parent menu, hiển thị "No Parent"
+                                                }
+                                            </td>
+                                            <!-- Thêm data-attribute để chứa PARENT_ID -->
+
+                                            <td class="text-wrap text-break" title="@item.Title">
+                                                @if (!string.IsNullOrEmpty(item.Title))
+                                                {
+                                                    @if (item.Title.Length > 50)
+                                                    {
+                                                        @($"{item.Title.Substring(0, 50)}...")
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.Title
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @("No Title")
+                                                }
+                                            </td>
+
+                                            <td class="text-wrap text-break" title="@item.Url">
+                                                @if (!string.IsNullOrEmpty(item.Url))
+                                                {
+                                                    @if (item.Url.Length > 50)
+                                                    {
+                                                        @($"{item.Url.Substring(0, 50)}...")
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.Url
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    @("No URL")
+                                                }
+                                            </td>
                                             <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
-                                            <td>@Html.DisplayFor(modelItem => item.UpdatedDate)</td>
                                             <td>@Html.DisplayFor(modelItem => item.UpdatedBy)</td>
                                             <td>
-                                                <a asp-action="Edit" asp-route-id="@item.MEN_ID" >
+                                                <a asp-action="Edit" asp-route-id="@item.MEN_ID">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a asp-action="Details" asp-route-id="@item.MEN_ID" class="text-info ms-3">
@@ -58,6 +108,7 @@
                                             </td>
                                         </tr>
                                     }
+                                  
                                 </tbody>
                             </table>
                         </div>
@@ -67,5 +118,4 @@
         </div>
         <!--end::Row-->
     </div>
-    <!--end::Container-->
 </div>

@@ -38,12 +38,38 @@
                                     @foreach (var item in Model)
                                     {
                                         <tr>
-                                            <td>@Html.DisplayFor(modelItem => item.Title)</td>
+                                            <td class="text-wrap text-break" title="@item.Title">
+                                                @if (!string.IsNullOrEmpty(item.Title))
+                                                {
+                                                    @(
+                                                        item.Title.Length > 50
+                                                        ? $"{item.Title.Substring(0, 50)}..."
+                                                        : item.Title
+                                                        )
+                                                }
+                                                else
+                                                {
+                                                    <i>No Title</i>
+                                                }
+                                            </td>
                                             <td>
                                                 <img src="@Url.Content("~/data/banner/" + item.Image)" style="max-width: 100px; max-height: 100px; border: 1px solid #ddd;" />
 
                                             </td>
-                                            <td>@Html.DisplayFor(modelItem => item.Url)</td>
+                                            <td class="text-wrap text-break" title="@item.Url">
+                                                @if (!string.IsNullOrEmpty(item.Url))
+                                                {
+                                                    @(
+                                                        item.Url.Length > 50
+                                                        ? $"{item.Url.Substring(0, 50)}..."
+                                                        : item.Url
+                                                        )
+                                                }
+                                                else
+                                                {
+                                                    <i>No URL</i>
+                                                }
+                                            </td>
                                             <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
                                             <td>@Html.DisplayFor(modelItem => item.UpdatedBy)</td>
                                  

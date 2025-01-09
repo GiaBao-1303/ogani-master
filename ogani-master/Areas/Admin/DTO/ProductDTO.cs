@@ -14,6 +14,8 @@ namespace ogani_master.Areas.Admin.DTO
         public int quantity { get; set; }
 
         public IFormFile? Avatar { get; set; }
+        [Required]
+        [MaxLength(255, ErrorMessage = "Tên sản phẩm không được vượt quá 255 ký tự.")]
         public required string Name { get; set; }
         public string? Intro { get; set; }
         public required decimal Price { get; set; }

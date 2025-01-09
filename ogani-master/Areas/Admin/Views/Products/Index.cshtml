@@ -26,30 +26,19 @@
                         </div>
                     </div>
                     <div class="card-body">
+
                         <div class="table-responsive">
                             <table id="tbl" class="table">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.Avatar)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.Name)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.Price)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.DiscountPrice)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.Rate)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.UpdatedBy)
-                                        </th>
+                                        <th>Avatar</th>
+                                        <th>Name</th>
+                                        <th>Price</th>
+                                        <th>Discount Price</th>
+                                        <th>Rate</th>
+                                        <th>Created By</th>
+                                        <th>Updated By</th>
                                         <th>Actions</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -57,74 +46,81 @@
                                     {
                                         <tr>
                                             <td>
-                                                <img src="@Url.Content("~/data/product/" + item.Avatar)" style="max-width: 100px; max-height: 100px; border: 1px solid #ddd;" />
+                                                <img src="@Url.Content("~/data/product/" + item.Avatar)"
+                                                     style="max-width: 100px; max-height: 100px; border: 1px solid #ddd;" />
                                             </td>
-                                            <td >
-                                                <div class="mt-5">@Html.DisplayFor(modelItem => item.Name)</div>
+                                            <td class="text-wrap text-break" title="@item.Name">
+                                                @if (!string.IsNullOrEmpty(item.Name))
+                                                {
+                                                    @if (item.Name.Length > 50)
+                                                    {
+                                                        @($"{item.Name.Substring(0, 50)}...")
+                                                    }
+                                                    else
+                                                    {
+                                                        @item.Name
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    <i>No Name</i>
+                                                }
                                             </td>
                                             <td>
-                                                <div class="mt-5">@Html.DisplayFor(modelItem => item.Price) </div>
+                                                @String.Format("{0:N0}", item.Price)
                                             </td>
                                             <td>
-                                                <div class="mt-5">@Html.DisplayFor(modelItem => item.DiscountPrice)</div>
+                                                @String.Format("{0:N0}", item.DiscountPrice)
                                             </td>
                                             <td>
-                                                <div class=" mt-5">
-                                                    @Html.DisplayFor(modelItem => item.Rate)
-                                                </div>
+                                                @item.Rate
                                             </td>
                                             <td>
-                                                <div class=" mt-5">
-                                                    @Html.DisplayFor(modelItem => item.UpdatedBy)
-                                                </div>
+                                                @(item.CreatedBy ?? "Không rõ")
                                             </td>
                                             <td>
-                                                <div class=" mt-5">
+                                                @(item.UpdatedBy ?? "Chưa cập nhật")
+                                            </td>
+                                            <td>
+                                                <div>
                                                     <a asp-action="Edit" asp-route-id="@item.PRO_ID">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
                                                     <a asp-action="Details" asp-route-id="@item.PRO_ID" class="text-info ms-3">
                                                         <i class="fas fa-info-circle"></i>
                                                     </a>
-                                                    <a asp-action="Delete" asp-route-id="@item.PRO_ID " class="text-danger ms-3">
+                                                    <a asp-action="Delete" asp-route-id="@item.PRO_ID" class="text-danger ms-3">
                                                         <i class="fas fa-trash-alt"></i>
                                                     </a>
                                                 </div>
                                             </td>
-
                                         </tr>
                                     }
                                 </tbody>
                             </table>
-                            @*==================================== Show IMG Products ======================================================  *@
                             <script>
                                 window.onload = () => {
                                     document.getElementById("Avatar").onchange = (e) => {
                                         var preview = document.getElementById('imgPreview');
                                         var file = e.target.files[0];
-                                        var reader  = new FileReader();
+                                        var reader = new FileReader();
 
                                         reader.onloadend = function () {
-                                          preview.src = reader.result;
+                                            preview.src = reader.result;
                                         }
 
                                         if (file) {
-                                          reader.readAsDataURL(file);
+                                            reader.readAsDataURL(file);
                                         } else {
-                                          preview.src = '';
+                                            preview.src = '';
                                         }
                                     };
                                 }
                             </script>
-
                         </div>
-
                     </div>
-
                 </div>
             </div>
-
         </div>
-
     </div>
-
+</div>

@@ -19,7 +19,7 @@ namespace ogani_master.Areas.Admin.Controllers
             _context = context;
         }
 
-        protected async Task<User?> GetCurrentUser()
+        protected async Task<User?> GetCurrentUser()    
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
             if (userId != null)
@@ -36,11 +36,11 @@ namespace ogani_master.Areas.Admin.Controllers
             pageSize = pageSize > 100 ? 100 : pageSize;
 
             ViewBag.CurrentUser = await GetCurrentUser();
-            
+
             var categories = await _context.Categories
-                                           .OrderBy(c => c.CAT_ID) 
-                                           .Skip((page - 1) * pageSize) 
-                                           .Take(pageSize) 
+                                           .OrderBy(c => c.CAT_ID)
+                                           .Skip((page - 1) * pageSize)
+                                           .Take(pageSize)
                                            .ToListAsync();
 
             return View(categories);
@@ -77,10 +77,15 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("CAT_ID,Name,DisplayOrder,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Category category)
+        public async Task<IActionResult> Create([FromForm] Category category)
         {
             if (ModelState.IsValid)
             {
+                var currentUser = await GetCurrentUser();
+                if (currentUser != null) {
+                    category.CreatedBy = currentUser.UserName;
+                }
+                category.CreatedDate = DateTime.Now;
                 _context.Add(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -110,7 +115,7 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("CAT_ID,Name,DisplayOrder,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Category category)
+        public async Task<IActionResult> Edit(int id, [FromForm] Category category)
         {
             if (id != category.CAT_ID)
             {
@@ -121,12 +126,23 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 try
                 {
+                    var existingCategory = await _context.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.CAT_ID == id);
+                    if (existingCategory == null)
+                    {
+                        return NotFound();
+                    }
+                    category.CreatedBy = existingCategory.CreatedBy;
+                    category.CreatedDate = existingCategory.CreatedDate;
+                    var currentUser = await GetCurrentUser();
+                    category.UpdatedBy = currentUser?.UserName;
+                    category.UpdatedDate = DateTime.Now;
                     _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CategoryExists(category.CAT_ID))
+                    // Kiểm tra nếu category.CAT_ID có giá trị và gọi CategoryExists
+                    if (!CategoryExists(category.CAT_ID ?? 0))  // Dùng ?? 0 nếu CAT_ID là null
                     {
                         return NotFound();
                     }
@@ -164,13 +180,27 @@ namespace ogani_master.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
+            //var category = await _context.Categories.FindAsync(id);
+            //if (category != null)
+            //{
+            //    _context.Categories.Remove(category);
+            //}
+
+            //await _context.SaveChangesAsync();
+            //return RedirectToAction(nameof(Index));
+            var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(c => c.CAT_ID == id);
             if (category != null)
             {
+                // Ngắt kết nối giữa sản phẩm và danh mục (đặt CategoryId = null cho tất cả sản phẩm trong danh mục này)
+                foreach (var product in category.Products)
+                {
+                    product.CAT_ID = null; // CategoryId có thể nhận giá trị null
+                }
+
                 _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
             }
 
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
