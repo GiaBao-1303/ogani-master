@@ -24,15 +24,36 @@
                             <input type="hidden" asp-for="PRO_ID" />
 
                             <!-- Category -->
-                            <div class="mb-3">
-                                <label asp-for="CAT_ID" class="form-label fw-bold">Category</label>
-                                <select asp-for="CAT_ID" class="form-select" asp-items="ViewBag.CAT_ID"></select>
-                                <span asp-validation-for="CAT_ID" class="text-danger"></span>
+                            @* <div class="mb-3"> *@
+                            @*     <label asp-for="CAT_ID" class="form-label fw-bold">Category</label> *@
+                            @*     <select asp-for="CAT_ID" class="form-select" asp-items="ViewBag.CAT_ID"></select> *@
+                            @*     <span asp-validation-for="CAT_ID" class="text-danger"></span> *@
+                            @* </div> *@
+                            <div class="form-group">
+                                <label asp-for="CAT_ID" class="control-label"></label>
+                                @Html.DropDownListFor(
+                                                  model => model.CAT_ID,
+                                                  (SelectList)ViewData["CAT_ID"],   
+                                                  "Chọn danh mục", // Dòng placeholder
+                                                  new { @class = "form-control" } // Thêm class CSS nếu cần
+                                                  )
+                                @Html.ValidationMessageFor(model => model.CAT_ID, "", new { @class = "text-danger" })
                             </div>
 
                             <!-- Avatar -->
                             <div class="mb-3">
-                                <label asp-for="Avatar" class="form-label fw-bold">Avatar</label>
+                                @* <label asp-for="Avatar" class="form-label fw-bold">Avatar</label> *@
+                                @* <input asp-for="Avatar" class="form-control" type="file" accept="image/*" /> *@
+                                @* <span asp-validation-for="Avatar" class="text-danger"></span> *@
+                                <label asp-for ="Avatar" class="form-lable fw-bold">Avatar </label>
+                                @* Hiển thị ảnh nếu có ảnh  *@
+                                @if (!string.IsNullOrEmpty(Model.Avatar))
+                                { 
+                                <div class="mb-2">
+                                        <img src="@Url.Content("~/data/product/" + Model.Avatar)" alt="Current Avatar" width="150"/>
+                                </div>
+                                    <small class="text-muted">Chọn ảnh mới nếu bạn muốn thay thế ảnh cũ.</small>
+                                }
                                 <input asp-for="Avatar" class="form-control" type="file" accept="image/*" />
                                 <span asp-validation-for="Avatar" class="text-danger"></span>
                             </div>
@@ -56,26 +77,67 @@
                             </div>
 
                             <!-- Price & Discount Price -->
+                            @* <div class="row"> *@
+                            @*     <div class="col-md-6 mb-3"> *@
+                            @*         <label asp-for="Price" class="form-label fw-bold">Price</label> *@
+                            @*         <input asp-for="Price" class="form-control" /> *@
+                            @*         <span asp-validation-for="Price" class="text-danger"></span> *@
+                            @*     </div> *@
+                            @*     <div class="col-md-6 mb-3"> *@
+                            @*         <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price</label> *@
+                            @*         <input asp-for="DiscountPrice" class="form-control" /> *@
+                            @*         <span asp-validation-for="DiscountPrice" class="text-danger"></span> *@
+                            @*     </div> *@
+                            @* </div> *@
                             <div class="row">
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="Price" class="form-label fw-bold">Price</label>
-                                    <input asp-for="Price" class="form-control" />
+                                    <input asp-for="Price" id="Price" class="form-control" oninput="formatPrice(this)" />
                                     <span asp-validation-for="Price" class="text-danger"></span>
                                 </div>
                                 <div class="col-md-6 mb-3">
                                     <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price</label>
-                                    <input asp-for="DiscountPrice" class="form-control" />
+                                    <input asp-for="DiscountPrice" id="DiscountPrice" class="form-control" oninput="formatPrice(this)" />
                                     <span asp-validation-for="DiscountPrice" class="text-danger"></span>
                                 </div>
                             </div>
 
                             <!-- Unit -->
-                            <div class="mb-3">
-                                <label asp-for="Unit" class="form-label fw-bold">Unit</label>
-                                <input asp-for="Unit" class="form-control" />
-                                <span asp-validation-for="Unit" class="text-danger"></span>
-                            </div>
+                            @* <div class="mb-3"> *@
+                            @*     <label asp-for="Unit" class="form-label fw-bold">Unit</label> *@
+                            @*     <input asp-for="Unit" class="form-control" /> *@
+                            @*     <span asp-validation-for="Unit" class="text-danger"></span> *@
+                            @* </div> *@
+                            <div class="form-group row mt-1">
+                                <div class="form-group col-md-2">
+                                    <label asp-for="Unit" class="control-label">Đơn vị</label>
+                                    <div class="input-group">
+                                        <select asp-for="Unit" class="form-control" id="unitSelect">
+                                            <option value="KG">KG</option>
+                                            <option value="Gram">Gram</option>
+                                            <option value="Other">Khác</option>
+                                        </select>
 
+                                        <div class="input-group-append">
+                                            <button type="button" class="btn btn-success" id="addOtherOption" style="display: none;">+</button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Input for 'Other' -->
+                                    <div class="form-group col-md-2 mt-2" id="otherUnitContainer" style="display: none; width: 140px;">
+                                        <input type="text" id="OtherUnit" name="OtherUnit" class="form-control" maxlength="50" placeholder="Nhập đơn vị khác" />
+                                        <span class="text-danger" id="otherUnitError"></span>
+                                    </div>
+
+                                    <span asp-validation-for="Unit" class="text-danger"></span>
+                                </div>
+
+                                <div class="form-group col-md-2">
+                                    <label asp-for="Rate" class="control-label"></label>
+                                    <input asp-for="Rate" class="form-control" />
+                                    <span asp-validation-for="Rate" class="text-danger"></span>
+                                </div>
+                            </div>
                             <!-- Rate -->
                             <div class="mb-3">
                                 <label asp-for="Rate" class="form-label fw-bold">Rate</label>
@@ -98,28 +160,28 @@
                             </div>
 
                             <!-- Created & Updated Info -->
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="CreatedDate" class="form-label fw-bold">Created Date</label>
-                                    <input asp-for="CreatedDate" class="form-control" />
-                                    <span asp-validation-for="CreatedDate" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="UpdatedDate" class="form-label fw-bold">Updated Date</label>
-                                    <input asp-for="UpdatedDate" class="form-control" />
-                                    <span asp-validation-for="UpdatedDate" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="CreatedBy" class="form-label fw-bold">Created By</label>
-                                    <input asp-for="CreatedBy" class="form-control" />
-                                    <span asp-validation-for="CreatedBy" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="UpdatedBy" class="form-label fw-bold">Updated By</label>
-                                    <input asp-for="UpdatedBy" class="form-control" />
-                                    <span asp-validation-for="UpdatedBy" class="text-danger"></span>
-                                </div>
-                            </div>
+                            @* <div class="row"> *@
+                            @*     <div class="col-md-6 mb-3"> *@
+                            @*         <label asp-for="CreatedDate" class="form-label fw-bold">Created Date</label> *@
+                            @*         <input asp-for="CreatedDate" class="form-control" /> *@
+                            @*         <span asp-validation-for="CreatedDate" class="text-danger"></span> *@
+                            @*     </div> *@
+                            @*     <div class="col-md-6 mb-3"> *@
+                            @*         <label asp-for="UpdatedDate" class="form-label fw-bold">Updated Date</label> *@
+                            @*         <input asp-for="UpdatedDate" class="form-control" /> *@
+                            @*         <span asp-validation-for="UpdatedDate" class="text-danger"></span> *@
+                            @*     </div> *@
+                            @*     <div class="col-md-6 mb-3"> *@
+                            @*         <label asp-for="CreatedBy" class="form-label fw-bold">Created By</label> *@
+                            @*         <input asp-for="CreatedBy" class="form-control" /> *@
+                            @*         <span asp-validation-for="CreatedBy" class="text-danger"></span> *@
+                            @*     </div> *@
+                            @*     <div class="col-md-6 mb-3"> *@
+                            @*         <label asp-for="UpdatedBy" class="form-label fw-bold">Updated By</label> *@
+                            @*         <input asp-for="UpdatedBy" class="form-control" /> *@
+                            @*         <span asp-validation-for="UpdatedBy" class="text-danger"></span> *@
+                            @*     </div> *@
+                            @* </div> *@
 
                             <!-- Action Buttons -->
                             <div class="d-flex justify-content-end">
@@ -168,7 +230,7 @@
         @{
             await Html.RenderPartialAsync("_ValidationScriptsPartial");
         }
-    }
+   
         <script type="importmap">
             {
                 "imports": {
@@ -202,36 +264,6 @@
                 HorizontalLine,
                 Highlight
             } from 'ckeditor5';
-
-            ClassicEditor
-                .create(document.querySelector('#Intro1',), {
-                    plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
-                        BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
-                        ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
-                        HorizontalLine, Highlight],
-                    toolbar: [
-                         'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
-                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-                        'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
-                        '|', 'bulletedList', 'numberedList', '|',
-                        'insertTable', 'mediaEmbed', 'horizontalLine', '|',
-                        'imageUpload'
-                    ],
-                    table: {
-                        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-                    },
-                    image: {
-                        toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
-                        resizeUnit: 'px',
-                        styles: ['full', 'side']
-                    }
-                })
-                .then(editor => {
-                    window.editor = editor;
-                }) 
-                .catch(error => {
-                    console.error(error);
-                });
                  ClassicEditor
                 .create(document.querySelector('#Description',), {
                     plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
@@ -262,7 +294,117 @@
                     console.error(error);
                 });
         </script>
+        @* /// CK5 detail  *@
+        <script type="module">
+            import {
+                ClassicEditor,
+                Essentials,
+                Paragraph,
+                Bold,
+                Italic,
+                Font,
+                Heading,
+                Alignment,
+                BlockQuote,
+                Link,
+                List,
+                Table,
+                TableToolbar,
+                Image,
+                ImageToolbar,
+                ImageCaption,
+                ImageStyle,
+                ImageResize,
+                MediaEmbed,
+                CodeBlock,
+                HorizontalLine,
+                Highlight
+            } from 'ckeditor5';
+                 ClassicEditor
+                .create(document.querySelector('#Details',), {
+                    plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
+                        BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
+                        ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
+                        HorizontalLine, Highlight],
+                    toolbar: [
+                         'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
+                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                        'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
+                        '|', 'bulletedList', 'numberedList', '|',
+                        'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+                        'imageUpload'
+                    ],
+                    table: {
+                        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                    },
+                    image: {
+                        toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                        resizeUnit: 'px',
+                        styles: ['full', 'side']
+                    }
+                })
+                .then(editor => {
+                    window.editor = editor;
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        </script>
 
+       @* Xử lý maxlength và show hide  *@
+        <script>
+            $(document).ready(function () {
+                // Check if 'Other' is selected by default
+                if ($('#unitSelect').val() === 'Other') {
+                    $('#otherUnitContainer').show();  // Show input for 'Other'
+                } else {
+                    $('#otherUnitContainer').hide();  // Hide input for 'Other'
+                }
+
+                // When 'Unit' dropdown changes
+                $('#unitSelect').change(function () {
+                    if ($(this).val() === 'Other') {
+                        $('#otherUnitContainer').show();  // Show input for 'Other'
+                    } else {
+                        $('#otherUnitContainer').hide();  // Hide input for 'Other'
+                        $('#OtherUnit').val('');  // Clear 'Other' input if not selected
+                    }
+                });
+
+                // Handle input validation for 'Other' unit
+                $('#OtherUnit').on('input', function () {
+                    var inputValue = $(this).val();
+                    if (inputValue.length > 50) {
+                        $('#otherUnitError').text("Đơn vị không được quá 50 ký tự.");
+                        $(this).val(inputValue.substring(0, 50)); // Limit input length
+                    } else {
+                        $('#otherUnitError').text("");
+                    }
+                });
+            });
+        </script>
+        @* xử lý định dạng số price *@
+        <script>
+            function formatPrice(input) {
+                let value = input.value;
+
+                // Xóa các ký tự không phải là số và dấu phẩy
+                value = value.replace(/[^0-9.]/g, '');
+
+                // Nếu có dấu thập phân, chỉ giữ lại một phần thập phân tối đa
+                let parts = value.split('.');
+                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');  // Thêm dấu phân cách hàng nghìn
+
+                // Nếu phần thập phân có giá trị là '00', loại bỏ nó
+                if (parts[1] === '00') {
+                    value = parts[0]; // chỉ giữ phần nguyên
+                } else {
+                    value = parts.join('.');
+                }
+
+                input.value = value;
+            }
+        </script>
     }
 </body>
 </html>

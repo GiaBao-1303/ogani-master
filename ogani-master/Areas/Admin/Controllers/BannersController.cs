@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ogani_master.Areas.Admin.DTO;
 using ogani_master.Models;
+using System.IO;
 
 namespace ogani_master.Areas.Admin.Controllers
 {
@@ -76,12 +78,14 @@ namespace ogani_master.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromForm] BannerDTO _banner)
         {
+            var currentUser = await GetCurrentUser();
             var banner = new Banner
             {
                 BAN_ID = _banner.BAN_ID,
                 Title = _banner.Title,
                 Url = _banner.Url,
-                CreatedBy = _banner.CreatedBy,
+                CreatedBy = currentUser?.UserName ?? "System", // gán createdBy
+                
             };
             if (ModelState.IsValid)
             {
@@ -89,13 +93,15 @@ namespace ogani_master.Areas.Admin.Controllers
                 if (_banner.Image != null)
                 {
                     var extension = Path.GetExtension(_banner.Image.FileName);
-                    //No_Reply file name
-                    newImageFileName = $"{Guid.NewGuid().ToString()}{extension}";
+                    newImageFileName = $"{Guid.NewGuid()}{extension}";
                     var filePath = Path.Combine(_hostEnv.WebRootPath, "data", "banner", newImageFileName);
-                    _banner.Image.CopyTo(new FileStream(filePath, FileMode.Create));
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await _banner.Image.CopyToAsync(stream);
+                    }
 
+                    banner.Image = newImageFileName;
                 }
-                if (newImageFileName != null) banner.Image = newImageFileName;
                 _context.Add(banner);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -107,17 +113,18 @@ namespace ogani_master.Areas.Admin.Controllers
         // GET: Admin/Banners/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            ViewBag.CurrentUser = await this.GetCurrentUser();
             if (id == null)
             {
-                return NotFound();
+               return NotFound();
             }
 
             var banner = await _context.Banners.FindAsync(id);
             if (banner == null)
             {
-                return NotFound();
+               return NotFound();
             }
+
+            ViewBag.CurrentUser = await GetCurrentUser(); ;
             return View(banner);
         }
 
@@ -126,9 +133,9 @@ namespace ogani_master.Areas.Admin.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [FromForm] Banner banner)
+        public async Task<IActionResult> Edit(int id, [FromForm] BannerDTO bannerDto)
         {
-            if (id != banner.BAN_ID)
+            if (id != bannerDto.BAN_ID)
             {
                 return NotFound();
             }
@@ -137,12 +144,48 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 try
                 {
-                    _context.Update(banner);
+                    var existingBanner = await _context.Banners.FindAsync(id);
+                    if (existingBanner == null)
+                    {
+                        return NotFound();
+                    }
+
+                    existingBanner.Title = bannerDto.Title;
+                    existingBanner.Url = bannerDto.Url;
+
+                    if (bannerDto.Image != null && bannerDto.Image is { Length: > 0 })
+                    {
+                        var extension = Path.GetExtension(bannerDto.Image.FileName);
+                        var newImageFileName = $"{Guid.NewGuid()}{extension}";
+                        var filePath = Path.Combine(_hostEnv.WebRootPath, "data", "banner", newImageFileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await bannerDto.Image.CopyToAsync(stream);
+                        }
+
+                        if (!string.IsNullOrEmpty(existingBanner.Image))
+                        {
+                            var oldFilePath = Path.Combine(_hostEnv.WebRootPath, "data", "banner", existingBanner.Image);
+                            if (System.IO.File.Exists(oldFilePath))
+                            {
+                                System.IO.File.Delete(oldFilePath);
+                            }
+                        }
+
+                        existingBanner.Image = newImageFileName;
+                    }
+
+                    var currentUser = await GetCurrentUser();
+                    existingBanner.UpdatedBy = currentUser?.UserName ?? "System";
+                    existingBanner.UpdatedDate = DateTime.Now;
+
+                    _context.Update(existingBanner);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!BannerExists(banner.BAN_ID))
+                    if (!BannerExists(bannerDto.BAN_ID))
                     {
                         return NotFound();
                     }
@@ -151,9 +194,11 @@ namespace ogani_master.Areas.Admin.Controllers
                         throw;
                     }
                 }
+
                 return RedirectToAction(nameof(Index));
             }
-            return View(banner);
+
+            return View(bannerDto);
         }
 
         // GET: Admin/Banners/Delete/5
