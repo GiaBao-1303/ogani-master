@@ -16,12 +16,15 @@
                 <div class="card-body">
                     <form asp-action="Create" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                        <!-- Dropdown for Category -->
                         <div class="form-group">
                             <label asp-for="CAT_ID" class="control-label"></label>
-                            <select asp-for="CAT_ID" class="form-control" asp-items="ViewBag.CAT_ID"></select>
-                            <span asp-validation-for="CAT_ID" class="text-danger"></span>
+                            @Html.DropDownListFor(
+                                     model => model.CAT_ID,
+                                     (SelectList)ViewData["CAT_ID"],
+                                     "Chọn danh mục", // Dòng placeholder
+                                     new { @class = "form-control" } // Thêm class CSS nếu cần
+                                     )
+                            @Html.ValidationMessageFor(model => model.CAT_ID, "", new { @class = "text-danger" })
                         </div>
 
                         <div class="form-group">
@@ -37,53 +40,73 @@
 
                         <div class="form-group">
                             <label asp-for="Name" class="control-label"></label>
-                            <input asp-for="Name" class="form-control" />
+                            <input asp-for="Name" class="form-control" maxlength="255" oninput="validateLength(this, 255)" />
                             <span asp-validation-for="Name" class="text-danger"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="quantity" class="control-label"></label>
-                            <input asp-for="quantity" class="form-control" />
+                            <input asp-for="quantity" type="number" class="form-control" />
                             <span asp-validation-for="quantity" class="text-danger"></span>
                         </div>
 
                         <div class="form-group">
                             <label asp-for="Intro" class="control-label"></label>
-                            <input asp-for="Intro" class="form-control" />
+                            <input asp-for="Intro" type="text" class="form-control" />
                             <span asp-validation-for="Intro" class="text-danger"></span>
                         </div>
 
                         <div class="form-group row mt-1">
                             <div class="form-group col-md-2">
                                 <label asp-for="Price" class="control-label"></label>
-                                <input asp-for="Price" class="form-control" />
+                                <input asp-for="Price" type="number" class="form-control" />
                                 <span asp-validation-for="Price" class="text-danger"></span>
                             </div>
                             <div class="form-group col-md-2">
                                 <label asp-for="DiscountPrice" class="control-label"></label>
-                                <input asp-for="DiscountPrice" class="form-control" />
+                                <input asp-for="DiscountPrice" type="number" class="form-control" />
                                 <span asp-validation-for="DiscountPrice" class="text-danger"></span>
                             </div>
                         </div>
 
                         <div class="form-group row mt-1 ">
+                          
+
                             <div class="form-group col-md-2">
-                                <label asp-for="Unit" class="control-label"></label>
-                                <input asp-for="Unit" type="number" class="form-control" />
+                                <label asp-for="Unit" class="control-label">Đơn vị</label>
+                                <div class="input-group">
+                                    <!-- Dropdown để chọn các đơn vị có sẵn -->
+                                    <select asp-for="Unit" class="form-control" id="unitSelect">
+                                        <option value="KG">KG</option>
+                                        <option value="Gram">Gram</option>
+                                        <option value="Other">Khác</option>
+                                    </select>
+
+                                    <!-- Nút thêm nếu chọn "Khác" -->
+                                    <div class="input-group-append">
+                                        <button type="button" class="btn btn-success" id="addOtherOption" style="display: none;">+</button>
+                                    </div>
+                                </div>
+
+                                <!-- Ô nhập liệu "Khác" -->
+                                <div class="form-group col-md-2 mt-2" id="otherUnitContainer" style="display: none; width: 140px;">
+                                    <input type="text" id="OtherUnit" name="OtherUnit" class="form-control" maxlength="50" placeholder="Nhập đơn vị khác" />
+                                    <span class="text-danger" id="otherUnitError"></span>
+                                </div>
+
                                 <span asp-validation-for="Unit" class="text-danger"></span>
                             </div>
+
+                           
+
                             <div class="form-group col-md-2">
                                 <label asp-for="Rate" class="control-label"></label>
-                                <input asp-for="Rate" class="form-control" />
+                                <input asp-for="Rate"  class="form-control" />
                                 <span asp-validation-for="Rate" class="text-danger"></span>
                             </div>
                         </div>
 
-                        <div class="form-group">
-                            <label asp-for="UpdatedBy" class="control-label"></label>
-                            <input asp-for="UpdatedBy" class="form-control" />
-                            <span asp-validation-for="UpdatedBy" class="text-danger"></span>
-                        </div>
+                      
 
                         <div class="form-group">
                             <label asp-for="Description" class="control-label"></label>
@@ -174,7 +197,8 @@
                     toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
                     resizeUnit: 'px',
                     styles: ['full', 'side']
-                }
+                },
+                allowedContent: true
             })
             .then(editor => {
                 window.editor = editor;
@@ -182,7 +206,35 @@
             .catch(error => {
                 console.error(error);
             });
-             ClassicEditor
+             
+    </script>
+    <script type="module">
+        import {
+            ClassicEditor,
+            Essentials,
+            Paragraph,
+            Bold,
+            Italic,
+            Font,
+            Heading,
+            Alignment,
+            BlockQuote,
+            Link,
+            List,
+            Table,
+            TableToolbar,
+            Image,
+            ImageToolbar,
+            ImageCaption,
+            ImageStyle,
+            ImageResize,
+            MediaEmbed,
+            CodeBlock,
+            HorizontalLine,
+            Highlight
+        } from 'ckeditor5';
+
+        ClassicEditor
             .create(document.querySelector('#Description',), {
                 plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
                     BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
@@ -203,7 +255,8 @@
                     toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
                     resizeUnit: 'px',
                     styles: ['full', 'side']
-                }
+                },
+                allowedContent: true
             })
             .then(editor => {
                 window.editor = editor;
@@ -211,6 +264,7 @@
             .catch(error => {
                 console.error(error);
             });
+
     </script>
     @*==================================== Show IMG Products ======================================================  *@
     <script>
@@ -232,6 +286,53 @@
             };
         }
     </script>
+    <script>
+        function validateLength(input, maxLength) {
+            if (input.value.length > maxLength) {
+                alert(`Tên sản phẩm không được vượt quá ${maxLength} ký tự.`);
+                input.value = input.value.substring(0, maxLength);
+            }
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            // Ẩn ô nhập liệu "Khác" khi chưa chọn
+            $('#otherUnitContainer').hide();
+
+            // Khi chọn "Khác", hiển thị ô nhập liệu
+            $('#unitSelect').change(function () {
+                if ($(this).val() === 'Other') {
+                    $('#otherUnitContainer').show();
+                } else {
+                    $('#otherUnitContainer').hide();
+                    $('#OtherUnit').val(''); // Xóa giá trị ô nhập khi chọn lại đơn vị mặc định
+                }
+            });
+
+            // Khi nhấn nút "Thêm đơn vị khác"
+            $('#addOtherOption').click(function () {
+                // Thêm "Khác" vào dropdown nếu chưa có
+                var currentUnitValue = $('#unitSelect').val();
+                if (currentUnitValue !== 'Other') {
+                    $('#unitSelect').append('<option value="Other">Khác</option>');
+                    $('#unitSelect').val('Other'); // Chọn "Khác"
+                    $('#otherUnitContainer').show(); // Hiển thị ô nhập liệu
+                }
+            });
+
+            // Kiểm tra độ dài nếu nhập vào ô "Khác"
+            $('#OtherUnit').on('input', function () {
+                var inputValue = $(this).val();
+                if (inputValue.length > 50) {
+                    $('#otherUnitError').text("Đơn vị không được quá 50 ký tự.");
+                    $(this).val(inputValue.substring(0, 50)); // Giới hạn ký tự nhập
+                } else {
+                    $('#otherUnitError').text("");
+                }
+            });
+        });
+    </script>
+
 
 }
 

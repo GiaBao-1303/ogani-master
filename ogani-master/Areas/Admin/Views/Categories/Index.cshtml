@@ -33,6 +33,7 @@
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().DisplayOrder)</th>
                                         <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CreatedBy)</th>
+                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UpdatedBy)</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -43,6 +44,7 @@
                                             <td>@Html.DisplayFor(modelItem => item.Name)</td>
                                             <td>@Html.DisplayFor(modelItem => item.DisplayOrder)</td>
                                             <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
+                                            <td>@Html.DisplayFor(modelItem => item.UpdatedBy)</td>
                                             <td>
                                                 <a asp-action="Edit" asp-route-id="@item.CAT_ID" >
                                                     <i class="fas fa-edit"></i>
