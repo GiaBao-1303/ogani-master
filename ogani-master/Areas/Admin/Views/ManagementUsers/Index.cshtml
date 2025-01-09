@@ -1,0 +1,152 @@
+﻿@model IEnumerable<ogani_master.Models.User>
+@using ogani_master.enums;
+
+@{
+    ViewData["Title"] = "Management Users";
+    User currentUser = ViewBag.CurrentUser;
+    List<User> listUsers = ViewBag.ListUsers;
+}
+<div class="app-content">
+    <!--begin::Container-->
+    <div class="container-fluid">
+        <!--begin::Row-->
+        <div class="row">
+            <div class="col-12">
+                <!-- Default box -->
+                <div class="card card-success card-outline">
+                    <div class="card-header">
+                        <div class="row">
+                            <div class="col-md">
+                                <h3 class="card-title">List Users</h3>
+                            </div>
+                          
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="tbl" class="table">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            Avatar
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.UserId)
+                                        </th>
+                                        <th>
+                                            FullName
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.UserName)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Email)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Role)
+                                        </th>
+                                        <th>
+                                            @Html.DisplayNameFor(model => model.Status)
+                                        </th>
+                                        <th>Actions</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (User user in listUsers)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <img src="@Url.Content("~/" + user.ProfilePictureUrl)" style="max-width: 100px; max-height: 100px; border: 1px solid #ddd;" />
+                                            </td>
+                                            <td>
+                                                <div class="mt-5">@user.UserId</div>
+                                            </td>
+                                            <td>
+                                                <div class="mt-5">@user.FirstName @user.LastName</div>
+                                            </td>
+                                            <td>
+                                                <div class="mt-5">@user.UserName</div>
+                                            </td>
+                                            <td>
+                                                <div class=" mt-5">
+                                                    @user.Email
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <form asp-area="Admin" asp-controller="ManagementUsers" asp-action="ChangeRole" method="post">
+                                                    @Html.AntiForgeryToken()
+                                                    <input name="UserId" value="@user.UserId" type="hidden" />
+                                                    <select class="form-select mt-5" aria-label="@((UserRole)user.Role)" name="selectedRole" onchange="this.form.submit()">
+                                                        @foreach (int role in Enum.GetValues(typeof(ogani_master.enums.UserRole)))
+                                                        {
+                                                            if (currentUser.Role < role)
+                                                            {
+                                                                <option value="@role" selected="@(user.Role == role)">
+                                                                    @((UserRole)role)  @(user.Role == role ? "     ✔️" : "")
+                                                                </option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </form>
+                                            </td>
+                                            <td>
+                                                     <form asp-area="Admin" asp-controller="ManagementUsers" asp-action="ChangeStatus" method="post">
+                                                        <input name="UserId" value="@user.UserId" type="hidden" />
+                                                    <select name="selectedStatus" class="form-select mt-5" aria-label="@(user.Status == 1 ? "Active" : "Inactive")" onchange="this.form.submit()">
+                                                                    @Html.AntiForgeryToken()
+                                                                    <option selected="@(user.Status == 1)" value="1">
+                                                                        Active
+                                                                        @(user.Status == 1 ? "     ✔️" : "")
+                                                                    </option>
+                                                                    <option selected="@(user.Status == 0)" value="0">
+                                                                            Inactive
+                                                                        @(user.Status == 0 ? "     ✔️" : "")
+                                                                    </option>
+                                                         </select>
+                                                    </form>
+                                            </td>
+                                            <td>
+                                                <div class=" mt-5">
+                                                    <a asp-area="Admin" asp-controller="ManagementUsers" asp-action="Detail" asp-route-uid="@user.UserId" class="text-info ms-3">
+                                                        <i class="fas fa-info-circle"></i>
+                                                    </a>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                            <script>
+                                window.onload = () => {
+                                    document.getElementById("Avatar").onchange = (e) => {
+                                        var preview = document.getElementById('imgPreview');
+                                        var file = e.target.files[0];
+                                        var reader  = new FileReader();
+
+                                        reader.onloadend = function () {
+                                          preview.src = reader.result;
+                                        }
+
+                                        if (file) {
+                                          reader.readAsDataURL(file);
+                                        } else {
+                                          preview.src = '';
+                                        }
+                                    };
+                                }
+                            </script>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+

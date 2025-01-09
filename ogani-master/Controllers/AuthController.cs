@@ -114,8 +114,10 @@ namespace ogani_master.Controllers
 					return View("~/Views/SignIn/Index.cshtml");
 				}
 
-				HttpContext.Session.SetInt32("UserID", existingUser.UserId);
-				HttpContext.Session.SetString("role", existingUser.Role == (int)UserRole.Admin ? "Admin" : "User");
+				UserRole role = (UserRole)existingUser.Role;
+
+                HttpContext.Session.SetInt32("UserID", existingUser.UserId);
+				HttpContext.Session.SetString("role", role.ToString());
 
 				if (existingUser.Role == (int)UserRole.Admin)
 				{

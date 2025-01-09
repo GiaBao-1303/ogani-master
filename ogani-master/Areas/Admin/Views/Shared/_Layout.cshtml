@@ -1,5 +1,6 @@
 ﻿@using Microsoft.AspNetCore.Http;
 @using ogani_master.Helpers;
+@using ogani_master.enums;
 
 @{
     User CurrentUser = ViewBag.CurrentUser;
@@ -218,14 +219,17 @@
                                 </p>
                             </a>
                         </li>
-                        <li class="nav-item @Html.IsActive("Products", "Index")">
-                            <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="nav-link">
-                                <i class="nav-icon bi bi-box-seam-fill"></i>
-                                <p>
-                                    Product
-                                </p>
-                            </a>
-                        </li>
+                        @if(CurrentUser.Role == (int)UserRole.Admin)
+                        {
+                            <li class="nav-item @Html.IsActive("Products", "Index")">
+                                <a asp-area="Admin" asp-controller="Products" asp-action="Index" class="nav-link">
+                                    <i class="nav-icon bi bi-box-seam-fill"></i>
+                                    <p>
+                                        Product
+                                    </p>
+                                </a>
+                            </li>
+                        }
                         <li class="nav-item @Html.IsParentActive([
                                  new ControllerInfo{ action = "Index", controllerName = "Order" },
                                  new ControllerInfo{ action = "DetailsPage", controllerName = "Order" },
@@ -268,6 +272,16 @@
                                 <i class="fa-thin fa-gear"></i>
                                 <p>
                                     Settings
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item @Html.IsParentActive([
+                                new ControllerInfo{ action = "Index", controllerName = "ManagementUsers" }
+                            ])">
+                            <a asp-area="Admin" asp-controller="ManagementUsers" asp-action="Index" class="nav-link">
+                                <i class="fa-thin fa-gear"></i>
+                                <p>
+                                    Management Users
                                 </p>
                             </a>
                         </li>

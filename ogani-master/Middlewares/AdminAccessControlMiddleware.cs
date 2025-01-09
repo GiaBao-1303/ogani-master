@@ -6,6 +6,7 @@ namespace ogani_master.Middlewares
     public class AdminAccessControlMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly string[] _allowedRoles = { "Admin", "Moderator" };
 
         public AdminAccessControlMiddleware(RequestDelegate next)
         {
@@ -18,9 +19,7 @@ namespace ogani_master.Middlewares
             {
                 var userRole = context.Session.GetString("role");
 
-
-
-                if (userRole != "Admin")
+                if (!_allowedRoles.Contains(userRole))
                 {
                     context.Response.Redirect("/");
                     return;

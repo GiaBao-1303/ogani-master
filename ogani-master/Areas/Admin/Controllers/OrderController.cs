@@ -36,7 +36,12 @@ namespace ogani_master.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index()
         {
-            ViewBag.CurrentUser = await GetCurrentUser();
+            User? user = await GetCurrentUser();
+
+
+            if (user == null) return RedirectToAction("SignInPage", "Auth");
+
+                ViewBag.CurrentUser = user;
 
             List<Order> orders = await this.context.Orders
                 .Include(o => o.Product)
