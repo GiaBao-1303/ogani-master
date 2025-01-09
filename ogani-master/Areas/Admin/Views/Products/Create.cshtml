@@ -16,14 +16,6 @@
                 <div class="card-body">
                     <form asp-action="Create" enctype="multipart/form-data">
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-                        <!-- Dropdown for Category -->
-                        @* <div class="form-group"> *@
-                        @*     <label asp-for="CAT_ID" class="control-label"></label> *@
-                        @*     <select asp-for="CAT_ID" class="form-control" asp-items="ViewBag.CAT_ID"></select> *@
-                        @*     <span asp-validation-for="CAT_ID" class="text-danger"></span> *@
-                        @* </div> *@
-
                         <div class="form-group">
                             <label asp-for="CAT_ID" class="control-label"></label>
                             @Html.DropDownListFor(
@@ -78,12 +70,7 @@
                         </div>
 
                         <div class="form-group row mt-1 ">
-                            @* <div class="form-group col-md-2"> *@
-                            @*     @* <label asp-for="Unit" class="control-label"></label> *@ 
-                            @*     @* <input asp-for="Unit" class="form-control" /> *@
-                            @*     @* <span asp-validation-for="Unit" class="text-danger"></span> *@ 
-
-                            @* </div> *@
+                          
 
                             <div class="form-group col-md-2">
                                 <label asp-for="Unit" class="control-label">Đơn vị</label>
@@ -119,11 +106,7 @@
                             </div>
                         </div>
 
-                        @* <div class="form-group"> *@
-                        @*     <label asp-for="UpdatedBy" class="control-label"></label> *@
-                        @*     <input asp-for="UpdatedBy" class="form-control" /> *@
-                        @*     <span asp-validation-for="UpdatedBy" class="text-danger"></span> *@
-                        @* </div> *@
+                      
 
                         <div class="form-group">
                             <label asp-for="Description" class="control-label"></label>
@@ -214,7 +197,8 @@
                     toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
                     resizeUnit: 'px',
                     styles: ['full', 'side']
-                }
+                },
+                allowedContent: true
             })
             .then(editor => {
                 window.editor = editor;
@@ -222,7 +206,35 @@
             .catch(error => {
                 console.error(error);
             });
-             ClassicEditor
+             
+    </script>
+    <script type="module">
+        import {
+            ClassicEditor,
+            Essentials,
+            Paragraph,
+            Bold,
+            Italic,
+            Font,
+            Heading,
+            Alignment,
+            BlockQuote,
+            Link,
+            List,
+            Table,
+            TableToolbar,
+            Image,
+            ImageToolbar,
+            ImageCaption,
+            ImageStyle,
+            ImageResize,
+            MediaEmbed,
+            CodeBlock,
+            HorizontalLine,
+            Highlight
+        } from 'ckeditor5';
+
+        ClassicEditor
             .create(document.querySelector('#Description',), {
                 plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
                     BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
@@ -243,7 +255,8 @@
                     toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
                     resizeUnit: 'px',
                     styles: ['full', 'side']
-                }
+                },
+                allowedContent: true
             })
             .then(editor => {
                 window.editor = editor;
@@ -251,6 +264,7 @@
             .catch(error => {
                 console.error(error);
             });
+
     </script>
     @*==================================== Show IMG Products ======================================================  *@
     <script>

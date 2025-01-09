@@ -74,27 +74,7 @@ namespace ogani_master.Areas.Admin.Controllers
 
             return View(menu);
         }
-        //Menu Da Cấp
-        //private List<SelectListItem> BuildMenuSelectList(List<Menu> menus, int? parentId = null, string prefix = "")
-        //{
-        //    List<SelectListItem> items = new List<SelectListItem>();
 
-        //    var filteredMenus = menus.Where(m => m.PARENT_ID == parentId).ToList();  // Lọc các menu con của một menu cha
-
-        //    foreach (var menu in filteredMenus)
-        //    {
-        //        items.Add(new SelectListItem
-        //        {
-        //            Value = menu.MEN_ID.ToString(),
-        //            Text = prefix + menu.Title  // Thêm prefix (dấu "--" nếu menu là con) vào tên menu
-        //        });
-
-        //        // Đệ quy để lấy các menu con của menu này
-        //        items.AddRange(BuildMenuSelectList(menus, menu.MEN_ID, prefix + "Menu Con"));  // Thêm dấu "--" cho menu con
-        //    }
-
-        //    return items;
-        //}
 
         private List<SelectListItem> BuildMenuSelectList(List<Menu> menus, int? parentId = null, string prefix = "", HashSet<int> visited = null)
         {

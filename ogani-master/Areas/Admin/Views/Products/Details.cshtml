@@ -62,15 +62,15 @@
                     <!-- Description -->
                     <div class="form-group mb-3">
                         <label class="fw-bold">@Html.DisplayNameFor(model => model.Description):</label>
-                        <p>@Html.DisplayFor(model => model.Description)</p>
+                        <div>@Html.Raw(Model.Description)</div>
                     </div>
 
                     <!-- Details -->
                     <div class="form-group mb-3">
                         <label class="fw-bold">@Html.DisplayNameFor(model => model.Details):</label>
-                        <p>@Html.DisplayFor(model => model.Details)</p>
-                        
-                    </div>
+                        <div>@Html.Raw(Model.Details)</div>
+                     </div>
+
 
                     <!-- Category -->
                     <div class="form-group mb-3">

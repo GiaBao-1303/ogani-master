@@ -60,7 +60,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.CurrentUser = await this.GetCurrentUser();
             return View(banner);
         }
 
@@ -106,6 +106,7 @@ namespace ogani_master.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(banner);
         }
         
@@ -197,7 +198,7 @@ namespace ogani_master.Areas.Admin.Controllers
 
                 return RedirectToAction(nameof(Index));
             }
-
+            ViewBag.CurrentUser = await this.GetCurrentUser();
             return View(bannerDto);
         }
 
