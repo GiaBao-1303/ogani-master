@@ -8,6 +8,7 @@ namespace ogani_master.Models
     public class AdminUser : BaseModel
     {
         [Key]
+      
         public int USE_ID { get; set; }
 
         public required string Username { get; set; }

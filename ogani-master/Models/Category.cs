@@ -7,7 +7,7 @@ namespace ogani_master.Models
     public class Category:BaseModel
     {
         [Key]
-        public int CAT_ID { get; set; }
+        public int? CAT_ID { get; set; }
         public required string Name { get; set; }
         public int DisplayOrder { get; set; }
 

@@ -14,3 +14,4 @@ namespace ogani_master.Models
         public string? Url { get; set; }
     }
 }
+    
