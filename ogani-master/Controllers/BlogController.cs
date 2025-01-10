@@ -1,18 +1,69 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using ogani_master.Models;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace ogani_master.Controllers
 {
     public class BlogController : Controller
     {
-        public IActionResult Index()
+        private readonly OganiMaterContext _context;
+
+        public BlogController(OganiMaterContext context)
         {
-            return View();
+            _context = context;
         }
 
-        [HttpGet]
-        public IActionResult Detail()
+      
+
+        // Action để hiển thị danh sách các bài blog
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var allBlogs = await _context.Blogs
+                .OrderByDescending(b => b.CreatedAt)
+                .ToListAsync();
+
+            int? userId = HttpContext.Session.GetInt32("UserID");
+
+            ViewBag.CurrentUser = await this._context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+           
+            var mainBlogs = allBlogs.Take(15).ToList();
+
+            
+            var recentBlogs = allBlogs.Take(5).ToList();
+
+            // Trả về view với dữ liệu từ ViewData
+            ViewData["MainBlogs"] = mainBlogs;
+            ViewData["RecentBlogs"] = recentBlogs;
+
+            return View(allBlogs); // Trả về tất cả bài blog để sử dụng nếu cần trong view
         }
+
+        // Action để hiển thị chi tiết một bài blog
+        [HttpGet]
+        public async Task<IActionResult> Detail(int id)
+        {
+            // Lấy bài viết chi tiết
+            var blog = await _context.Blogs.FirstOrDefaultAsync(b => b.BlogId == id);
+            if (blog == null)
+            {
+                return NotFound();
+            }
+
+            // Lấy 3 bài viết gợi ý (không bao gồm bài viết hiện tại)
+            var relatedBlogs = await _context.Blogs
+                .Where(b => b.BlogId != id)
+                .OrderByDescending(b => b.CreatedAt)
+                .Take(3)
+                .ToListAsync();
+            int? userId = HttpContext.Session.GetInt32("UserID");
+
+            ViewBag.CurrentUser = await this._context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+            // Truyền dữ liệu sang view
+            ViewData["RelatedBlogs"] = relatedBlogs;
+            return View(blog);
+        }
+
     }
 }

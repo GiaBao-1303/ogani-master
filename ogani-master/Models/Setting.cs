@@ -9,6 +9,7 @@ namespace ogani_master.Models
     {
         [Key]
         public int SET_ID { get; set; }
+        
         public required string Name { get; set; }
         public required string Value { get; set; }
     }

@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ogani_master.Models;
 
@@ -19,6 +17,7 @@ namespace ogani_master.Areas.Admin.Controllers
             _context = context;
         }
 
+        // Lấy thông tin người dùng từ session
         protected async Task<User?> GetCurrentUser()
         {
             int? userId = HttpContext.Session.GetInt32("UserID");
@@ -33,26 +32,9 @@ namespace ogani_master.Areas.Admin.Controllers
         // GET: Admin/Settings
         public async Task<IActionResult> Index()
         {
-            ViewBag.CurrentUser = await GetCurrentUser();
-            return View(await _context.Settings.ToListAsync());
-        }
-
-        // GET: Admin/Settings/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var setting = await _context.Settings
-                .FirstOrDefaultAsync(m => m.SET_ID == id);
-            if (setting == null)
-            {
-                return NotFound();
-            }
-            ViewBag.CurrentUser = await GetCurrentUser();
-            return View(setting);
+            ViewBag.CurrentUser = await GetCurrentUser();  // Lấy thông tin người dùng hiện tại
+            var settings = await _context.Settings.ToListAsync();  // Lấy danh sách setting
+            return View(settings);
         }
 
         // GET: Admin/Settings/Create
@@ -63,18 +45,20 @@ namespace ogani_master.Areas.Admin.Controllers
         }
 
         // POST: Admin/Settings/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SET_ID,Name,Value,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Setting setting)
+        public async Task<IActionResult> Create([Bind("Name,Value")] Setting setting)
         {
             if (ModelState.IsValid)
             {
+                var currentUser = await GetCurrentUser();
+                setting.CreatedDate = DateTime.Now;
+                setting.CreatedBy = currentUser?.UserName ?? "System";  // Lấy tên người dùng hoặc mặc định là "System"
                 _context.Add(setting);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(setting);
         }
 
@@ -86,21 +70,20 @@ namespace ogani_master.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var setting = await _context.Settings.FindAsync(id);
+            var setting = await _context.Settings.FirstOrDefaultAsync(s => s.SET_ID == id);
             if (setting == null)
             {
                 return NotFound();
             }
+
             ViewBag.CurrentUser = await GetCurrentUser();
             return View(setting);
         }
 
         // POST: Admin/Settings/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SET_ID,Name,Value,CreatedDate,CreatedBy,UpdatedDate,UpdatedBy")] Setting setting)
+        public async Task<IActionResult> Edit(int id, [Bind("SET_ID,Name,Value")] Setting setting)
         {
             if (id != setting.SET_ID)
             {
@@ -109,6 +92,20 @@ namespace ogani_master.Areas.Admin.Controllers
 
             if (ModelState.IsValid)
             {
+                var currentUser = await GetCurrentUser();
+                var existingSetting = await _context.Settings.AsNoTracking().FirstOrDefaultAsync(s => s.SET_ID == id);
+
+                if (existingSetting == null)
+                {
+                    return NotFound();
+                }
+
+                // Giữ lại thông tin người tạo và ngày tạo
+                setting.CreatedBy = existingSetting.CreatedBy;
+                setting.CreatedDate = existingSetting.CreatedDate;
+                setting.UpdatedBy = currentUser?.UserName ?? "System";  // Cập nhật người chỉnh sửa
+                setting.UpdatedDate = DateTime.Now;  // Cập nhật thời gian chỉnh sửa
+
                 try
                 {
                     _context.Update(setting);
@@ -127,6 +124,7 @@ namespace ogani_master.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.CurrentUser = await GetCurrentUser();
             return View(setting);
         }
 
@@ -138,12 +136,12 @@ namespace ogani_master.Areas.Admin.Controllers
                 return NotFound();
             }
 
-            var setting = await _context.Settings
-                .FirstOrDefaultAsync(m => m.SET_ID == id);
+            var setting = await _context.Settings.FirstOrDefaultAsync(s => s.SET_ID == id);
             if (setting == null)
             {
                 return NotFound();
             }
+
             ViewBag.CurrentUser = await GetCurrentUser();
             return View(setting);
         }
@@ -157,9 +155,8 @@ namespace ogani_master.Areas.Admin.Controllers
             if (setting != null)
             {
                 _context.Settings.Remove(setting);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 

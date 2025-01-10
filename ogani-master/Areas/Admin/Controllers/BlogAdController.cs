@@ -198,6 +198,14 @@ namespace ogani_master.Areas.Admin.Controllers
             var blog = await _context.Blogs.FindAsync(id);
             if (blog != null)
             {
+                string oldFilePath = Path.Combine(_webHostEnvironment.WebRootPath, "data", "blog", blog.Image);
+
+                // Xóa ảnh cũ nếu tồn tại
+                if (System.IO.File.Exists(oldFilePath))
+                {
+                    System.IO.File.Delete(oldFilePath);
+                }
+
                 _context.Blogs.Remove(blog);
                 await _context.SaveChangesAsync();
             }

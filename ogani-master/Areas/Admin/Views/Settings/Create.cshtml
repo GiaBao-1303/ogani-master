@@ -1,4 +1,4 @@
-﻿@model ogani_master.Models.Setting
+﻿@model ogani_master.dto.SettingCreateDto
 
 
 @{
@@ -13,7 +13,7 @@
                         <h4 class="card-title">Create New Setting</h4>
                     </div>
                     <div class="card-body">
-                        <form asp-action="Create">
+                        <form asp-area="Admin" asp-controller="Settings" asp-action="Create" method="post">
                             <!-- Validation summary -->
                             <div asp-validation-summary="ModelOnly" class="text-danger mb-4"></div>
 
@@ -39,12 +39,12 @@
                             @* </div> *@
 
                             <!-- Created By Field -->
-                            <div class="form-group mb-3">
+                           @*  <div class="form-group mb-3">
                                 <label asp-for="CreatedBy" class="control-label">Created By</label>
                                 <input asp-for="CreatedBy" class="form-control" placeholder="Enter creator's name" />
                                 <span asp-validation-for="CreatedBy" class="text-danger"></span>
                             </div>
-
+ *@
                             <!-- Updated Date Field -->
                             @* <div class="form-group mb-3"> *@
                             @*     <label asp-for="UpdatedDate" class="control-label">Updated Date</label> *@

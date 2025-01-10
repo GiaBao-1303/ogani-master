@@ -45,7 +45,7 @@
                                             <td>@Html.DisplayFor(modelItem => item.CreatedBy)</td>
                                             <td>@Html.DisplayFor(modelItem => item.UpdatedBy)</td>
                                             <td>
-                                                <a asp-action="Edit" asp-route-id="@item.SET_ID" class="text-warning">
+                                                <a asp-area="Admin" asp-controller="Settings" asp-action="Edit" asp-route-id="@item.SET_ID" class="text-warning">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a asp-action="Details" asp-route-id="@item.SET_ID" class="text-info ms-3">

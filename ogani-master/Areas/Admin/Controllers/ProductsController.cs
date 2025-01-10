@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Azure.Core;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ogani_master.Areas.Admin.DTO;
@@ -61,6 +62,12 @@ namespace ogani_master.Areas.Admin.Controllers
                 return View(request);
             }
 
+            if(request.DiscountPrice > request.Price)
+            {
+                TempData["ErrorMessage-discountPrice"] = "Discount Price cannot be greater than the original Price. Please enter a valid Discount Price.";
+                return View(request);
+            }
+
             var currentUser = await GetCurrentUser();
             var newProduct = new Product
             {
@@ -106,6 +113,8 @@ namespace ogani_master.Areas.Admin.Controllers
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();
 
+
+
             ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name", product.CAT_ID);
             ViewBag.CurrentUser = await GetCurrentUser();
             return View(product);
@@ -120,7 +129,13 @@ namespace ogani_master.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                // Trả về View với dữ liệu ProductDTO được chuyển đổi sang Product
+                if (productdto.DiscountPrice > productdto.Price)
+                {
+                    TempData["ErrorMessage-discountPrice"] = "Discount Price cannot be greater than the original Price. Please enter a valid Discount Price.";
+                    return View(productdto);
+                }
+
+
                 var productInvalid = new Product
                 {
                     PRO_ID = productdto.PRO_ID,

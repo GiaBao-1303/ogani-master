@@ -28,6 +28,15 @@
     <link rel="stylesheet" href="~/Admin/css/custom.css" />
 
     <style>
+       
+        body .truncate {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+            margin: 0.5rem 0.5rem;
+            padding: 0px !important;
+        }
         .sidebar-menu .nav-item.active .nav-link {
             color: var(--lte-sidebar-hover-color) !important;
             background-color: var(--lte-sidebar-hover-bg) !important;
@@ -275,7 +284,6 @@
                                 </p>
                             </a>
                         </li>
-<<<<<<< HEAD
                         <li class="nav-item @Html.IsParentActive([
                                 new ControllerInfo{ action = "Index", controllerName = "ManagementUsers" }
                             ])">
@@ -286,9 +294,6 @@
                                 </p>
                             </a>
                         </li>
-=======
-                      
->>>>>>> d1cc9868ab77abe113dd6bd895da653cac2abe86
                     </ul>
                     <!--end::Sidebar Menu-->
                 </nav>
