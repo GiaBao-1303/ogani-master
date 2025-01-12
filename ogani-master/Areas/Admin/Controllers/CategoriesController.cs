@@ -46,7 +46,7 @@ namespace ogani_master.Areas.Admin.Controllers
             return View(categories);
         }
 
-        // GET: Admin/Categories/Details/5
+        // GET: Admin/Categories/Details 
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -140,9 +140,8 @@ namespace ogani_master.Areas.Admin.Controllers
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
-                {
-                    // Kiểm tra nếu category.CAT_ID có giá trị và gọi CategoryExists
-                    if (!CategoryExists(category.CAT_ID ?? 0))  // Dùng ?? 0 nếu CAT_ID là null
+                { 
+                    if (!CategoryExists(category.CAT_ID ?? 0))  
                     {
                         return NotFound();
                     }
@@ -180,21 +179,13 @@ namespace ogani_master.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            //var category = await _context.Categories.FindAsync(id);
-            //if (category != null)
-            //{
-            //    _context.Categories.Remove(category);
-            //}
-
-            //await _context.SaveChangesAsync();
-            //return RedirectToAction(nameof(Index));
             var category = await _context.Categories.Include(c => c.Products).FirstOrDefaultAsync(c => c.CAT_ID == id);
             if (category != null)
             {
-                // Ngắt kết nối giữa sản phẩm và danh mục (đặt CategoryId = null cho tất cả sản phẩm trong danh mục này)
+             
                 foreach (var product in category.Products)
                 {
-                    product.CAT_ID = null; // CategoryId có thể nhận giá trị null
+                    product.CAT_ID = null;
                 }
 
                 _context.Categories.Remove(category);

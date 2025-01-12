@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ogani_master.Areas.Admin.DTO;
 using ogani_master.Models;
 
@@ -51,23 +52,29 @@ namespace ogani_master.Areas.Admin.Controllers
             ViewBag.CurrentUser = await GetCurrentUser();
             return View();
         }
-
+        /// Post creates
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([FromForm] ProductDTO request)
         {
-            if (!ModelState.IsValid)
+            Console.WriteLine($"Description: {request.Description}");
+            if (request.quantity < 0)
             {
+                ModelState.AddModelError("quantity", "The quantity of products cannot be negative.");
                 ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name");
                 return View(request);
             }
-
             if(request.DiscountPrice > request.Price)
             {
                 TempData["ErrorMessage-discountPrice"] = "Discount Price cannot be greater than the original Price. Please enter a valid Discount Price.";
                 return View(request);
             }
-
+            if (!ModelState.IsValid)
+            {
+                ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name", request.CAT_ID);
+                TempData["ErrorMessage"] = "Please check again for promotional prices and quantities.";
+                return View(request);
+            }
             var currentUser = await GetCurrentUser();
             var newProduct = new Product
             {
@@ -120,41 +127,29 @@ namespace ogani_master.Areas.Admin.Controllers
             return View(product);
         }
 
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [FromForm] ProductDTO productdto)
         {
             if (id != productdto.PRO_ID) return NotFound();
 
+            // Kiểm tra tính hợp lệ
+            if (productdto.DiscountPrice > productdto.Price)
+            {
+                ModelState.AddModelError("DiscountPrice", "Discount Price cannot be greater than the original Price.");
+            }
+            if (productdto.quantity < 0)
+            {
+                ModelState.AddModelError("quantity", "The quantity of products cannot be negative.");
+            }
+
             if (!ModelState.IsValid)
             {
-                if (productdto.DiscountPrice > productdto.Price)
-                {
-                    TempData["ErrorMessage-discountPrice"] = "Discount Price cannot be greater than the original Price. Please enter a valid Discount Price.";
-                    return View(productdto);
-                }
-
-
-                var productInvalid = new Product
-                {
-                    PRO_ID = productdto.PRO_ID,
-                    CAT_ID = productdto.CAT_ID,
-                    Name = productdto.Name,
-                    Intro = productdto.Intro,
-                    Price = productdto.Price,
-                    DiscountPrice = productdto.DiscountPrice,
-                    Unit = productdto.Unit,
-                    Rate = productdto.Rate,
-                    quantity = productdto.quantity,
-                    Description = productdto.Description,
-                    Details = productdto.Details
-                };
-
+                // Truyền lại dữ liệu để tránh mất dropdown và dữ liệu khi trả về view
                 ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name", productdto.CAT_ID);
                 ViewBag.CurrentUser = await GetCurrentUser();
-
-                return View(productInvalid);
+                TempData["ErrorMessage"] = "Please check the input fields and try again.";
+                return View(productdto);
             }
 
             // Lấy sản phẩm hiện tại từ database
@@ -163,54 +158,58 @@ namespace ogani_master.Areas.Admin.Controllers
 
             try
             {
-                // Cập nhật các trường dữ liệu
+                // Cập nhật dữ liệu sản phẩm
                 existingProduct.Name = productdto.Name;
                 existingProduct.Intro = productdto.Intro;
                 existingProduct.Price = productdto.Price;
                 existingProduct.DiscountPrice = productdto.DiscountPrice;
                 existingProduct.Unit = productdto.Unit == "Other" && !string.IsNullOrEmpty(Request.Form["OtherUnit"])
-                                        ? Request.Form["OtherUnit"]
-                                        : productdto.Unit;
-                existingProduct.Rate = productdto.Rate;
+                    ? Request.Form["OtherUnit"]
+                    : productdto.Unit;
                 existingProduct.quantity = productdto.quantity;
-                existingProduct.Description = productdto.Description;
-                existingProduct.Details = productdto.Details;
+                existingProduct.Description = productdto.Description ?? "No description provided.";
+                existingProduct.Details = productdto.Details ?? "No details provided.";
+                existingProduct.UpdatedBy = (await GetCurrentUser())?.UserName;
+                existingProduct.UpdatedDate = DateTime.Now;
 
-                // Xử lý avatar mới (nếu có)
-                if (productdto.Avatar != null)
+                // Xử lý ảnh đại diện nếu có thay đổi
+                if (productdto.Avatar != null && productdto.Avatar.Length > 0)
                 {
                     string extension = Path.GetExtension(productdto.Avatar.FileName);
                     string newFileName = $"{Guid.NewGuid()}{extension}";
                     string filePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", newFileName);
 
+                    // Lưu ảnh mới
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await productdto.Avatar.CopyToAsync(stream);
                     }
 
-                    // Xóa file ảnh cũ (nếu tồn tại)
+                    // Xóa ảnh cũ nếu tồn tại
                     if (!string.IsNullOrEmpty(existingProduct.Avatar))
                     {
                         string oldFilePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", existingProduct.Avatar);
-                        if (System.IO.File.Exists(oldFilePath)) System.IO.File.Delete(oldFilePath);
+                        if (System.IO.File.Exists(oldFilePath))
+                        {
+                            System.IO.File.Delete(oldFilePath);
+                        }
                     }
 
                     existingProduct.Avatar = newFileName;
                 }
 
-                // Cập nhật thông tin người chỉnh sửa
-                existingProduct.UpdatedBy = (await GetCurrentUser())?.UserName;
-                existingProduct.UpdatedDate = DateTime.Now;
-
-                // Cập nhật sản phẩm vào database
+                // Cập nhật vào database
                 _context.Update(existingProduct);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Product updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ProductExists(productdto.PRO_ID)) return NotFound();
-                throw;
+                if (!ProductExists(productdto.PRO_ID))
+                    return NotFound();
+
+                throw; // Ném lại lỗi để hiển thị thông báo lỗi nếu cần
             }
         }
 
@@ -233,7 +232,15 @@ namespace ogani_master.Areas.Admin.Controllers
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();
-
+            /// Xoá ảnh 
+            if (!string.IsNullOrEmpty(product.Avatar))
+            {
+                string filePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", product.Avatar);
+                if (System.IO.File.Exists(filePath))
+                { 
+                System.IO.File.Delete(filePath);
+                }
+            }
             _context.Products.Remove(product);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));

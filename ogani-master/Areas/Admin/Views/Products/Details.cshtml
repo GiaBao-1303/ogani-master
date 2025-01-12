@@ -4,134 +4,120 @@
     ViewData["Title"] = "Product Details";
 }
 
-<div class="container mt-3">
-    <!-- Page Header -->
+<div class="container mt-5">
+    <!-- Card Shadow -->
     <div class="row justify-content-center">
-        <div class="col-md-11">
-            <div class="card shadow-lg">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">Product Details</h5>
+        <div class="col-md-10">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-success text-white text-staff">
+                    <h4 class="mb-0"><i class="fas fa-info-circle"></i> Product Details</h4>
                 </div>
                 <div class="card-body">
-                    <!-- Avatar -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Avatar):</label>
-                        <p> <img src="@Url.Content("~/data/product/" + Model.Avatar)" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd;" /></p>
-                    </div>
-
-                    <!-- Name -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Name):</label>
-                        <p>@Html.DisplayFor(model => model.Name)</p>
-                    </div>
-
-                    <!-- Unit -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Unit):</label>
-                        <p>@Html.DisplayFor(model => model.Unit)</p>
-                    </div>
-
-                    <!-- Price and Discount Price -->
-                    <div class="row mb-3">
-                        @* <div class="col-md-6"> *@
-                        @*     <label class="fw-bold">@Html.DisplayNameFor(model => model.Price):</label> *@
-                        @*     <p class="text-success" type="Number"><b>@Html.DisplayFor(model => model.Price.ToString("0.##"))</b></p> *@
-                        @* </div> *@
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Price):</label>
-                            <p class="text-success"><b>@Model.Price.ToString("#,0.##")</b></p>
+                    <div class="row mb-4">
+                        <div class="col-md-4 text-center">
+                            <label class="fw-bold">Product Image:</label>
+                            <div class="border p-2 rounded">
+                                <img src="@Url.Content("~/data/product/" + Model.Avatar)" alt="Product Image"
+                                     style="max-width: 100%; height: auto;" class="rounded shadow-sm" />
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.DiscountPrice):</label>
-                            <p class="text-danger"><b>@Model.DiscountPrice.ToString("#,0.##")</b></p>
-                        </div>
-                    </div>
+                        <div class="col-md-8">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="fw-bold">Name:</label>
+                                    <div class="border p-2 bg-light rounder text-dark">@Html.DisplayFor(model => model.Name)</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fw-bold">Unit:</label>
+                                    <div class="text-dark border p-2 bg-light rounder">@Html.DisplayFor(model => model.Unit)</div>
+                                </div>
+                            </div>
 
-                    <!-- Intro and Rate -->
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Intro):</label>
-                            <p>@Html.DisplayFor(model => model.Intro)</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.Rate):</label>
-                            <p>@Html.DisplayFor(model => model.Rate)</p>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="fw-bold">Price:</label>
+                                    <div class="border rounder p-2 bg-light text-success fw-bold">@Model.Price.ToString("#,0.##") VND</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fw-bold">Discount Price:</label>
+                                    <div class="text-danger fw-bold border p-2 bg-light rounder">@Model.DiscountPrice.ToString("#,0.##") VND</div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label class="fw-bold">Intro:</label>
+                                    <div class="border rounder bg-light p-2">@Html.DisplayFor(model => model.Intro)</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="fw-bold">Rating:</label>
+                                    <div class="bg-light border rouder p-2">@Model.Rate / 5.0 ⭐</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Description -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Description):</label>
-                        <div>@Html.Raw(Model.Description)</div>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="fw-bold">Description:</label>
+                            <div class="border rounded p-3 bg-light">
+                                @Html.Raw(Model.Description ?? "No description available.")
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Details -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Details):</label>
-                        <div>@Html.Raw(Model.Details)</div>
-                     </div>
-
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <label class="fw-bold">Details:</label>
+                            <div class="border rounded p-3 bg-light">
+                                @Html.Raw(Model.Details ?? "No details available.")
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- Category -->
-                    <div class="form-group mb-3">
-                        <label class="fw-bold">@Html.DisplayNameFor(model => model.Category):</label>
-                        <p>@Html.DisplayFor(model => model.Category.Name)</p>
-                    </div>
-
-                    <!-- Created Date and By -->
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.CreatedDate):</label>
-                            <p>@Html.DisplayFor(model => model.CreatedDate)</p>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.CreatedBy):</label>
-                            <p>@Html.DisplayFor(model => model.CreatedBy)</p>
+                            <label class="fw-bold">Category:</label>
+                            <div class="border rounded p-3 bg-light">
+                                @Html.DisplayFor(model => model.Category.Name)
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Updated Date and By -->
+                    <!-- Created and Updated Info -->
                     <div class="row mb-3">
                         <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.UpdatedDate):</label>
-                            <p>@Html.DisplayFor(model => model.UpdatedDate)</p>
+                            <label class="fw-bold">Created Date:</label>
+                            <div class="border rounded p-2 bg-light">
+                                @Html.DisplayFor(model => model.CreatedDate)
+                            </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="fw-bold">@Html.DisplayNameFor(model => model.UpdatedBy):</label>
-                            <p>@Html.DisplayFor(model => model.UpdatedBy)</p>
+                            <label class="fw-bold">Created By:</label>
+                            <div class="border rounded p-2 bg-light">@Html.DisplayFor(model => model.CreatedBy)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Updated Date:</label>
+                            <div class="border rounder p-2 bg-light">@Html.DisplayFor(model => model.UpdatedDate)</div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="fw-bold">Updated By:</label>
+                            <div class=" border rounded-right p-2 bg-light">@Html.DisplayFor(model => model.UpdatedBy)</div>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
-                    <div class="form-group text-center">
-                        <a asp-action="Edit" asp-route-id="@Model?.PRO_ID" class="btn btn-primary me-2">
+                    <div class="text-center mt-4">
+                        <a asp-action="Edit" asp-route-id="@Model?.PRO_ID" class="btn btn-primary btn-lg me-3">
                             <i class="fas fa-edit"></i> Edit Product
                         </a>
-                        <a asp-action="Index" class="btn btn-secondary">
+                        <a asp-action="Index" class="btn btn-secondary btn-lg">
                             <i class="fas fa-arrow-left"></i> Back to List
                         </a>
                     </div>
-                    @*==================================== Show IMG Products ======================================================  *@
-                    <script>
-                        window.onload = () => {
-                            document.getElementById("Avatar").onchange = (e) => {
-                                var preview = document.getElementById('imgPreview');
-                                var file = e.target.files[0];
-                                var reader  = new FileReader();
-
-                                reader.onloadend = function () {
-                                  preview.src = reader.result;
-                                }
-
-                                if (file) {
-                                  reader.readAsDataURL(file);
-                                } else {
-                                  preview.src = '';
-                                }
-                            };
-                        }
-                    </script>
-
                 </div>
             </div>
         </div>

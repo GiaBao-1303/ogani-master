@@ -4,407 +4,424 @@
     ViewData["Title"] = "Edit";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Edit Product</title>
-</head>
-<body class="bg-light">
-    <div class="container mt-4">
-        <div class="row justify-content-center">
-            <div class="col-md-8">
-                <div class="card shadow-lg">
-                    <div class="card-header bg-success text-white">
-                        <h4 class="mb-0">Edit Product</h4>
-                    </div>
-                    <div class="card-body">
-                        <form asp-action="Edit" enctype="multipart/form-data">
-                            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
-                            <input type="hidden" asp-for="PRO_ID" />
-
-                            <!-- Category -->
-                            @* <div class="mb-3"> *@
-                            @*     <label asp-for="CAT_ID" class="form-label fw-bold">Category</label> *@
-                            @*     <select asp-for="CAT_ID" class="form-select" asp-items="ViewBag.CAT_ID"></select> *@
-                            @*     <span asp-validation-for="CAT_ID" class="text-danger"></span> *@
-                            @* </div> *@
-                            <div class="form-group">
-                                <label asp-for="CAT_ID" class="control-label"></label>
-                                @Html.DropDownListFor(
-                                                  model => model.CAT_ID,
-                                                  (SelectList)ViewData["CAT_ID"],   
-                                                  "Chọn danh mục", // Dòng placeholder
-                                                  new { @class = "form-control" } // Thêm class CSS nếu cần
-                                                  )
-                                @Html.ValidationMessageFor(model => model.CAT_ID, "", new { @class = "text-danger" })
-                            </div>
-
-                            <!-- Avatar -->
-                            <div class="mb-3">
-                                @* <label asp-for="Avatar" class="form-label fw-bold">Avatar</label> *@
-                                @* <input asp-for="Avatar" class="form-control" type="file" accept="image/*" /> *@
-                                @* <span asp-validation-for="Avatar" class="text-danger"></span> *@
-                                <label asp-for ="Avatar" class="form-lable fw-bold">Avatar </label>
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col">
+            <div class="card border-0 shadow-lg">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0"><i class="fas fa-info-circle ms-1 me-3"></i> Edit Product</h4>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Edit" enctype="multipart/form-data" id="EditForm">
+                        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+                        <input type="hidden" asp-for="PRO_ID" />
+                        <!-- Avatar -->
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label asp-for="Avatar" class="form-lable fw-bold">Product Photos </label>
                                 @* Hiển thị ảnh nếu có ảnh  *@
                                 @if (!string.IsNullOrEmpty(Model.Avatar))
-                                { 
-                                <div class="mb-2">
-                                        <img src="@Url.Content("~/data/product/" + Model.Avatar)" alt="Current Avatar" width="150"/>
-                                </div>
-                                    <small class="text-muted">Chọn ảnh mới nếu bạn muốn thay thế ảnh cũ.</small>
+                                {
+                                    <div class="mb-2">
+                                        <img src="@Url.Content("~/data/product/" + Model.Avatar)" alt="Current Avatar" width="150" />
+                                    </div>
+                                    <small class="text-muted"><b><i class="text-danger">Select a new photo if you want to replace the old photo.</i></b></small>
                                 }
                                 <input asp-for="Avatar" class="form-control" type="file" accept="image/*" />
                                 <span asp-validation-for="Avatar" class="text-danger"></span>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group col">
+                                <label class=" mt-0"> <b>New Product Photos</b></label>
                                 <div>
-                                    <img id="imgPreview" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; margin-top: 10px;" />
+                                    <img id="imgPreview" style="max-width: 200px; max-height: 100px; border: 1px solid #ddd; margin-top: 5px;" />
                                 </div>
                             </div>
-                            <!-- Name -->
-                            <div class="mb-3">
-                                <label asp-for="Name" class="form-label fw-bold">Name</label>
-                                <input asp-for="Name" class="form-control" />
-                                <span asp-validation-for="Name" class="text-danger"></span>
-                            </div>
+                        </div>
+                        <!-- Category -->
+                       
 
-                            <!-- Intro -->
-                            <div class="mb-3">
-                                <label asp-for="Intro" class="form-label fw-bold">Introduction</label>
-                                <input asp-for="Intro" class="form-control" />
-                                <span asp-validation-for="Intro" class="text-danger"></span>
-                            </div>
+                        <!-- Name -->
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-bold">Name</label>
+                            <input asp-for="Name" class="form-control" id="NameInput" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </div>
 
-                            <!-- Price & Discount Price -->
-                            @* <div class="row"> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label asp-for="Price" class="form-label fw-bold">Price</label> *@
-                            @*         <input asp-for="Price" class="form-control" /> *@
-                            @*         <span asp-validation-for="Price" class="text-danger"></span> *@
-                            @*     </div> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price</label> *@
-                            @*         <input asp-for="DiscountPrice" class="form-control" /> *@
-                            @*         <span asp-validation-for="DiscountPrice" class="text-danger"></span> *@
-                            @*     </div> *@
-                            @* </div> *@
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="Price" class="form-label fw-bold">Price</label>
-                                    <input asp-for="Price" id="Price" class="form-control" oninput="formatPrice(this)" />
-                                    <span asp-validation-for="Price" class="text-danger"></span>
+                        <!-- Intro -->
+                        <div class="mb-3">
+                            <label asp-for="Intro" class="form-label fw-bold">Introduction</label>
+                            <input asp-for="Intro" class="form-control" />
+                            <span asp-validation-for="Intro" class="text-danger"></span>
+                        </div>
+
+                        <div class=" form-group row">
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="Price" class="form-label fw-bold">Price</label>
+                                <input asp-for="Price" type="number" class="form-control" oninput="formatPrice(this)" value="@Model.Price.ToString("#,0.##")" id="PriceInput" />
+                                <span asp-validation-for="Price" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price</label>
+                                <input asp-for="DiscountPrice" id="DiscountPrice" class="form-control" oninput="formatPrice(this)" value="@Model.DiscountPrice.ToString("#,0.##")" id="DiscountPriceInput" />
+                                <span asp-validation-for="DiscountPrice" class="text-danger"></span>
+                        </div>
+                            <div class="form-group row">
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="quantity" class="form-label fw-bold">Quantity</label>
+                                    <input asp-for="quantity" type="number" min="0" class="form-control" oninput="formatPrice(this)" id="QuantityInput" />
+                                    <span asp-validation-for="quantity" class="text-danger"></span>
                                 </div>
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price</label>
-                                    <input asp-for="DiscountPrice" id="DiscountPrice" class="form-control" oninput="formatPrice(this)" />
-                                    <span asp-validation-for="DiscountPrice" class="text-danger"></span>
+                                <div class="col-md-4 mb-3">
+                                    <label asp-for="CAT_ID" class="control-label form-label fw-bold mb-2">Categories</label>
+                                    @Html.DropDownListFor(
+                                             model => model.CAT_ID,
+                                             (SelectList)ViewData["CAT_ID"],
+                                             "Chọn danh mục", // Dòng placeholder
+                                             new { @class = "form-control" } // Thêm class CSS nếu cần
+                                             )
+                                    @Html.ValidationMessageFor(model => model.CAT_ID, "", new { @class = "text-danger" })
                                 </div>
-                            </div>
-
-                            <!-- Unit -->
-                            @* <div class="mb-3"> *@
-                            @*     <label asp-for="Unit" class="form-label fw-bold">Unit</label> *@
-                            @*     <input asp-for="Unit" class="form-control" /> *@
-                            @*     <span asp-validation-for="Unit" class="text-danger"></span> *@
-                            @* </div> *@
+                        </div>
+                        <div class="form-group row mt-1 ">
                             <div class="form-group row mt-1">
-                                <div class="form-group col-md-2">
-                                    <label asp-for="Unit" class="control-label">Đơn vị</label>
-                                    <div class="input-group">
-                                        <select asp-for="Unit" class="form-control" id="unitSelect">
-                                            <option value="KG">KG</option>
-                                            <option value="Gram">Gram</option>
-                                            <option value="Other">Khác</option>
-                                        </select>
-
-                                        <div class="input-group-append">
-                                            <button type="button" class="btn btn-success" id="addOtherOption" style="display: none;">+</button>
+                                <!-- Dropdown chọn đơn vị và ô nhập đơn vị khác trên cùng một hàng -->
+                                <div class="col-md-8 d-flex align-items-start">
+                                    <div class="form-group me-3 " style="flex: 1;">
+                                            <label asp-for="Unit" class="control-label form-label fw-bold">Unit</label>
+                                        <div class="input-group">
+                                            <select asp-for="Unit" class="form-control" id="unitSelect">
+                                                    <option value="KG">Kilogram (Kg)</option>
+                                                <option value="Gram">Gram (Gr)</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                            <div class="input-group-append">
+                                                <button type="button" class="btn btn-success" id="addOtherOption" style="display: none;">+</button>
+                                            </div>
                                         </div>
+                                        <span asp-validation-for="Unit" class="text-danger"></span>
                                     </div>
 
-                                    <!-- Input for 'Other' -->
-                                    <div class="form-group col-md-2 mt-2" id="otherUnitContainer" style="display: none; width: 140px;">
+                                    <div class="form-group form-label fw-bold mb-2" id="otherUnitContainer" style="display: none; flex: 0.5;">
+                                        <label for="OtherUnit" class="control-label mb-1">Unit Other</label>
                                         <input type="text" id="OtherUnit" name="OtherUnit" class="form-control" maxlength="50" placeholder="Nhập đơn vị khác" />
                                         <span class="text-danger" id="otherUnitError"></span>
                                     </div>
-
-                                    <span asp-validation-for="Unit" class="text-danger"></span>
-                                </div>
-
-                                <div class="form-group col-md-2">
-                                    <label asp-for="Rate" class="control-label"></label>
-                                    <input asp-for="Rate" class="form-control" />
-                                    <span asp-validation-for="Rate" class="text-danger"></span>
                                 </div>
                             </div>
-                            <!-- Rate -->
-                            <div class="mb-3">
-                                <label asp-for="Rate" class="form-label fw-bold">Rate</label>
-                                <input asp-for="Rate" class="form-control" />
-                                <span asp-validation-for="Rate" class="text-danger"></span>
-                            </div>
+                        </div>
 
-                            <!-- Description -->
-                            <div class="mb-3">
-                                <label asp-for="Description" class="form-label fw-bold">Description</label>
-                                <textarea asp-for="Description" class="form-control"></textarea>
-                                <span asp-validation-for="Description" class="text-danger"></span>
-                            </div>
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-bold">Description</label>
+                            <textarea asp-for="Description" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
 
-                            <!-- Details -->
-                            <div class="mb-3">
-                                <label asp-for="Details" class="form-label fw-bold">Details</label>
-                                <textarea asp-for="Details" class="form-control"></textarea>
-                                <span asp-validation-for="Details" class="text-danger"></span>
-                            </div>
+                        <!-- Details -->
+                        <div class="mb-3">
+                            <label asp-for="Details" class="form-label fw-bold">Details</label>
+                            <textarea asp-for="Details" class="form-control"></textarea>
+                            <span asp-validation-for="Details" class="text-danger"></span>
+                        </div>
+                        <!-- Action Buttons -->
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-success me-2" id="submitBtn">
+                                <i class="fas fa-save"></i> Save
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                    @*==================================== Show IMG Products ======================================================  *@
+                    <script>
+                        window.onload = () => {
+                            document.getElementById("Avatar").onchange = (e) => {
+                                var preview = document.getElementById('imgPreview');
+                                var file = e.target.files[0];
+                                var reader  = new FileReader();
 
-                            <!-- Created & Updated Info -->
-                            @* <div class="row"> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label asp-for="CreatedDate" class="form-label fw-bold">Created Date</label> *@
-                            @*         <input asp-for="CreatedDate" class="form-control" /> *@
-                            @*         <span asp-validation-for="CreatedDate" class="text-danger"></span> *@
-                            @*     </div> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label asp-for="UpdatedDate" class="form-label fw-bold">Updated Date</label> *@
-                            @*         <input asp-for="UpdatedDate" class="form-control" /> *@
-                            @*         <span asp-validation-for="UpdatedDate" class="text-danger"></span> *@
-                            @*     </div> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label asp-for="CreatedBy" class="form-label fw-bold">Created By</label> *@
-                            @*         <input asp-for="CreatedBy" class="form-control" /> *@
-                            @*         <span asp-validation-for="CreatedBy" class="text-danger"></span> *@
-                            @*     </div> *@
-                            @*     <div class="col-md-6 mb-3"> *@
-                            @*         <label asp-for="UpdatedBy" class="form-label fw-bold">Updated By</label> *@
-                            @*         <input asp-for="UpdatedBy" class="form-control" /> *@
-                            @*         <span asp-validation-for="UpdatedBy" class="text-danger"></span> *@
-                            @*     </div> *@
-                            @* </div> *@
+                                reader.onloadend = function () {
+                                  preview.src = reader.result;
+                                }
 
-                            <!-- Action Buttons -->
-                            <div class="d-flex justify-content-end">
-                                <button type="submit" class="btn btn-success me-2">
-                                    <i class="fas fa-save"></i> Save
-                                </button>
-                                <a asp-action="Index" class="btn btn-secondary">
-                                    <i class="fas fa-arrow-left"></i> Back to List
-                                </a>
-                            </div>
-                        </form>
-                        @*==================================== Show IMG Products ======================================================  *@
-                        <script>
-                            window.onload = () => {
-                                document.getElementById("Avatar").onchange = (e) => {
-                                    var preview = document.getElementById('imgPreview');
-                                    var file = e.target.files[0];
-                                    var reader  = new FileReader();
+                                if (file) {
+                                  reader.readAsDataURL(file);
+                                } else {
+                                  preview.src = '';
+                                }
+                            };
+                        }
+                    </script>
 
-                                    reader.onloadend = function () {
-                                      preview.src = reader.result;
-                                    }
-
-                                    if (file) {
-                                      reader.readAsDataURL(file);
-                                    } else {
-                                      preview.src = '';
-                                    }
-                                };
-                            }
-                        </script>
-
-                    </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
-    @section Header {
-        <link rel="stylesheet" href="~/Admin/plugins/ckeditor5/ckeditor5.css">
+@section Header {
+    <link rel="stylesheet" href="~/Admin/plugins/ckeditor5/ckeditor5.css">
+}
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
 
-    @section Scripts {
-        @{
-            await Html.RenderPartialAsync("_ValidationScriptsPartial");
-        }
-   
-        <script type="importmap">
-            {
-                "imports": {
-                    "ckeditor5": "/Admin/plugins/ckeditor5/ckeditor5.js",
-                    "ckeditor5/": "/Admin/plugins/ckeditor5/"
-                }
-            }
-        </script>
-        <script type="module">
-            import {
-                ClassicEditor,
-                Essentials,
-                Paragraph,
-                Bold,
-                Italic,
-                Font,
-                Heading,
-                Alignment,
-                BlockQuote,
-                Link,
-                List,
-                Table,
-                TableToolbar,
-                Image,
-                ImageToolbar,
-                ImageCaption,
-                ImageStyle,
-                ImageResize,
-                MediaEmbed,
-                CodeBlock,
-                HorizontalLine,
-                Highlight
-            } from 'ckeditor5';
-                 ClassicEditor
-                .create(document.querySelector('#Description',), {
-                    plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
-                        BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
-                        ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
-                        HorizontalLine, Highlight],
-                    toolbar: [
-                         'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
-                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-                        'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
-                        '|', 'bulletedList', 'numberedList', '|',
-                        'insertTable', 'mediaEmbed', 'horizontalLine', '|',
-                        'imageUpload'
-                    ],
-                    table: {
-                        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-                    },
-                    image: {
-                        toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
-                        resizeUnit: 'px',
-                        styles: ['full', 'side']
-                    }
-                })
-                .then(editor => {
-                    window.editor = editor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        </script>
-        @* /// CK5 detail  *@
-        <script type="module">
-            import {
-                ClassicEditor,
-                Essentials,
-                Paragraph,
-                Bold,
-                Italic,
-                Font,
-                Heading,
-                Alignment,
-                BlockQuote,
-                Link,
-                List,
-                Table,
-                TableToolbar,
-                Image,
-                ImageToolbar,
-                ImageCaption,
-                ImageStyle,
-                ImageResize,
-                MediaEmbed,
-                CodeBlock,
-                HorizontalLine,
-                Highlight
-            } from 'ckeditor5';
-                 ClassicEditor
-                .create(document.querySelector('#Details',), {
-                    plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
-                        BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
-                        ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
-                        HorizontalLine, Highlight],
-                    toolbar: [
-                         'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
-                        'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
-                        'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
-                        '|', 'bulletedList', 'numberedList', '|',
-                        'insertTable', 'mediaEmbed', 'horizontalLine', '|',
-                        'imageUpload'
-                    ],
-                    table: {
-                        contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
-                    },
-                    image: {
-                        toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
-                        resizeUnit: 'px',
-                        styles: ['full', 'side']
-                    }
-                })
-                .then(editor => {
-                    window.editor = editor;
-                })
-                .catch(error => {
-                    console.error(error);
-                });
-        </script>
+    <script>
+                document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById("EditForm");
+            const formInputs = form.querySelectorAll("input, select, textarea");
 
-       @* Xử lý maxlength và show hide  *@
-        <script>
-            $(document).ready(function () {
-                // Check if 'Other' is selected by default
-                if ($('#unitSelect').val() === 'Other') {
+            function validateInput(input) {
+                let value = input.value.trim();
+                let isValid = true;
+
+                // Kiểm tra các trường hợp cụ thể
+                if (input.id === "PriceInput") {
+                    const price = parseFloat(value);
+                    if (isNaN(price) || price <= 0) {
+                        input.classList.add("is-invalid");
+                        isValid = false;
+                    } else {
+                        input.classList.remove("is-invalid");
+                    }
+                }
+
+                if (input.id === "DiscountPriceInput") {
+                    const discountPrice = parseFloat(value);
+                    const price = parseFloat(document.getElementById("PriceInput").value);
+                    if (isNaN(discountPrice) || discountPrice > price) {
+                        input.classList.add("is-invalid");
+                        isValid = false;
+                    } else {
+                        input.classList.remove("is-invalid");
+                    }
+                }
+
+                if (input.id === "QuantityInput") {
+                    const quantity = parseInt(value);
+                    if (isNaN(quantity) || quantity < 0) {
+                        input.classList.add("is-invalid");
+                        isValid = false;
+                    } else {
+                        input.classList.remove("is-invalid");
+                    }
+                }
+
+                // Kiểm tra trường trống
+                if (value === "" && input.required) {
+                    input.classList.add("is-invalid");
+                    isValid = false;
+                } else {
+                    input.classList.remove("is-invalid");
+                }
+
+                return isValid;
+            }
+
+            // Sự kiện blur kiểm tra khi rời khỏi input
+            formInputs.forEach(input => {
+                input.addEventListener("blur", () => validateInput(input));
+            });
+
+            // Kiểm tra tất cả khi submit form
+            form.addEventListener("submit", function (e) {
+                let isFormValid = true;
+
+                formInputs.forEach(input => {
+                    if (!validateInput(input)) {
+                        isFormValid = false;
+                    }
+                });
+
+                if (!isFormValid) {
+                    e.preventDefault(); // Ngăn submit nếu có lỗi
+                    alert("Vui lòng kiểm tra các trường dữ liệu có lỗi trước khi gửi.");
+                }
+            });
+        });
+
+
+    </script>
+
+
+    <script type="importmap">
+        {
+            "imports": {
+                "ckeditor5": "/Admin/plugins/ckeditor5/ckeditor5.js",
+                "ckeditor5/": "/Admin/plugins/ckeditor5/"
+            }
+        }
+    </script>
+    <script type="module">
+        import {
+            ClassicEditor,
+            Essentials,
+            Paragraph,
+            Bold,
+            Italic,
+            Font,
+            Heading,
+            Alignment,
+            BlockQuote,
+            Link,
+            List,
+            Table,
+            TableToolbar,
+            Image,
+            ImageToolbar,
+            ImageCaption,
+            ImageStyle,
+            ImageResize,
+            MediaEmbed,
+            CodeBlock,
+            HorizontalLine,
+            Highlight
+        } from 'ckeditor5';
+             ClassicEditor
+            .create(document.querySelector('#Description',), {
+                plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
+                    BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
+                    ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
+                    HorizontalLine, Highlight],
+                toolbar: [
+                     'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                    'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
+                    '|', 'bulletedList', 'numberedList', '|',
+                    'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+                    'imageUpload'
+                ],
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                },
+                image: {
+                    toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                    resizeUnit: 'px',
+                    styles: ['full', 'side']
+                }
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+    @* /// CK5 detail  *@
+    <script type="module">
+        import {
+            ClassicEditor,
+            Essentials,
+            Paragraph,
+            Bold,
+            Italic,
+            Font,
+            Heading,
+            Alignment,
+            BlockQuote,
+            Link,
+            List,
+            Table,
+            TableToolbar,
+            Image,
+            ImageToolbar,
+            ImageCaption,
+            ImageStyle,
+            ImageResize,
+            MediaEmbed,
+            CodeBlock,
+            HorizontalLine,
+            Highlight
+        } from 'ckeditor5';
+             ClassicEditor
+            .create(document.querySelector('#Details',), {
+                plugins: [Essentials, Paragraph, Bold, Italic, Font, Heading, Alignment,
+                    BlockQuote, Link, List, Table, TableToolbar, Image, ImageToolbar,
+                    ImageCaption, ImageStyle, ImageResize, MediaEmbed, CodeBlock,
+                    HorizontalLine, Highlight],
+                toolbar: [
+                     'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor', '|',
+                    'alignment', 'highlight', '|', 'link', 'blockQuote', 'codeBlock',
+                    '|', 'bulletedList', 'numberedList', '|',
+                    'insertTable', 'mediaEmbed', 'horizontalLine', '|',
+                    'imageUpload'
+                ],
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                },
+                image: {
+                    toolbar: ['imageStyle:full', 'imageStyle:side', '|', 'imageTextAlternative'],
+                    resizeUnit: 'px',
+                    styles: ['full', 'side']
+                }
+            })
+            .then(editor => {
+                window.editor = editor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    </script>
+
+    @* Xử lý maxlength và show hide  *@
+    <script>
+        $(document).ready(function () {
+            // Check if 'Other' is selected by default
+            if ($('#unitSelect').val() === 'Other') {
+                $('#otherUnitContainer').show();  // Show input for 'Other'
+            } else {
+                $('#otherUnitContainer').hide();  // Hide input for 'Other'
+            }
+
+            // When 'Unit' dropdown changes
+            $('#unitSelect').change(function () {
+                if ($(this).val() === 'Other') {
                     $('#otherUnitContainer').show();  // Show input for 'Other'
                 } else {
                     $('#otherUnitContainer').hide();  // Hide input for 'Other'
+                    $('#OtherUnit').val('');  // Clear 'Other' input if not selected
                 }
-
-                // When 'Unit' dropdown changes
-                $('#unitSelect').change(function () {
-                    if ($(this).val() === 'Other') {
-                        $('#otherUnitContainer').show();  // Show input for 'Other'
-                    } else {
-                        $('#otherUnitContainer').hide();  // Hide input for 'Other'
-                        $('#OtherUnit').val('');  // Clear 'Other' input if not selected
-                    }
-                });
-
-                // Handle input validation for 'Other' unit
-                $('#OtherUnit').on('input', function () {
-                    var inputValue = $(this).val();
-                    if (inputValue.length > 50) {
-                        $('#otherUnitError').text("Đơn vị không được quá 50 ký tự.");
-                        $(this).val(inputValue.substring(0, 50)); // Limit input length
-                    } else {
-                        $('#otherUnitError').text("");
-                    }
-                });
             });
-        </script>
-        @* xử lý định dạng số price *@
-        <script>
-            function formatPrice(input) {
-                let value = input.value;
 
-                // Xóa các ký tự không phải là số và dấu phẩy
-                value = value.replace(/[^0-9.]/g, '');
-
-                // Nếu có dấu thập phân, chỉ giữ lại một phần thập phân tối đa
-                let parts = value.split('.');
-                parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');  // Thêm dấu phân cách hàng nghìn
-
-                // Nếu phần thập phân có giá trị là '00', loại bỏ nó
-                if (parts[1] === '00') {
-                    value = parts[0]; // chỉ giữ phần nguyên
+            // Handle input validation for 'Other' unit
+            $('#OtherUnit').on('input', function () {
+                var inputValue = $(this).val();
+                if (inputValue.length > 50) {
+                    $('#otherUnitError').text("Đơn vị không được quá 50 ký tự.");
+                    $(this).val(inputValue.substring(0, 50)); // Limit input length
                 } else {
-                    value = parts.join('.');
+                    $('#otherUnitError').text("");
                 }
+            });
+        });
+    </script>
+    @* xử lý định dạng số price *@
+    <script>
+        function formatPrice(input) {
+            let value = input.value;
 
-                input.value = value;
+            // Xóa các ký tự không phải là số và dấu phẩy
+            value = value.replace(/[^0-9.]/g, '');
+
+            // Nếu có dấu thập phân, chỉ giữ lại một phần thập phân tối đa
+            let parts = value.split('.');
+            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');  // Thêm dấu phân cách hàng nghìn
+
+            // Nếu phần thập phân có giá trị là '00', loại bỏ nó
+            if (parts[1] === '00') {
+                value = parts[0]; // chỉ giữ phần nguyên
+            } else {
+                value = parts.join('.');
             }
-        </script>
-    }
-</body>
-</html>
+
+            input.value = value;
+        }
+    </script>
+}

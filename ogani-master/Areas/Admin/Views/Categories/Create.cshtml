@@ -3,7 +3,7 @@
 @{
     ViewData["Title"] = "Create";
 }
-<div class="app-content">
+<div class="app-content mt-3">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-8">
@@ -23,7 +23,7 @@
 
                             <div class="form-group mb-3">
                                 <label asp-for="DisplayOrder" class="control-label">Display Order</label>
-                                <input asp-for="DisplayOrder" class="form-control" />
+                                <input asp-for="DisplayOrder" type="number" min="0" class="form-control" />
                                 <span asp-validation-for="DisplayOrder" class="text-danger"></span>
                             </div>
                            
