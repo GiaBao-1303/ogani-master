@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Configuration;
 
+
 namespace ogani_master.Areas.Admin.DTO
 {
     public class ProductDTO : BaseModel

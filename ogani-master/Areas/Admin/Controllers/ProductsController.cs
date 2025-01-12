@@ -1,10 +1,13 @@
 ﻿using Azure.Core;
+using X.PagedList;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ogani_master.Areas.Admin.DTO;
 using ogani_master.Models;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using X.PagedList.Extensions;
 
 namespace ogani_master.Areas.Admin.Controllers
 {
@@ -27,11 +30,33 @@ namespace ogani_master.Areas.Admin.Controllers
                 : null;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string searchQuery, int? page)
         {
-            var products = await _context.Products.Include(p => p.Category).ToListAsync();
+            //var products = await _context.Products.Include(p => p.Category).ToListAsync();
+            //ViewBag.CurrentUser = await GetCurrentUser();
+            //return View(products);
+            int pageSize = 12; // Số sản phẩm trên mỗi trang
+            int pageNumber = page ?? 1;
+
+            // Tạo truy vấn IQueryable
+            var query = _context.Products.Include(p => p.Category).AsQueryable();
+
+            // Tìm kiếm nếu có searchQuery
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(p =>
+                    (!string.IsNullOrEmpty(p.Name) && p.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)) ||
+                    (!string.IsNullOrEmpty(p.Description) && p.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
+                );
+            }
+
+            ViewBag.SearchQuery = searchQuery;
             ViewBag.CurrentUser = await GetCurrentUser();
-            return View(products);
+
+         
+            var pagedProducts = query.OrderBy(p => p.PRO_ID).ToPagedList(pageNumber, pageSize);
+
+            return View(pagedProducts); 
         }
 
         public async Task<IActionResult> Details(int? id)

@@ -1,9 +1,12 @@
-﻿@model IEnumerable<ogani_master.Models.Product>
+﻿@* @model IEnumerable<ogani_master.Models.Product> *@
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model IPagedList<ogani_master.Models.Product>
 
 @{
     ViewData["Title"] = "Index";
 }
-<div class="app-content">
+<div class="app-content mt-3">
     <!--begin::Container-->
     <div class="container-fluid">
         <!--begin::Row-->
@@ -16,6 +19,15 @@
                             <div class="col-md">
                                 <h3 class="card-title">Product List</h3>
                             </div>
+                            <div class="col-md-4">
+                                <!-- Form tìm kiếm -->
+                                <form asp-controller="Products" asp-action="Index" method="get" class="d-flex">
+                                    <input type="text" name="searchQuery" class="form-control" placeholder="Search products by name or description..." value="@ViewBag.SearchQuery" />
+                                    <button type="submit" class="btn btn-success ms-1">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </form>
+                            </div>
                             <div class="col-md-auto">
                                 <a asp-action="Create" id="btnAdd"
                                    type="button"
@@ -23,97 +35,120 @@
                                     <i class="fa fa-plus me-1"></i> Add Product
                                 </a>
                             </div>
+
                         </div>
                     </div>
                     <div class="card-body">
-
-                        <div class="table-responsive">
-                            <table id="tbl" class="table table-striped table-hover">
-                                <thead class="thead-light">
-                                    <tr>
-                                        <th>@Html.DisplayNameFor(model => model.Avatar)</th>
-                                        <th>@Html.DisplayNameFor(model => model.Name)</th>
-                                        <th>@Html.DisplayNameFor(model => model.Price)</th>
-                                        <th>@Html.DisplayNameFor(model => model.DiscountPrice)</th>
-                                        <th>@Html.DisplayNameFor(model => model.CreatedBy)</th>
-                                        <th>@Html.DisplayNameFor(model => model.UpdatedBy)</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var item in Model)
-                                    {
+                          @if (!Model.Any())
+                        {
+                            <div class="alert alert-warning text-center">
+                                <i class="fas fa-exclamation-circle"></i> No products found for "<b>@ViewBag.SearchQuery</b>"
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="table-responsive">
+                                <table id="tbl" class="table table-striped table-hover">
+                                    <thead class="thead-light">
                                         <tr>
-                                            <td>
-                                                <img src="@Url.Content("~/data/product/" + item.Avatar)"
-                                                     style="max-width: 100px; max-height: 100px; border: 1px solid #ddd;" />
-                                            </td>
-                                            <td class="text-wrap text-break" title="@item.Name">
-                                                @if (!string.IsNullOrEmpty(item.Name))
-                                                {
-                                                    @if (item.Name.Length > 50)
+                                            <th>Avatar</th>
+                                            <th>Name</th>
+                                            <th>Price</th>
+                                            <th>DiscountPrice</th>
+                                            <th>CreatedBy</th>
+                                            <th>UpdatedBy</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var item in Model)
+                                        {
+                                            <tr>
+                                                <td>
+                                                    <img src="@Url.Content("~/data/product/" + item.Avatar)"
+                                                         style="max-width: 100px; max-height: 100px; border: 1px solid #ddd;" />
+                                                </td>
+                                                <td class="text-wrap text-break" title="@item.Name">
+                                                    @if (!string.IsNullOrEmpty(item.Name))
                                                     {
-                                                        @($"{item.Name.Substring(0, 50)}...")
+                                                        @if (item.Name.Length > 50)
+                                                        {
+                                                            @($"{item.Name.Substring(0, 50)}...")
+                                                        }
+                                                        else
+                                                        {
+                                                            @item.Name
+                                                        }
                                                     }
                                                     else
                                                     {
-                                                        @item.Name
+                                                        <i>No Name</i>
                                                     }
-                                                }
-                                                else
-                                                {
-                                                    <i>No Name</i>
-                                                }
-                                            </td>
-                                            <td>
-                                                @String.Format("{0:N0}", item.Price)
-                                            </td>
-                                            <td>
-                                                @String.Format("{0:N0}", item.DiscountPrice)
-                                            </td>
-                                            <td>
-                                                @(item.CreatedBy ?? "Không rõ")
-                                            </td>
-                                            <td>
-                                                @(item.UpdatedBy ?? "Chưa cập nhật")
-                                            </td>
-                                            <td>
-                                                <div>
-                                                    <a asp-action="Edit" asp-route-id="@item.PRO_ID">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <a asp-action="Details" asp-route-id="@item.PRO_ID" class="text-info ms-3">
-                                                        <i class="fas fa-info-circle"></i>
-                                                    </a>
-                                                    <a asp-action="Delete" asp-route-id="@item.PRO_ID" class="text-danger ms-3">
-                                                        <i class="fas fa-trash-alt"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                                </td>
+                                                <td>
+                                                    @String.Format("{0:N0}", item.Price)
+                                                </td>
+                                                <td>
+                                                    @String.Format("{0:N0}", item.DiscountPrice)
+                                                </td>
+                                                <td>
+                                                    @(item.CreatedBy ?? "Không rõ")
+                                                </td>
+                                                <td>
+                                                    @(item.UpdatedBy ?? "Chưa cập nhật")
+                                                </td>
+                                                <td>
+                                                    <div>
+                                                        <a asp-action="Edit" asp-route-id="@item.PRO_ID">
+                                                            <i class="fas fa-edit"></i>
+                                                        </a>
+                                                        <a asp-action="Details" asp-route-id="@item.PRO_ID" class="text-info ms-3">
+                                                            <i class="fas fa-info-circle"></i>
+                                                        </a>
+                                                        <a asp-action="Delete" asp-route-id="@item.PRO_ID" class="text-danger ms-3">
+                                                            <i class="fas fa-trash-alt"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                                <script>
+                                    window.onload = () => {
+                                        document.getElementById("Avatar").onchange = (e) => {
+                                            var preview = document.getElementById('imgPreview');
+                                            var file = e.target.files[0];
+                                            var reader = new FileReader();
+
+                                            reader.onloadend = function () {
+                                                preview.src = reader.result;
+                                            }
+
+                                            if (file) {
+                                                reader.readAsDataURL(file);
+                                            } else {
+                                                preview.src = '';
+                                            }
+                                        };
                                     }
-                                </tbody>
-                            </table>
-                            <script>
-                                window.onload = () => {
-                                    document.getElementById("Avatar").onchange = (e) => {
-                                        var preview = document.getElementById('imgPreview');
-                                        var file = e.target.files[0];
-                                        var reader = new FileReader();
-
-                                        reader.onloadend = function () {
-                                            preview.src = reader.result;
-                                        }
-
-                                        if (file) {
-                                            reader.readAsDataURL(file);
-                                        } else {
-                                            preview.src = '';
-                                        }
-                                    };
-                                }
-                            </script>
-                        </div>
+                                </script>
+                                <div class="d-flex justify-content-center mt-3">
+                                    @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchQuery = ViewBag.SearchQuery }),
+                                             new PagedListRenderOptions
+                                {
+                                    LinkToPreviousPageFormat = "Trang trước",
+                                    LinkToNextPageFormat = "Trang sau",
+                                    DisplayLinkToFirstPage = PagedListDisplayMode.Always,
+                                    DisplayLinkToLastPage = PagedListDisplayMode.Always,
+                                    MaximumPageNumbersToDisplay = 5,
+                                    UlElementClasses = new[] { "pagination", "justify-content-center" }, // Chuyển chuỗi thành mảng chuỗi
+                                    LiElementClasses = new[] { "page-item", "me-2" }, // Chuyển chuỗi thành mảng chuỗi
+                                    PageClasses = new[] { "page-link", "bg-success", "text-white" } // Chuyển chuỗi thành mảng chuỗi
+                                })
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
