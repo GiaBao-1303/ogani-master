@@ -68,6 +68,7 @@ namespace ogani_master.Areas.Admin.Controllers
             if (product == null) return NotFound();
 
             ViewBag.CurrentUser = await GetCurrentUser();
+
             return View(product);
         }
 

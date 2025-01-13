@@ -1,110 +1,364 @@
 ﻿@using ogani_master.enums;
 @using ogani_master.Extensions;
 @using System.Globalization;
+@using ogani_master.Areas.Admin.Models;
 
 @model ogani_master.Models.Order;
 
 @{
     ViewData["Title"] = "Orders";
     List<Order> orders = ViewBag.Orders;
+    PaginationModel pagination = ViewBag.Pagination;
+}
+
+@section Styles {
+    <style>
+        .table-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .card-header {
+            background: #198754 !important;
+            border-bottom: 2px solid #e9ecef;
+            padding: 15px 20px;
+            border-radius: 12px !important;
+            color: #FFF !important;
+        }
+
+        .table thead th {
+            background: #f8f9fa;
+            font-weight: 600;
+            border-bottom: 2px solid #dee2e6;
+            white-space: nowrap;
+        }
+
+        .table tbody tr:hover {
+            background-color: #f8f9fa;
+            transition: all 0.2s;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .pending {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+
+        .confirmed {
+            background-color: #cce5ff;
+            color: #004085;
+            border: 1px solid #b8daff;
+        }
+
+        .preparing {
+            background-color: #e0f3ff;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .shipping {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .delivered {
+            background-color: #d1e7dd;
+            color: #0f5132;
+            border: 1px solid #badbcc;
+        }
+
+        .canceled {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .returned {
+            background-color: #e2e3e5;
+            color: #383d41;
+            border: 1px solid #d6d8db;
+        }
+
+        .action-btn {
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            opacity: 0.8;
+        }
+
+        .pagination {
+            margin: 20px 0 0;
+            justify-content: center;
+        }
+
+        .page-link {
+            padding: 8px 16px;
+            margin: 0 4px;
+            border-radius: 4px;
+        }
+
+        .search-box {
+            max-width: 300px;
+            margin-bottom: 20px;
+        }
+
+        .truncate {
+            max-width: 200px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+         .pagination-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .pagination {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            gap: 5px;
+        }
+
+        .page-item .page-link {
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: #6c757d;
+            background: #fff;
+            border: 1px solid #dee2e6;
+            min-width: 38px;
+            text-align: center;
+        }
+
+        .page-item.active .page-link {
+                background-color: #198754 !important;
+                border-color: #198754 !important;
+                color: #fff;
+        }
+
+        .page-item.disabled .page-link {
+            background-color: #e9ecef;
+            border-color: #dee2e6;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .page-jump {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .page-jump input {
+            width: 60px;
+            padding: 4px 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .page-jump button {
+            padding: 4px 12px;
+            border-radius: 4px;
+            background: ;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .page-jump button:hover {
+            background: #198754 !important;
+        }
+    </style>
 }
 
 <div class="app-content">
-    <!--begin::Container-->
     <div class="container-fluid">
-        <!--begin::Row-->
         <div class="row">
             <div class="col-12">
-                <!-- Default box -->
-                <div class="card card-success card-outline">
+                <div class="table-container">
                     <div class="card-header">
-                        <div class="row">
-                            <div class="col-md">
-                                <h3 class="card-title">Product List</h3>
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h1 class="card-title mb-0">Orders Management</h1>
                             </div>
-                           
+                            <div class="col-md-6">
+                                <div class="search-box float-md-end">
+                                    <input type="text" class="form-control" placeholder="Search orders...">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table id="tbl" class="table">
+                            <table id="tbl" class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.ORD_ID)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.Product.Name)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.Quantity)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.TotalPrice)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.PaymentMethod)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.CreatedDate)
-                                        </th>
-                                        <th>
-                                            @Html.DisplayNameFor(model => model.Status)
-                                        </th>
+                                        <th>Order ID</th>
+                                        <th>Product Name</th>
+                                        <th>Quantity</th>
+                                        <th>Total Price</th>
+                                        <th>Payment Method</th>
+                                        <th>Created Date</th>
+                                        <th>Status</th>
                                         <th>Actions</th>
-
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @foreach (Order o in orders)
                                     {
-
                                         var statusEnum = (OrderStatus)o.Status;
-                                        var statusClass = statusEnum.GetCssClass();
+                                        var statusClass = statusEnum.ToString().ToLower();
+                                        var displayName = statusEnum.GetDisplayName();
 
                                         <tr>
+                                            <td>@o.ORD_ID</td>
+                                            <td class="truncate">@o.Product.Name</td>
+                                            <td>@o.Quantity</td>
+                                            <td>@o.TotalPrice.ToString("C0", new CultureInfo("en-US"))</td>
+                                            <td>@o.PaymentMethod</td>
+                                            <td>@o.CreatedDate</td>
                                             <td>
-                                                @o.ORD_ID
-                                            </td>
-                                            <td class="truncate">
-                                                @o.Product.Name
-                                            </td>
-                                            <td>
-                                                @o.Quantity
-                                            </td>
-                                            <td>
-                                                @o.TotalPrice.ToString("C0", new CultureInfo("en-US"))
-                                            </td>
-                                            <td>
-                                               @o.PaymentMethod
+                                                <span style="font-weight: 600" class="status-badge @statusClass">
+                                                    @displayName
+                                                </span>
                                             </td>
                                             <td>
-                                                @o.CreatedDate
-                                            </td>
-                                            <td class="@statusClass">
-                                                @statusEnum
-                                            </td>
-                                            <td>
-                                                <a asp-area="Admin" asp-controller="Order" asp-action="DetailsPage" asp-route-uid="@o.ORD_ID" class="text-info ms-3">
+                                                <a asp-area="Admin" asp-controller="Order" asp-action="DetailsPage"
+                                                   asp-route-uid="@o.ORD_ID" class="action-btn text-info"
+                                                   title="View Details">
                                                     <i class="fas fa-info-circle"></i>
                                                 </a>
-                                                <a asp-area="Admin" asp-controller="Order" asp-action="DeletePage" asp-route-uid="@o.ORD_ID" class="text-danger ms-3">
+                                                <a asp-area="Admin" asp-controller="Order" asp-action="DeletePage"
+                                                   asp-route-uid="@o.ORD_ID" class="action-btn text-danger ms-2"
+                                                   title="Delete Order">
                                                     <i class="fas fa-trash-alt"></i>
                                                 </a>
                                             </td>
-
                                         </tr>
                                     }
                                 </tbody>
                             </table>
                         </div>
 
-                    </div>
+                        <div class="pagination-container">
+                            <div class="page-info">
+                                Showing page @pagination.CurrentPage of @pagination.TotalPages
+                            </div>
 
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    @{
+                                        <li class="page-item @(!pagination.HasPreviousPage ? "disabled" : "")">
+                                            <a class="page-link" href="@(pagination.HasPreviousPage ? Url.Action("Index", new { page = pagination.CurrentPage - 1 }) : "#")" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                        <li class="page-item @(pagination.CurrentPage == 1 ? "active" : "")">
+                                            <a class="page-link" href="@Url.Action("Index", new { page = 1 })">1</a>
+                                        </li>
+
+                                        if (pagination.CurrentPage > 4)
+                                        {
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        }
+
+                                        for (int i = Math.Max(2, pagination.CurrentPage - 2); i <= Math.Min(pagination.TotalPages - 1, pagination.CurrentPage + 2); i++)
+                                        {
+                                            <li class="page-item @(pagination.CurrentPage == i ? "active" : "")">
+                                                <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                                            </li>
+                                        }
+
+                                        if (pagination.CurrentPage < pagination.TotalPages - 3)
+                                        {
+                                            <li class="page-item disabled"><span class="page-link">...</span></li>
+                                        }
+
+                                        if (pagination.TotalPages > 1)
+                                        {
+                                            <li class="page-item @(pagination.CurrentPage == pagination.TotalPages ? "active" : "")">
+                                                <a class="page-link" href="@Url.Action("Index", new { page = pagination.TotalPages })">@pagination.TotalPages</a>
+                                            </li>
+                                        }
+                                        <li class="page-item @(!pagination.HasNextPage ? "disabled" : "")">
+                                            <a class="page-link" href="@(pagination.HasNextPage ? Url.Action("Index", new { page = pagination.CurrentPage + 1 }) : "#")" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+                            </nav>
+
+                            <div class="page-jump">
+                                <span>Go to page:</span>
+                                <input type="number" min="1" max="@pagination.TotalPages" id="pageInput" value="@pagination.CurrentPage">
+                                <button onclick="jumpToPage()">Go</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
         </div>
-
     </div>
+</div>
 
+@section Scripts {
+    <script>
+        document.querySelector('.search-box input').addEventListener('keyup', function () {
+            var searchText = this.value.toLowerCase();
+            var rows = document.querySelectorAll('#tbl tbody tr');
+
+            rows.forEach(row => {
+                var text = row.textContent.toLowerCase();
+                row.style.display = text.includes(searchText) ? '' : 'none';
+            });
+        });
+
+        function jumpToPage() {
+            var input = document.getElementById('pageInput');
+            var page = parseInt(input.value);
+            var maxPage = @pagination.TotalPages;
+
+            if (page >= 1 && page <= maxPage) {
+                window.location.href = '@Url.Action("Index")?page=' + page;
+            } else {
+                alert('Please enter a valid page number between 1 and ' + maxPage);
+            }
+        }
+
+        document.getElementById('pageInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                jumpToPage();
+            }
+        });
+    </script>
+}

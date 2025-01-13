@@ -1,4 +1,5 @@
-﻿@using ogani_master.Helpers
+﻿@using ogani_master.Helpers;
+@using System.Globalization;
 
 @{
     User CurrentUser = ViewBag.CurrentUser;
@@ -186,9 +187,9 @@
 
 </head>
 <body>
-    @* <div id="preloder">
-        <div class="loader"></div>
-    </div> *@
+     <div id="preloder">
+         <div class="loader"></div>
+     </div>
 
     <main id="root">
         <header class="header">
@@ -313,10 +314,10 @@
                                     <a href="#"><i class="fa fa-heart"></i> <span>1</span></a>
                                 </li>
                                 <li>
-                                    <a href="#"><i class="fa fa-shopping-bag"></i> <span>3</span></a>
+                                    <a asp-controller="ShopingCart" asp-action="Index"><i class="fa fa-shopping-bag"></i> <span>@ViewBag.CartCount</span></a>
                                 </li>
                             </ul>
-                            <div class="header__cart__price">item: <span>$150.00</span></div>
+                            <div class="header__cart__price">item: <span>@(ViewBag.CartTotal.ToString("C0", new CultureInfo("en-US")))</span></div>
                         </div>
                     </div>
                 </div>

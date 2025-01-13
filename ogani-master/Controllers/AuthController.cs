@@ -152,7 +152,7 @@ namespace ogani_master.Controllers
 		[Route("SignUp/v1")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult VerifySignUpV1(UserRegistrationV1Dto userRegistrationV1Dto)
+		public async Task<IActionResult> VerifySignUpV1(UserRegistrationV1Dto userRegistrationV1Dto)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -164,12 +164,84 @@ namespace ogani_master.Controllers
 				throw new Exception("The key is not available");
 			}
 
+            Guid newGuid = Guid.NewGuid();
+            byte[] guidBytes = new byte[16]; 
+            newGuid.TryWriteBytes(guidBytes);
+            byte[] fourByteArray = new byte[4];
+            Array.Copy(guidBytes, 0, fourByteArray, 0, 4);
+            string hexString = BitConverter.ToString(fourByteArray).Replace("-", "").ToLower();
+
+            userRegistrationV1Dto.otpCode = hexString;
+			userRegistrationV1Dto.otp_expired = DateTime.Now.AddMinutes(3);
+
+            var encryptedBacsicInfo = EncryptionHelper.Encrypt(JsonConvert.SerializeObject(userRegistrationV1Dto), key);
+
+            HttpContext.Session.SetString("BasicInfo", encryptedBacsicInfo);
+			HttpContext.Session.SetString("Step", "v2");
+
+			string fullname = userRegistrationV1Dto.FirstName + " " + userRegistrationV1Dto.LastName;
+
+			bool isSuccess = await MailUtils.SendMailGoogleSmtpConfirmEmailAsync(userRegistrationV1Dto.Email, "Xác thực Email", fullname, hexString);
+
+			if(!isSuccess)
+			{
+				HttpContext.Session.Clear();
+				TempData["ErrorMessage"] = "Internal server error";
+				return RedirectToAction("SignInPage", "Auth");
+            }
+
+
+
+			return RedirectToAction("SignUpV2");
+		}
+
+		[HttpPost]
+		[AutoValidateAntiforgeryToken]
+		public async Task<IActionResult> SendOtp()
+		{
+			string? key = Environment.GetEnvironmentVariable("EncryptionKey");
+			if (string.IsNullOrEmpty(key)) throw new Exception("The key is not available");
+
+			string? dataEncrypted = HttpContext.Session.GetString("BasicInfo");
+			if (string.IsNullOrEmpty(dataEncrypted))
+			{
+				return RedirectToAction("SignUp");
+			}
+
+			var DecryptData = EncryptionHelper.Decrypt(dataEncrypted, key);
+			UserRegistrationV1Dto? userRegistrationV1Dto = JsonConvert.DeserializeObject<UserRegistrationV1Dto>(DecryptData);
+
+			if (userRegistrationV1Dto == null || !TryValidateModel(userRegistrationV1Dto))
+			{
+				return RedirectToAction("SignUp");
+			}
+
+			Guid newGuid = Guid.NewGuid();
+			byte[] guidBytes = new byte[16];
+			newGuid.TryWriteBytes(guidBytes);
+			byte[] fourByteArray = new byte[4];
+			Array.Copy(guidBytes, 0, fourByteArray, 0, 4);
+			string hexString = BitConverter.ToString(fourByteArray).Replace("-", "").ToLower();
+
+			userRegistrationV1Dto.otpCode = hexString;
+			userRegistrationV1Dto.otp_expired = DateTime.Now.AddMinutes(3);
+
 			var encryptedBacsicInfo = EncryptionHelper.Encrypt(JsonConvert.SerializeObject(userRegistrationV1Dto), key);
 
 			HttpContext.Session.SetString("BasicInfo", encryptedBacsicInfo);
-			HttpContext.Session.SetString("Step", "v2");
 
-			return RedirectToAction("SignUpV2");
+			string fullname = userRegistrationV1Dto.FirstName + " " + userRegistrationV1Dto.LastName;
+			bool isSuccess = await MailUtils.SendMailGoogleSmtpConfirmEmailAsync(userRegistrationV1Dto.Email, "Xác thực Email", fullname, hexString);
+
+			if (!isSuccess)
+			{
+				HttpContext.Session.Clear();
+				TempData["ErrorMessage"] = "Internal server error";
+				return RedirectToAction("SignInPage", "Auth");
+			}
+
+			TempData["SuccessMessage"] = "The otp has sent";;
+			return RedirectToAction("SignUpV2", "Auth");
 		}
 
 		[Route("SignUp/v2")]
@@ -210,6 +282,20 @@ namespace ogani_master.Controllers
 				if (userRegistrationV1Dto == null || !TryValidateModel(userRegistrationV1Dto))
 				{
 					return RedirectToAction("SignUp");
+				}
+
+				if(userRegistrationV1Dto.otpCode != userRegistrationV2Dto.otp)
+				{
+                    ModelState.AddModelError("otp", "The otp is not valid");
+                    ViewBag.userRegistrationV2Dto = userRegistrationV2Dto;
+                    return View("~/Views/SignUp/v2.cshtml");
+                }
+
+				if (userRegistrationV1Dto.otp_expired <= DateTime.Now)
+				{
+					ModelState.AddModelError("otp", "The otp has expired");
+					ViewBag.userRegistrationV2Dto = userRegistrationV2Dto;
+					return View("~/Views/SignUp/v2.cshtml");
 				}
 
 				var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userRegistrationV2Dto.Password, 12);
