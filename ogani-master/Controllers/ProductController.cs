@@ -40,6 +40,7 @@ namespace ogani_master.Controllers
                     .ToListAsync();
             ViewBag.Product = product;
             ViewBag.ListNewProducts = listNewProducts;
+            ViewBag.CurrentUser = await GetCurrentUser();
 
             return View();
         }

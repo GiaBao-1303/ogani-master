@@ -29,6 +29,11 @@ namespace ogani_master
                 options.Cookie.IsEssential = true;             
             });
 
+            builder.Services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<CartCountFilter>();
+            });
+
             var loggerFactory = LoggerFactory.Create(
                  builder => builder
                      .AddConsole()
@@ -39,15 +44,13 @@ namespace ogani_master
 
             builder.Services.AddHttpContextAccessor();
 
-
-            builder.Services.AddControllersWithViews();
-
             var app = builder.Build();
 
             app.UseSession();
 
             app.UseMiddleware<UserBehaviorLoggingMiddleware>();
             app.UseMiddleware<AdminAccessControlMiddleware>();
+            app.UseMiddleware<CartCountMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
