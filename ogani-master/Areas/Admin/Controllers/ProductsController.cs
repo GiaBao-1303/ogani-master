@@ -83,23 +83,37 @@ namespace ogani_master.Areas.Admin.Controllers
         public async Task<IActionResult> Create([FromForm] ProductDTO request)
         {
             Console.WriteLine($"Description: {request.Description}");
+
             if (request.quantity < 0)
             {
                 ModelState.AddModelError("quantity", "The quantity of products cannot be negative.");
                 ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name");
                 return View(request);
             }
-            if(request.DiscountPrice > request.Price)
+
+            if (request.DiscountPrice > request.Price)
             {
                 TempData["ErrorMessage-discountPrice"] = "Discount Price cannot be greater than the original Price. Please enter a valid Discount Price.";
+                ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name", request.CAT_ID);
                 return View(request);
             }
+
+            // Kiểm tra nếu không có ảnh được upload
+            if (request.Avatar == null || request.Avatar.Length == 0)
+            {
+                ModelState.AddModelError("Avatar", "Please upload an image for the product.");
+                ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name", request.CAT_ID);
+                TempData["ErrorMessage"] = "Product must have an image. Please upload a photo.";
+                return View(request);
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name", request.CAT_ID);
-                TempData["ErrorMessage"] = "Please check again for promotional prices and quantities.";
+                TempData["ErrorMessage"] = "Please check again for promotional prices, quantities, and product image.";
                 return View(request);
             }
+
             var currentUser = await GetCurrentUser();
             var newProduct = new Product
             {
@@ -119,25 +133,23 @@ namespace ogani_master.Areas.Admin.Controllers
                 CreatedDate = DateTime.Now
             };
 
-            if (request.Avatar != null)
+            // Xử lý upload ảnh
+            string extension = Path.GetExtension(request.Avatar.FileName);
+            string newFileName = $"{Guid.NewGuid()}{extension}";
+            string filePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", newFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
             {
-                string extension = Path.GetExtension(request.Avatar.FileName);
-                string newFileName = $"{Guid.NewGuid()}{extension}";
-                string filePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", newFileName);
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await request.Avatar.CopyToAsync(stream);
-                }
-
-                newProduct.Avatar = newFileName;
+                await request.Avatar.CopyToAsync(stream);
             }
+
+            newProduct.Avatar = newFileName;
 
             _context.Add(newProduct);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Product created successfully!";
             return RedirectToAction(nameof(Index));
         }
-
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -158,7 +170,6 @@ namespace ogani_master.Areas.Admin.Controllers
         {
             if (id != productdto.PRO_ID) return NotFound();
 
-            // Kiểm tra tính hợp lệ
             if (productdto.DiscountPrice > productdto.Price)
             {
                 ModelState.AddModelError("DiscountPrice", "Discount Price cannot be greater than the original Price.");
@@ -170,23 +181,21 @@ namespace ogani_master.Areas.Admin.Controllers
 
             if (!ModelState.IsValid)
             {
-                // Truyền lại dữ liệu để tránh mất dropdown và dữ liệu khi trả về view
                 ViewData["CAT_ID"] = new SelectList(await _context.Categories.OrderBy(c => c.Name).ToListAsync(), "CAT_ID", "Name", productdto.CAT_ID);
                 ViewBag.CurrentUser = await GetCurrentUser();
                 TempData["ErrorMessage"] = "Please check the input fields and try again.";
                 return View(productdto);
             }
 
-            // Lấy sản phẩm hiện tại từ database
             var existingProduct = await _context.Products.FindAsync(id);
             if (existingProduct == null) return NotFound();
 
             try
             {
-                // Cập nhật dữ liệu sản phẩm
                 existingProduct.Name = productdto.Name;
                 existingProduct.Intro = productdto.Intro;
                 existingProduct.Price = productdto.Price;
+                existingProduct.CAT_ID = productdto.CAT_ID;
                 existingProduct.DiscountPrice = productdto.DiscountPrice;
                 existingProduct.Unit = productdto.Unit == "Other" && !string.IsNullOrEmpty(Request.Form["OtherUnit"])
                     ? Request.Form["OtherUnit"]
@@ -197,20 +206,18 @@ namespace ogani_master.Areas.Admin.Controllers
                 existingProduct.UpdatedBy = (await GetCurrentUser())?.UserName;
                 existingProduct.UpdatedDate = DateTime.Now;
 
-                // Xử lý ảnh đại diện nếu có thay đổi
+                // Nếu người dùng upload ảnh mới thì thay ảnh, nếu không thì giữ nguyên ảnh cũ
                 if (productdto.Avatar != null && productdto.Avatar.Length > 0)
                 {
                     string extension = Path.GetExtension(productdto.Avatar.FileName);
                     string newFileName = $"{Guid.NewGuid()}{extension}";
                     string filePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", newFileName);
 
-                    // Lưu ảnh mới
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await productdto.Avatar.CopyToAsync(stream);
                     }
 
-                    // Xóa ảnh cũ nếu tồn tại
                     if (!string.IsNullOrEmpty(existingProduct.Avatar))
                     {
                         string oldFilePath = Path.Combine(_hostEnv.WebRootPath, "data", "product", existingProduct.Avatar);
@@ -222,8 +229,12 @@ namespace ogani_master.Areas.Admin.Controllers
 
                     existingProduct.Avatar = newFileName;
                 }
+                else
+                {
+                    // Không làm gì nếu người dùng không chọn ảnh mới
+                    existingProduct.Avatar = existingProduct.Avatar;
+                }
 
-                // Cập nhật vào database
                 _context.Update(existingProduct);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Product updated successfully!";
@@ -234,7 +245,7 @@ namespace ogani_master.Areas.Admin.Controllers
                 if (!ProductExists(productdto.PRO_ID))
                     return NotFound();
 
-                throw; // Ném lại lỗi để hiển thị thông báo lỗi nếu cần
+                throw;
             }
         }
 

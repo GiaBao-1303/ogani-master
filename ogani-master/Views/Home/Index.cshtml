@@ -17,17 +17,19 @@
                 <span>All departments</span>
               </div>
               <ul>
-                <li><a href="#">Fresh Meat</a></li>
-                <li><a href="#">Vegetables</a></li>
-                <li><a href="#">Fruit & Nut Gifts</a></li>
-                <li><a href="#">Fresh Berries</a></li>
-                <li><a href="#">Ocean Foods</a></li>
-                <li><a href="#">Butter & Eggs</a></li>
-                <li><a href="#">Fastfood</a></li>
-                <li><a href="#">Fresh Onion</a></li>
-                <li><a href="#">Papayaya & Crisps</a></li>
-                <li><a href="#">Oatmeal</a></li>
-                <li><a href="#">Fresh Bananas</a></li>
+                        @if (ViewBag.Categories != null)
+                        {
+                            foreach (var category in ViewBag.Categories)
+                            {
+                                <li>
+                                    <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@category.CAT_ID">@category.Name</a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            <li>No categories available</li>
+                        }
               </ul>
             </div>
           </div>

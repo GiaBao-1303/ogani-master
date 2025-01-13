@@ -15,8 +15,6 @@ namespace ogani_master.Models
 
         [Required]
         public int quantity { get; set; }
-
-        [Required]
         public string? Avatar { get; set; }
         [Required]
         [MaxLength(255, ErrorMessage = "Tên sản phẩm không được vượt quá 255 ký tự.")]

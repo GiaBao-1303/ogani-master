@@ -3,7 +3,6 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
 <div class="container mt-3">
     <div class="row justify-content-center">
         <div class="col">
@@ -12,7 +11,7 @@
                     <h4 class="mb-0"><i class="fas fa-info-circle ms-1 me-3"></i> Edit Product</h4>
                 </div>
                 <div class="card-body">
-                    <form asp-action="Edit" enctype="multipart/form-data" id="EditForm">
+                    <form asp-controller="Products" asp-action="Edit" enctype="multipart/form-data" id="EditForm">
                         <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
                         <input type="hidden" asp-for="PRO_ID" />
                         <!-- Avatar -->

@@ -30,8 +30,10 @@ namespace ogani_master.Controllers
         {
 
             List<Product> products = context.Products.ToList();
-
             ViewBag.Products = products;
+            //Category
+            var categoties = context.Categories.OrderBy(c => c.DisplayOrder).ToList();
+            ViewBag.Categories = categoties;
             ViewBag.CurrentUser = await this.GetCurrentUser();
             return View();
 

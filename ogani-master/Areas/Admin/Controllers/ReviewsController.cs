@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using ogani_master.Models;
+using X.PagedList.Extensions;
+using X.PagedList;
+
+
 
 namespace ogani_master.Areas.Admin.Controllers
 {
@@ -31,11 +35,19 @@ namespace ogani_master.Areas.Admin.Controllers
         }
 
         // GET: Admin/Reviews
-        public async Task<IActionResult> Index()
+        public IActionResult Index(int? page)
         {
-            var oganiMaterContext = _context.Reviews.Include(r => r.User).Include(r => r.Product);
-            ViewBag.CurrentUser = await GetCurrentUser();
-            return View(await oganiMaterContext.ToListAsync());
+            //var oganiMaterContext = _context.Reviews.Include(r => r.User).Include(r => r.Product);
+            //ViewBag.CurrentUser = await GetCurrentUser();
+
+            //return View(await oganiMaterContext.ToListAsync());
+            int pageSize = 12;
+            int pageNumber = page ?? 1;
+            var reviewQuery = _context.Reviews.Include(r => r.User).Include(r => r.Product).OrderByDescending(r => r.ReviewDate);
+            var pagedReviews = reviewQuery.ToPagedList(pageSize, pageNumber);
+            ViewBag.CurrentUser = GetCurrentUser().Result;
+            return View(pagedReviews);
+
         }
 
         // GET: Admin/Reviews/Details/5

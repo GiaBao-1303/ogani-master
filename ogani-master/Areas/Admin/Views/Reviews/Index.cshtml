@@ -1,4 +1,6 @@
-﻿@model IEnumerable<ogani_master.Models.Review>
+﻿@using X.PagedList
+@model X.PagedList.IPagedList<ogani_master.Models.Review>
+@using X.PagedList.Mvc.Core
 
 @{
     ViewData["Title"] = "Index";
@@ -16,11 +18,6 @@
                             <div class="col-md">
                                 <h3 class="card-title">Review List</h3>
                             </div>
-                            @* <div class="col-md-auto">
-                                <a asp-action="Create" id="btnAdd" type="button" class="btn btn-success">
-                                    <i class="fa fa-plus me-1"></i> Add New
-                                </a>
-                            </div> *@
                         </div>
                     </div>
                     <div class="card-body">
@@ -28,13 +25,11 @@
                             <table id="tbl" class="table table-striped">
                                 <thead>
                                     <tr>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Rate)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Contents)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().ReviewDate)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().User)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Product)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().CreatedBy)</th>
-                                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().UpdatedBy)</th>
+                                        <th>Products</th>
+                                        <th>User Name</th>
+                                        <th>Rate</th>
+                                        <th>Contents</th>
+                                        <th>Date Rate</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -64,6 +59,20 @@
                                     }
                                 </tbody>
                             </table>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            @Html.PagedListPager(Model, page => Url.Action("Index", new { page, searchQuery = ViewBag.SearchQuery }),
+                                     new PagedListRenderOptions
+                            {
+                                DisplayLinkToFirstPage = PagedListDisplayMode.Never,  // Không hiển thị nút "Trang đầu"
+                                DisplayLinkToLastPage = PagedListDisplayMode.Never,   // Không hiển thị nút "Trang cuối"
+                                DisplayLinkToPreviousPage = PagedListDisplayMode.Always,  // Luôn hiển thị "Trang trước"
+                                DisplayLinkToNextPage = PagedListDisplayMode.Always,      // Luôn hiển thị "Trang sau"
+                                MaximumPageNumbersToDisplay = 5,  // Số trang hiển thị giữa
+                                UlElementClasses = new[] { "pagination", "justify-content-center" },
+                                LiElementClasses = new[] { "page-item", "me-2" },
+                                PageClasses = new[] { "page-link", "bg-success", "text-white" }
+                            })
                         </div>
                     </div>
                 </div>
