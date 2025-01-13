@@ -48,9 +48,8 @@ namespace ogani_master
 
             app.UseSession();
 
-            app.UseMiddleware<UserBehaviorLoggingMiddleware>();
+            //app.UseMiddleware<UserBehaviorLoggingMiddleware>();
             app.UseMiddleware<AdminAccessControlMiddleware>();
-            app.UseMiddleware<CartCountMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

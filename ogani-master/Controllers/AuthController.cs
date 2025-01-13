@@ -449,5 +449,46 @@ namespace ogani_master.Controllers
 				return RedirectToAction("Index", "Home");
 			}
 		}
+
+		[HttpPost]
+		[AutoValidateAntiforgeryToken]
+		public async Task<IActionResult> AddToFavorite(int? prodID)
+		{
+			User? user = await this.getCurrentUser();
+
+			string? role = HttpContext.Session.GetString("role");
+
+			if (user == null) return RedirectToAction("SignInPage", "Auth");
+
+			Product? existingProduct = await this.context.Products.FirstOrDefaultAsync(p => p.PRO_ID == prodID);
+
+			if (existingProduct == null) return NotFound();
+
+			FavoritesModel? existingFavorite = await this.context.Favorites.FirstOrDefaultAsync(f => f.UserID == user.UserId && f.ProductId == prodID);
+
+			if(existingFavorite != null)
+			{
+				this.context.Favorites.Remove(existingFavorite);
+				await this.context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Product", new { uid = prodID });
+            }
+
+			FavoritesModel favorite = new FavoritesModel
+			{
+				ProductId = existingProduct.PRO_ID,
+				UserID = user.UserId,
+				CreatedBy = role,
+				UpdatedBy = role,
+				CreatedDate = DateTime.Now,
+				UpdatedDate = DateTime.Now,
+			};
+
+			this.context.Favorites.Add(favorite);
+
+			await this.context.SaveChangesAsync();
+
+			return RedirectToAction("Index", "Product", new { uid = prodID });
+		}
     }
 }
