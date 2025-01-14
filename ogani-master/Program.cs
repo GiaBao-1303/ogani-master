@@ -5,6 +5,7 @@ using DotNetEnv;
 using Microsoft.Extensions.Logging;
 using Microsoft.CodeAnalysis.Elfie.Diagnostics;
 using ogani_master.configs;
+using ogani_master.FIlters;
 
 namespace ogani_master
 {
@@ -32,6 +33,7 @@ namespace ogani_master
             builder.Services.AddControllersWithViews(options =>
             {
                 options.Filters.Add<CartCountFilter>();
+                options.Filters.Add<Authenticate>();
             });
 
             var loggerFactory = LoggerFactory.Create(
@@ -48,10 +50,9 @@ namespace ogani_master
 
             app.UseSession();
 
-            //app.UseMiddleware<UserBehaviorLoggingMiddleware>();
+            app.UseMiddleware<UserBehaviorLoggingMiddleware>();
             app.UseMiddleware<AdminAccessControlMiddleware>();
 
-            // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
                 app.UseExceptionHandler("/Home/Error");

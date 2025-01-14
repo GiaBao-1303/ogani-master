@@ -431,9 +431,6 @@
                                     )">           
                                     <a href="#">Pages</a>
                                     <ul class="header__menu__dropdown">
-                                        <li class="@Html.IsActive("Product", "Index")">
-                                            <a href="@Url.Action("Index", "Product")">Product Details</a>
-                                        </li>
 
                                         <li class="@Html.IsActive("ShopingCart", "Index")">
                                             <a href="@Url.Action("Index", "ShopingCart")">Shopping Cart</a>
@@ -442,10 +439,6 @@
                                         <li class="@Html.IsActive("Checkout", "Index")">
                                             <a href="@Url.Action("Index", "Checkout")">Check Out</a>
                                         </li>
-
-                                        <li class="@Html.IsActive("Blog", "Detail")">
-                                            <a href="@Url.Action("Detail", "Blog")">Blog Details</a>
-                                         </li>
                                     </ul>
                                 </li>
                                 <li class="@Html.IsActive("Blog", "Index")"><a href="@Url.Action("Index", "Blog")">Blog</a></li>
