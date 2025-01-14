@@ -12,6 +12,7 @@ using Microsoft.Extensions.Primitives;
 using ogani_master.Areas.Admin.DTO;
 using ogani_master.utils;
 using Microsoft.AspNetCore.DataProtection;
+using System.Linq;
 
 
 namespace ogani_master.Controllers
@@ -19,7 +20,8 @@ namespace ogani_master.Controllers
 	public class AuthController : Controller
 	{
 		private readonly OganiMaterContext context;
-        private readonly IWebHostEnvironment _hostEnv;
+		private readonly IWebHostEnvironment _hostEnv;
+		private readonly List<string> _roleAccess = new List<string> { "Admin", "Moderator" };
         public AuthController(OganiMaterContext _context, IWebHostEnvironment hostEnv) {
 			context = _context;
             _hostEnv = hostEnv;
@@ -119,7 +121,7 @@ namespace ogani_master.Controllers
                 HttpContext.Session.SetInt32("UserID", existingUser.UserId);
 				HttpContext.Session.SetString("role", role.ToString());
 
-				if (existingUser.Role == (int)UserRole.Admin)
+				if (_roleAccess.Contains(role.ToString()))
 				{
 					return Redirect("/Admin");
 				}
@@ -489,6 +491,12 @@ namespace ogani_master.Controllers
 			await this.context.SaveChangesAsync();
 
 			return RedirectToAction("Index", "Product", new { uid = prodID });
+		}
+
+		[Route("/AccessDenied")]
+		public IActionResult AccessDenied()
+		{
+			return View("~/Views/Access/Denied.cshtml");
 		}
     }
 }
