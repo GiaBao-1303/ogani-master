@@ -32,16 +32,10 @@ namespace ogani_master.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(string searchQuery, int? page)
         {
-            //var products = await _context.Products.Include(p => p.Category).ToListAsync();
-            //ViewBag.CurrentUser = await GetCurrentUser();
-            //return View(products);
+           
             int pageSize = 12; // Số sản phẩm trên mỗi trang
             int pageNumber = page ?? 1;
-
-            // Tạo truy vấn IQueryable
             var query = _context.Products.Include(p => p.Category).AsQueryable();
-
-            // Tìm kiếm nếu có searchQuery
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 query = query.Where(p =>
@@ -49,13 +43,9 @@ namespace ogani_master.Areas.Admin.Controllers
                     (!string.IsNullOrEmpty(p.Description) && p.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                 );
             }
-
             ViewBag.SearchQuery = searchQuery;
             ViewBag.CurrentUser = await GetCurrentUser();
-
-         
             var pagedProducts = query.OrderBy(p => p.PRO_ID).ToPagedList(pageNumber, pageSize);
-
             return View(pagedProducts); 
         }
 
@@ -205,7 +195,6 @@ namespace ogani_master.Areas.Admin.Controllers
                 existingProduct.Details = productdto.Details ?? "No details provided.";
                 existingProduct.UpdatedBy = (await GetCurrentUser())?.UserName;
                 existingProduct.UpdatedDate = DateTime.Now;
-
                 // Nếu người dùng upload ảnh mới thì thay ảnh, nếu không thì giữ nguyên ảnh cũ
                 if (productdto.Avatar != null && productdto.Avatar.Length > 0)
                 {
@@ -226,15 +215,12 @@ namespace ogani_master.Areas.Admin.Controllers
                             System.IO.File.Delete(oldFilePath);
                         }
                     }
-
                     existingProduct.Avatar = newFileName;
                 }
                 else
                 {
-                    // Không làm gì nếu người dùng không chọn ảnh mới
                     existingProduct.Avatar = existingProduct.Avatar;
                 }
-
                 _context.Update(existingProduct);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Product updated successfully!";

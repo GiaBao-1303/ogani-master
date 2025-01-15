@@ -17,14 +17,15 @@ namespace ogani_master.Areas.Admin.DTO
         public IFormFile? Avatar { get; set; }
         [Required]
         [MaxLength(255, ErrorMessage = "Tên sản phẩm không được vượt quá 255 ký tự.")]
-        public required string Name { get; set; }
+        public  string Name { get; set; }
         public string? Intro { get; set; }
+        [Required(ErrorMessage = "Giá sản phẩm là bắt buộc.")]
+        [Range(0, double.MaxValue, ErrorMessage = "Giá sản phẩm phải là số dương.")]
+        public  decimal Price { get; set; }
         [Required]
         [IntegerValidator(MinValue = 0)]
-        public required decimal Price { get; set; }
-        [Required]
-        [IntegerValidator(MinValue = 0)]
-        public required decimal DiscountPrice { get; set; }
+        [DisplayFormat(DataFormatString = "{0:N0}", ApplyFormatInEditMode = true)]
+        public  decimal DiscountPrice { get; set; }
         [Required]
         [IntegerValidator(MinValue = 1)]
         public string Unit { get; set; }
