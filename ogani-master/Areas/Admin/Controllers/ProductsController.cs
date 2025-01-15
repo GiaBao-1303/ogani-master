@@ -58,6 +58,7 @@ namespace ogani_master.Areas.Admin.Controllers
             if (product == null) return NotFound();
 
             ViewBag.CurrentUser = await GetCurrentUser();
+
             return View(product);
         }
 
@@ -234,8 +235,6 @@ namespace ogani_master.Areas.Admin.Controllers
                 throw;
             }
         }
-
-
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();

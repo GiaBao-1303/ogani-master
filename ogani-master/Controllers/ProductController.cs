@@ -22,6 +22,8 @@ namespace ogani_master.Controllers
         public async Task<IActionResult> Index(int? uid)
         {
 
+            int? userId = HttpContext.Session.GetInt32("UserID");
+
             if (!uid.HasValue)
             {
                 return NotFound("Product ID is required.");
@@ -38,8 +40,13 @@ namespace ogani_master.Controllers
                     .OrderByDescending(p => p.CreatedDate)
                     .Take(4)
                     .ToListAsync();
+
+            FavoritesModel? isFavorite = await this.context.Favorites.FirstOrDefaultAsync(f => f.UserID == userId && f.ProductId == uid);
+
             ViewBag.Product = product;
             ViewBag.ListNewProducts = listNewProducts;
+            ViewBag.CurrentUser = await GetCurrentUser();
+            ViewBag.isFavorite = isFavorite != null ? true : false;
 
             return View();
         }

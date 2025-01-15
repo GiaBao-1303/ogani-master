@@ -28,7 +28,6 @@
 
   <ItemGroup>
     <Folder Include="Areas\Admin\Data\" />
-    <Folder Include="Areas\Admin\Models\" />
     <Folder Include="wwwroot\Data\Banner\" />
     <Folder Include="wwwroot\Data\Blog\" />
     <Folder Include="wwwroot\Data\Product\" />

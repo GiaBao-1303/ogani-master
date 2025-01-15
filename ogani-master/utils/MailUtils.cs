@@ -73,8 +73,58 @@ namespace ogani_master.utils
 			}
 		}
 
+        public static async Task<bool> SendMailGoogleSmtpConfirmEmailAsync(
+            string to,
+            string subject,
+            string customerName,
+            string secretOtp,
+            string? ttl = "3 phút"
+        )
+        {
+            string? email = Environment.GetEnvironmentVariable("_gmailsend");
+            string? pwd = Environment.GetEnvironmentVariable("PWD_EMAIL");
 
-		private static async Task<bool> SendMailForgotPasswordAsync(
+            if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(pwd))
+                throw new Exception("Email credentials not available in environment variables.");
+
+            using (var client = new SmtpClient("smtp.gmail.com"))
+            {
+                client.Port = 587;
+                client.Credentials = new NetworkCredential(email, pwd);
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.EnableSsl = true;
+                client.Timeout = 20000;
+
+                string body = TemplateConfirmEmail(customerName, secretOtp, ttl);
+                return await SendMailConfirmEmailAsync(email, to, subject, body, client);
+            }
+        }
+
+        private static async Task<bool> SendMailConfirmEmailAsync(
+           string from,
+           string to,
+           string subject,
+           string body,
+           SmtpClient client)
+        {
+            try
+            {
+                using (var message = new MailMessage(from, to))
+                {
+                    message.Subject = subject;
+                    message.Body = body;
+                    message.IsBodyHtml = true;
+                    await client.SendMailAsync(message);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private static async Task<bool> SendMailForgotPasswordAsync(
 			string from,
 			string to,
 			string subject,
@@ -319,7 +369,42 @@ namespace ogani_master.utils
 </html>";
 		}
 
-		private static async Task<bool> SendMailPaymentSuccessAsync(string from, string to, string subject, string body, SmtpClient client)
+        public static string TemplateConfirmEmail(string customerName, string otpCode, string ttl)
+        {
+            return $@"
+<div style='margin: 0; padding: 0; background-color: #f4f4f4; font-family: Arial, sans-serif;'>
+    <div style='max-width: 600px; margin: 0 auto; background-color: #ffffff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);'>
+        <div style='text-align: center; padding: 20px;'>
+            <h1 style='color: #333333; margin-bottom: 20px;'>Xác Thực Email</h1>
+        </div>
+        
+        <div style='padding: 20px; color: #666666; font-size: 16px; line-height: 1.5;'>
+            <p>Xin chào {customerName},</p>
+            
+            <p>Chúng tôi nhận được yêu cầu xác thực email cho tài khoản của bạn. Dưới đây là mã OTP của bạn:</p>
+            
+            <div style='text-align: center; margin: 30px 0;'>
+                <p style='background-color: #f8f8f8; padding: 15px; border-radius: 5px; display: inline-block; font-size: 24px; font-weight: bold; color: #333333;'>{otpCode}</p>
+            </div>
+            
+            <p>Vui lòng nhập mã này trong vòng {ttl} để hoàn tất xác thực.</p>
+            
+            <p>Nếu bạn không thực hiện yêu cầu này, vui lòng bỏ qua email này. Nếu bạn gặp bất kỳ vấn đề gì, vui lòng liên hệ với chúng tôi để được hỗ trợ.</p>
+            
+            <div style='margin-top: 30px; padding-top: 20px; border-top: 1px solid #eeeeee;'>
+                <p style='color: #999999; font-size: 14px;'>
+                    Trân trọng,<br>
+                    Team Support
+                </p>
+            </div>
+        </div>
+    </div>
+    </div>
+";
+           
+        }
+
+        private static async Task<bool> SendMailPaymentSuccessAsync(string from, string to, string subject, string body, SmtpClient client)
         {
             using (var message = CreateMailMessagePaymentSuccess(from, to, subject, body))
             {

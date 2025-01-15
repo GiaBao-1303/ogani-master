@@ -122,6 +122,7 @@ namespace ogani_master.Controllers
             Cart cart = new Cart
             {
                 Price = product.Price,
+                DiscountPrice = product.DiscountPrice,
                 PRO_ID = product.PRO_ID,
                 Quantity = addToCartDto.amount,
                 UserId = user.UserId,

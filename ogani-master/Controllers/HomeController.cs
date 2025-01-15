@@ -26,6 +26,15 @@ namespace ogani_master.Controllers
             return null; 
         }
 
+        public async Task<List<FavoritesModel>> getFavorites()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+
+            List<FavoritesModel> favorites = await this.context.Favorites.Include(f => f.Product).Where(f => f.UserID == userId).ToListAsync();
+
+            return favorites;
+        }
+
         public async Task<IActionResult> Index()
         {
 
@@ -33,6 +42,7 @@ namespace ogani_master.Controllers
             ViewBag.Products = products;
             //Category
             var categoties = context.Categories.OrderBy(c => c.DisplayOrder).ToList();
+            ViewBag.Favorites = await this.getFavorites();
             ViewBag.Categories = categoties;
             ViewBag.CurrentUser = await this.GetCurrentUser();
             return View();

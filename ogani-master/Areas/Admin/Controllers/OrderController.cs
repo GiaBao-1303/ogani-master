@@ -7,6 +7,8 @@ using ogani_master.utils;
 using System.ComponentModel.DataAnnotations;
 using ogani_master.configs;
 using ogani_master.Controllers;
+using System.Linq;
+using ogani_master.Areas.Admin.Models;
 
 namespace ogani_master.Areas.Admin.Controllers
 {
@@ -15,6 +17,7 @@ namespace ogani_master.Areas.Admin.Controllers
     {
         private OganiMaterContext context;
         private ILogger<OrderController> logger;
+        private readonly int PAGE_SIZE = 12;
 
         public OrderController(OganiMaterContext context)
         {
@@ -34,20 +37,38 @@ namespace ogani_master.Areas.Admin.Controllers
             return null;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? page)
         {
             User? user = await GetCurrentUser();
 
-
             if (user == null) return RedirectToAction("SignInPage", "Auth");
 
-                ViewBag.CurrentUser = user;
+            int totalItems = await context.Orders.CountAsync();
 
-            List<Order> orders = await this.context.Orders
+            int totalPages = (int)Math.Ceiling(totalItems / (double)PAGE_SIZE);
+
+            page = Math.Max(1, Math.Min(page ?? 1, totalPages));
+
+            int skip = (int)(page - 1) * PAGE_SIZE;
+
+            List<Order> orders = await context.Orders
                 .Include(o => o.Product)
+                .OrderByDescending(o => o.CreatedDate)
+                .Skip(skip)
+                .Take(PAGE_SIZE)
                 .ToListAsync();
 
+            PaginationModel paginationModel = new PaginationModel
+            {
+                CurrentPage = page ?? 1,
+                TotalPages = totalPages,
+                TotalItems = totalItems
+            };
+
+
             ViewBag.Orders = orders;
+            ViewBag.CurrentUser = user;
+            ViewBag.Pagination = paginationModel;
 
             return View();
         }

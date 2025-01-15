@@ -7,6 +7,19 @@
     List<Product> listNewProducts = ViewBag.ListNewProducts;
 }
 
+@section Styles {
+    <style>
+        .heart-icon.active {
+            color: red !important;
+        }
+    </style>
+}
+
+<form asp-controller="Auth" asp-action="AddToFavorite" method="post">
+    <input type="hidden" value="@product.PRO_ID" name="prodID" />
+    <button type="submit" id="addToFavorite"></button>
+</form>
+
 <section class="product-details spad">
     <div class="container">
         <div class="row">
@@ -32,7 +45,7 @@
                         <span>(@product.Review reviews)</span>
                     </div>
                     <div class="product__details__price">
-                    @if(product.DiscountPrice != null)
+                    @if(product?.DiscountPrice != null)
                     {
                             <span style="text-decoration: line-through; color: gray;">
                                 @product.Price.ToString("C0", new CultureInfo("en-US"))
@@ -55,10 +68,12 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="primary-btn">ADD TO CARD<</button>/>
-                    <a href="#" class="heart-icon">
-                        <span class="icon_heart_alt"></span>
-                    </a>
+                    <button type="submit" class="primary-btn">ADD TO CARD<</button>
+                    <div class="heart-icon @(ViewBag.isFavorite ? "active" : "")">
+                        <label style="cursor: pointer; margin: 0 !important" for="addToFavorite">
+                            <i class="fa-solid fa-heart"></i>
+                        </label>
+                    </div>
                     <ul>
                         <li><b>Availability</b> <span>In Stock</span></li>
                         <li>
