@@ -234,12 +234,14 @@ namespace ogani_master.Controllers
                     UpdatedDate = DateTime.Now,
                 };
 
+                decimal originPrice = existingProductInCart.Product?.DiscountPrice ?? existingProductInCart.Product.Price;
+
                 MessageMailDto dataMail = new MessageMailDto
                 {
                     companyName = "Ogani-master",
                     customerName = user.LastName + " " + user.FirstName,
                     Email = user.Email,
-                    price = (int)existingProductInCart.Product.Price,
+                    price = (int)originPrice,
                     prodName = existingProductInCart.Product.Name,
                     quantity = o.amount,
                     totalPrice = o.amount * (int)existingProductInCart.Product.Price,

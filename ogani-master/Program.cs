@@ -50,7 +50,7 @@ namespace ogani_master
 
             app.UseSession();
 
-            app.UseMiddleware<UserBehaviorLoggingMiddleware>();
+            //app.UseMiddleware<UserBehaviorLoggingMiddleware>();
             app.UseMiddleware<AdminAccessControlMiddleware>();
 
             if (!app.Environment.IsDevelopment())

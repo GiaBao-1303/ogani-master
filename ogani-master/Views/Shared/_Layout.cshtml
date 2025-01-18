@@ -29,6 +29,12 @@
     @RenderSection("Styles", false)
 
     <style>
+        body .truncate {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+        }
         #root {
             display: flex !important;
             flex-direction: column !important;
@@ -422,25 +428,8 @@
                         <nav class="header__menu">
                             <ul>
                                 <li class="@Html.IsActive("Home", "Index")"><a href="@Url.Action("Index", "Home")">Home</a></li>
-                                <li class="@Html.IsActive("ShopGrid", "Index")"><a href="@Url.Action("Index", "ShopGrid")">Shop</a></li>
-                                <li class="@Html.IsParentActive(
-                                        new ControllerInfo { controllerName = "Checkout", action = "Index" },
-                                        new ControllerInfo { controllerName =  "ShopingCart", action = "Index" },
-                                        new ControllerInfo { controllerName =  "Blog", action = "Detail" },
-                                        new ControllerInfo { controllerName =  "Product", action = "Index" }
-                                    )">           
-                                    <a href="#">Pages</a>
-                                    <ul class="header__menu__dropdown">
-
-                                        <li class="@Html.IsActive("ShopingCart", "Index")">
-                                            <a href="@Url.Action("Index", "ShopingCart")">Shopping Cart</a>
-                                        </li>
-
-                                        <li class="@Html.IsActive("Checkout", "Index")">
-                                            <a href="@Url.Action("Index", "Checkout")">Check Out</a>
-                                        </li>
-                                    </ul>
-                                </li>
+                                <li class="@Html.IsActive("ShopGrid", "Index")"><a href="@Url.Action("Index", "ShopGrid")">Products</a></li>
+                               
                                 <li class="@Html.IsActive("Blog", "Index")"><a href="@Url.Action("Index", "Blog")">Blog</a></li>
                                 <li class="@Html.IsActive("Contact", "Index")"><a href="@Url.Action("Index", "Contact")">Contact</a></li>
                             </ul>

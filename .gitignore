@@ -51,6 +51,7 @@ TestResult.xml
 nunit-*.xml
 appsettings.json
 
+wwwroot/Data/Product
 .
 
 # Build Results of an ATL Project

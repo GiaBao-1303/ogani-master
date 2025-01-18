@@ -3,3 +3,4 @@ obj/
 *.exe
 *.dll
 appsettings.json
+wwwroot/Data/Product

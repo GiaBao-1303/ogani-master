@@ -22,9 +22,10 @@ namespace ogani_master.Areas.Admin.DTO
         [Required]
         [IntegerValidator(MinValue = 0)]
         public required decimal Price { get; set; }
-        [Required]
+
         [IntegerValidator(MinValue = 0)]
-        public required decimal DiscountPrice { get; set; }
+        public decimal DiscountPrice { get; set; }
+
         [Required]
         [IntegerValidator(MinValue = 1)]
         public string Unit { get; set; }

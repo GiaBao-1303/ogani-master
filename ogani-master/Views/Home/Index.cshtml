@@ -126,32 +126,32 @@
             </div>
         </div>
         <div class="row featured__filter">
-            <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
-                <div class="featured__item">
                     @foreach(Product product in products)
                     {
-                        <div class="featured__item__pic set-bg"
-                             data-setbg="@Url.Content("~/Data/Product/" + @product.Avatar)"
-                             style="background-image: url('@Url.Content("~/Data/Product/" + @product.Avatar)');">
-                            <ul class="featured__item__pic__hover">
-                                <li>
-                                    <a href="#"><i class="fa fa-heart"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="fa fa-retweet"></i></a>
-                                </li>
-                                <li>
-                                    <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="featured__item__text">
-                            <h6><a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID">@product.Name</a></h6>
-                            <h5>$@product.Price</h5>
+                        <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
+                                    <div class="featured__item">
+                                            <div class="featured__item__pic set-bg"
+                                                 data-setbg="@Url.Content("~/Data/Product/" + @product.Avatar)"
+                                                 style="background-image: url('@Url.Content("~/Data/Product/" + @product.Avatar)');">
+                                                <ul class="featured__item__pic__hover">
+                                                    <li>
+                                                        <a href="#"><i class="fa fa-heart"></i></a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="#"><i class="fa fa-retweet"></i></a>
+                                                    </li>
+                                                    <li>
+                                                        <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="featured__item__text">
+                                                <h6><a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID">@product.Name</a></h6>
+                                                <h5>$@product.Price</h5>
+                                            </div>
+                                    </div>
                         </div>
                     }
-                </div>
-            </div>
         </div>
     </div>
 
