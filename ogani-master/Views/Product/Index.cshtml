@@ -51,7 +51,7 @@
                                 @product.Price.ToString("C0", new CultureInfo("en-US"))
                             </span>
                             <span style="margin-left: 8px; color: red">
-                              @product.DiscountPrice.ToString("C0", new CultureInfo("en-US"))
+                              @product.DiscountPrice?.ToString("C0", new CultureInfo("en-US"))
                             </span>
                     } else
                     {
@@ -59,7 +59,7 @@
                      } 
                     </div>
                     <p>
-                       @product.Description
+                        @Html.Raw(@product.Description)
                     </p>
                     <div class="product__details__quantity">
                         <div class="quantity">

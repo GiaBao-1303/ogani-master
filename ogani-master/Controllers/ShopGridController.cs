@@ -1,46 +1,74 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
+using ogani_master.dto;
+
 using ogani_master.Models;
 
 namespace ogani_master.Controllers
 {
     public class ShopGridController : Controller
     {
-        private readonly OganiMaterContext _context;
-        public ShopGridController(OganiMaterContext context)
-        {
-            _context = context;
-        }
-        protected async Task<User?> GetCurrentUser()
-        {
-            int? userId = HttpContext.Session.GetInt32("UserID");
-            if (userId != null)
-            {
-                var user = await _context.users.FirstOrDefaultAsync(u => u.UserId == userId);
-                return user;
-            }
-            return null;
-        }
-        public async Task<List<FavoritesModel>> getFavorites()
-        {
-            int? userId = HttpContext.Session.GetInt32("UserID");
+        
+        private readonly int numberOfSaleOffs = 6;
+        private readonly int numberOfNewProduct = 6;
+        private readonly int numberOfProduct = 12;
+        public OganiMaterContext context;
 
-            List<FavoritesModel> favorites = await this._context.Favorites.Include(f => f.Product).Where(f => f.UserID == userId).ToListAsync();
-
-            return favorites;
-        }
-        public async Task<List<Category>> getCategories()
-        {
-            return await _context.Categories.ToListAsync(); 
+        public ShopGridController(OganiMaterContext _context) {
+            this.context = _context;
         }
 
         [HttpGet]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(QueryProduct? queryProduct)
         {
-            ViewBag.Categories = await getCategories();
-            ViewBag.Favorites = await this.getFavorites() ?? new List<FavoritesModel>();
-            ViewBag.CurrentUser = await this.GetCurrentUser();
+
+            List<Product> saleOffs = await this.context.Products
+                .Take(this.numberOfSaleOffs)
+                .Include(p => p.Category)
+                .Where(p => p.DiscountPrice != null)
+                .ToListAsync();
+
+            List<Product> listProducts;
+
+            var query = this.context.Products
+                .Take(this.numberOfProduct)
+                .Where(p => p.DiscountPrice == null);
+
+            if (queryProduct != null)
+            {
+                if (queryProduct.unit != null)
+                {
+                    query = query.Where(p => p.Unit == queryProduct.unit);
+                }
+
+                if (queryProduct.category != null)
+                {
+                    query = query.Where(p => p.CAT_ID == queryProduct.category);
+                }
+            }
+
+            listProducts = await query
+                .Include(p => p.Category)
+                .ToListAsync();
+
+            List<Product> listNewProducts = await this.context.Products
+                .OrderByDescending(p => p.CreatedDate)
+                .Take(this.numberOfNewProduct)
+                .ToListAsync();
+
+            List<Category> categories = await this.context.Categories.ToListAsync();
+
+            decimal minPriceDb = await this.context.Products.MinAsync(p => p.Price);
+            decimal maxPriceDb = await this.context.Products.MaxAsync(p => p.Price);
+
+            ViewBag.SaleOffs = saleOffs;
+            ViewBag.ListProducts = listProducts;
+            ViewBag.ListNewProduct = listNewProducts;
+            ViewBag.Categories = categories;
+            ViewBag.CategoryActive = queryProduct?.category;
+            ViewBag.UnitActive = queryProduct?.unit;
+            ViewBag.MinPrice = (int)minPriceDb;
+            ViewBag.MaxPrice = (int)maxPriceDb;
 
             return View();
         }

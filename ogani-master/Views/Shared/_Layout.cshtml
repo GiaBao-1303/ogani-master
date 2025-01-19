@@ -29,6 +29,12 @@
     @RenderSection("Styles", false)
 
     <style>
+        body .truncate {
+            display: -webkit-box;
+            -webkit-box-orient: vertical;
+            -webkit-line-clamp: 3;
+            overflow: hidden;
+        }
         #root {
         display: flex !important;
         flex-direction: column !important;

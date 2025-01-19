@@ -22,10 +22,9 @@ namespace ogani_master.Areas.Admin.DTO
         [Required(ErrorMessage = "Giá sản phẩm là bắt buộc.")]
         [Range(0, double.MaxValue, ErrorMessage = "Giá sản phẩm phải là số dương.")]
         public  decimal Price { get; set; }
-        [Required]
         [IntegerValidator(MinValue = 0)]
-        [DisplayFormat(DataFormatString = "{0:N0}", ApplyFormatInEditMode = true)]
-        public  decimal DiscountPrice { get; set; }
+        public decimal DiscountPrice { get; set; }
+
         [Required]
         [IntegerValidator(MinValue = 1)]
         public string Unit { get; set; }
