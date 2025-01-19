@@ -5,6 +5,7 @@
     ViewData["Title"] = "Product Detail Page";
     Product product = ViewBag.Product;
     List<Product> listNewProducts = ViewBag.ListNewProducts;
+    var settings = ViewBag.Settings as List<ogani_master.Models.Setting>;
 }
 
 @section Styles {
@@ -35,7 +36,7 @@
                 <form asp-controller="ShopingCart" asp-action="AddToCart" method="post" class="product__details__text">
 
                     <input class="d-none" asp-for="ProdID" type="number" value="@product.PRO_ID" />
-                    <h3>@product.Name</h3>
+                    <h3 style="white-space: normal; overflow-wrap: break-word;">@product.Name</h3>
                     <div class="product__details__rating">
                         <i class="fa fa-star"></i>
                         <i class="fa fa-star"></i>
@@ -68,7 +69,7 @@
                             </div>
                         </div>
                     </div>
-                    <button type="submit" class="primary-btn">ADD TO CARD<</button>
+                    <button type="submit" class="primary-btn">ADD TO CARD</button>
                     <div class="heart-icon @(ViewBag.isFavorite ? "active" : "")">
                         <label style="cursor: pointer; margin: 0 !important" for="addToFavorite">
                             <i class="fa-solid fa-heart"></i>
@@ -84,10 +85,10 @@
                         <li>
                             <b>Share on</b>
                             <div class="share">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-instagram"></i></a>
-                                <a href="#"><i class="fa fa-pinterest"></i></a>
+                                <a href="https://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
+                                <a href="https://instagram.com" target="_blank"><i class="fa fa-instagram"></i></a>
+                                <a href="https://twitter.com" target="_blank"><i class="fa fa-twitter"></i></a>
+                                <a href="https://pinterest.com" target="_blank"><i class="fa fa-pinterest"></i></a>
                             </div>
                         </li>
                     </ul>
@@ -169,7 +170,7 @@
                                     <a href="#"><i class="fa fa-retweet"></i></a>
                                 </li>
                                 <li>
-                                    <a asp-asp-controller="ShopingCart" asp-route-uid="@newProduct.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
+                                    <a asp-controller="ShopingCart" asp-route-uid="@newProduct.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
                                 </li>
                             </ul>
                         </div>

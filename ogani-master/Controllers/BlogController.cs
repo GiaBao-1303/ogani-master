@@ -36,7 +36,7 @@ namespace ogani_master.Controllers
                 .ToListAsync();
 
             int? userId = HttpContext.Session.GetInt32("UserID");
-
+            ViewBag.Settings = _context.Settings.ToList();
             ViewBag.CurrentUser = await this._context.users.FirstOrDefaultAsync(u => u.UserId == userId);
            
             var mainBlogs = allBlogs.Take(15).ToList();
@@ -70,7 +70,7 @@ namespace ogani_master.Controllers
                 .Take(3)
                 .ToListAsync();
             int? userId = HttpContext.Session.GetInt32("UserID");
-
+            ViewBag.Settings = _context.Settings.ToList();
             ViewBag.CurrentUser = await this._context.users.FirstOrDefaultAsync(u => u.UserId == userId);
             ViewBag.Favorites = await this.getFavorites();
             // Truyền dữ liệu sang view

@@ -35,6 +35,7 @@ namespace ogani_master.Controllers
         }
         public async Task<IActionResult> Index()
         {
+            ViewBag.Settings = _context.Settings.ToList();
             ViewBag.Favorites = await this.getFavorites() ?? new List<FavoritesModel>();
             ViewBag.CurrentUser = await this.GetCurrentUser();
             ViewBag.Categories = await getCategories();

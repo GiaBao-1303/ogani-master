@@ -251,6 +251,19 @@ namespace ogani_master.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // xoá yêu thích trước khi xoá sản phẩm
+            var favorites = _context.Favorites.Where(f => f.ProductId == id);
+            _context.Favorites.RemoveRange(favorites);
+            // xử lý côt pro_id = null thì xoá đươc products
+            //var orders = _context.Orders.Where(o => o.PROD_ID == id);
+            //foreach (var order in orders)
+            //{
+            //    order.PROD_ID = null;
+            //}
+
+            //await _context.SaveChangesAsync();
+
+            //xoá sản phẩm
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();
             /// Xoá ảnh 

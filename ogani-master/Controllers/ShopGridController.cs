@@ -60,7 +60,7 @@ namespace ogani_master.Controllers
 
             decimal minPriceDb = await this.context.Products.MinAsync(p => p.Price);
             decimal maxPriceDb = await this.context.Products.MaxAsync(p => p.Price);
-
+            ViewBag.Settings = context.Settings.ToList();
             ViewBag.SaleOffs = saleOffs;
             ViewBag.ListProducts = listProducts;
             ViewBag.ListNewProduct = listNewProducts;

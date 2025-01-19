@@ -59,7 +59,7 @@ namespace ogani_master.Controllers
 
             var sideBanners = await context.Banners.OrderBy(b => b.DisplayOrder).Skip(1).Take(2).ToListAsync();
             ViewBag.SideBanners = sideBanners;
-
+            ViewBag.Settings = context.Settings.ToList();
             ViewBag.Favorites = await this.getFavorites();
             ViewBag.CurrentUser = await this.GetCurrentUser();
 

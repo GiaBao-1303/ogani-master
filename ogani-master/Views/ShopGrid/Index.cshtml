@@ -75,7 +75,7 @@
                               @foreach(Category category in categories)
                               {
                                   <li class="category @(category.CAT_ID == categoryActive ? "active" : "")">
-                                    <button type="button" onclick="updateAndSubmit('category', @category.CAT_ID)">@category.Name</button>
+                                    <button type="button" onclick="updateAndSubmit('category', @category.CAT_ID)" style="white-space: normal; overflow-wrap: break-word;">@category.Name</button>
                                  </li>
                               }
                         </ul>
@@ -136,7 +136,7 @@
                                             <img style="height: 80px;object-fit: cover;" src="@Url.Content("~/Data/Product/" + newProduct.Avatar)" alt="" />
                                         </div>
                                         <div class="latest-product__item__text">
-                                            <h6 class="truncate">@newProduct.Name</h6>
+                                            <h6 class="truncate" style="white-space: normal; overflow-wrap: break-word;">@newProduct.Name</h6>
                                             <span>
                                                 @(newProduct.DiscountPrice.HasValue
                                                     ? newProduct.DiscountPrice.Value.ToString("C0", new CultureInfo("en-US"))
@@ -176,19 +176,19 @@
                                             <div class="product__discount__percent">-@(Math.Round(1 - (double)product?.DiscountPrice / (double)product.Price, 2) * 100)%</div>
                                             <ul class="product__item__pic__hover">
                                                 <li>
-                                                    <a href="#"><i class="fa fa-heart"></i></a>
+                                                    <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-heart"></i></a>
                                                 </li>
                                                 <li>
-                                                    <a href="#"><i class="fa fa-retweet"></i></a>
+                                                    <a asp-controller="Product" asp-action="Index"><i class="fa fa-retweet"></i></a>
                                                 </li>
                                                 <li>
-                                                    <a href="#"><i class="fa fa-shopping-cart"></i></a>
+                                                    <a asp-controller ="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
                                                 </li>
                                             </ul>
                                         </div>
                                         <div class="product__discount__item__text">
-                                            <span>@product.Category?.Name</span>
-                                            <h5><a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID">@product.Name</a></h5>
+                                            <span style="white-space: normal; overflow-wrap: break-word;">@product.Category?.Name</span>
+                                            <h5 style="white-space: normal; overflow-wrap: break-word;"><a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID">@product.Name</a></h5>
                                             <div class="product__item__price">
                                                 @product.DiscountPrice?.ToString("C0", new CultureInfo("en-US")) <span>@product.Price.ToString("C0", new CultureInfo("en-US"))</span>
                                             </div>
@@ -243,7 +243,7 @@
                                     </ul>
                                 </div>
                                 <div class="product__item__text">
-                                    <h6><a asp-controller="Product" asp-action="Index" asp-route-uid="@item.PRO_ID">@item.Name</a></h6>
+                                    <h6 style="white-space: normal; overflow-wrap: break-word;"><a asp-controller="Product" asp-action="Index" asp-route-uid="@item.PRO_ID">@item.Name</a></h6>
                                     <h5>@item.Price.ToString("C0", new CultureInfo("en-US"))</h5>
                                 </div>
                             </div>

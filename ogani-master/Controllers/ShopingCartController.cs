@@ -50,8 +50,8 @@ namespace ogani_master.Controllers
                 .Where(o => o.MEM_ID == user.UserId)
                 .ToListAsync();
 
-           
 
+            ViewBag.Settings = context.Settings.ToList();
             ViewBag.CurrentUser = user;
             ViewBag.Carts = carts;
             ViewBag.Orders = orders;

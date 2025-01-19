@@ -59,7 +59,7 @@
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price</label>
-                                <input asp-for="DiscountPrice" type="number" class="form-control" value="@Model.DiscountPrice.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)" id="DiscountPriceInput" />
+                                <input asp-for="DiscountPrice" type="number" class="form-control" value="@Model.DiscountPrice?.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)" id="DiscountPriceInput" />
                                 <span asp-validation-for="DiscountPrice" class="text-danger"></span>
                             </div>
                             <div class="col-md-3 mb-3">

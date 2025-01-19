@@ -4,11 +4,45 @@
 @{
     ViewData["Title"] = "Home Page";
     List<Product> products = ViewBag.Products;
+    var settings = ViewBag.Settings as List<ogani_master.Models.Setting>;
 }
 
 @* @section Styles {
     <link href="~" rel="stylesheet" />
 } *@
+@section Styles {
+    <style>
+        button {
+            border: none;
+            outline: none;
+            background: transparent;
+            color: inherit;
+        }
+
+        .category {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+            .category.active {
+                background: #7fad39;
+                color: white !important;
+            }
+
+        .sidebar__item__size.active label {
+            background: #7fad39 !important;
+            color: white !important;
+        }
+
+        body .price-input {
+            display: flex;
+        }
+
+        .price-range-wrap .range-slider .price-input input {
+            max-width: unset !important;
+        }
+    </style>
+}
 
 <section class="hero">
     <div class="container">
@@ -32,7 +66,7 @@
                             foreach (var category in ViewBag.Categories)
                             {
                                 <li>
-                                    <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@category.CAT_ID">@category.Name</a>
+                                    <a asp-controller="ShopGrid" asp-action="Index" >@category.Name</a>
                                 </li>
                             }
                         }
@@ -46,12 +80,12 @@
             <div class="col-lg-9">
                 <div class="hero__search">
                     <div class="hero__search__form">
-                        <form action="#">
+                        <form asp-controller="Product" asp-action="Search" method="get" class="container">
                             <div class="hero__search__categories">
                                 All Categories
                                 @* <span class="arrow_carrot-down"></span> *@
                             </div>
-                            <input type="text" placeholder="What do yo u need?" />
+                            <input type="text" name="query" placeholder="What do yo u need?" />
                             <button type="submit" class="site-btn">SEARCH</button>
                         </form>
                     </div>
@@ -60,7 +94,20 @@
                             <i class="fa fa-phone"></i>
                         </div>
                         <div class="hero__search__phone__text">
-                            <h5>+65 11.188.888</h5>
+                            @if (settings != null && settings.Any())
+                            {
+                                @foreach (var setting in settings)
+                                {
+                                    if (setting.Name.Equals("Phone", StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        <h5>@setting.Value</h5>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <h5>No phone number available</h5>
+                            }
                             <span>support 24/7 time</span>
                         </div>
                     </div>
@@ -135,82 +182,87 @@
 
 <section class="featured spad">
     <div class="container">
-        <div class="row">
-            <div class="col-lg-12">
-                <div class="section-title">
-                    @if (ViewBag.AllDepartmentCategory != null)
-                    {
-                        <h2>@ViewBag.AllDepartmentCategory.Name</h2>
-                    }
-                    else
-                    {
-                        <span>All Product</span>
-                    }
-                </div>
-                <div class="featured__controls">
-                    <ul>
-                        @if (ViewBag.Categories != null && ViewBag.Categories.Count > 0)
+         <form id="filterForm" asp-controller="ShopGrid" asp-action="Index" method="get" class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="section-title">
+                        @if (ViewBag.AllDepartmentCategory != null)
                         {
-                            int index = 0; // Khởi tạo biến đếm để kiểm tra phần tử đầu tiên
-                            foreach (var category in ViewBag.Categories)
-                            {
-                                <li data-category-id="@category.CAT_ID" class="@(index == 0 ? "active" : "")">
-                                    @category.Name
-                                </li>
-                                index++; // Tăng biến đếm
-                            }
+                            <h2>@ViewBag.AllDepartmentCategory.Name</h2>
                         }
                         else
                         {
-                            <li>No categories available</li>
+                            <span>All Product</span>
                         }
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="row featured__filter" id="product-list">
-            @foreach (Product product in products)
-            {
-                <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
-                    <div class="featured__item">
-                        <div class="featured__item__pic set-bg"
-                        data-setbg="@Url.Content("~/Data/Product/" + @product.Avatar)"
-                        style="background-image: url('@Url.Content("~/Data/Product/" + @product.Avatar)');">
-                            <ul class="featured__item__pic__hover">
-                                <li>
-                                    <a ><i class="fa fa-heart"></i></a>
-                                </li>
-                                <li>
-                                    <a href="#"><i class="fa fa-retweet"></i></a>
-                                </li>
-                                <li>
-                                    <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="featured__item__text">
-                            <h6><a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID">@product.Name</a></h6>
-                            <h5>
-                                @if (product?.DiscountPrice != null)
+                    </div>
+                    <div class="featured__controls">
+                        <ul>
+                            @if (ViewBag.Categories != null && ViewBag.Categories.Count > 0)
+                            {
+                                int index = 0; 
+                                foreach (var category in ViewBag.Categories)
                                 {
-                                    <span style="text-decoration: line-through; color: gray;">
-                                        @product.Price.ToString("C0", new CultureInfo("en-US"))
-                                    </span>
-                                    <span style="margin-left: 8px; color: red">
-                                        @product.DiscountPrice?.ToString("C0", new CultureInfo("en-US"))
-                                    </span>
+                                    <li data-category-id="@category.CAT_ID" class="@(index == 0 ? "active" : "")">
+                                        <button type="button" onclick="updateAndSubmit('category', @category.CAT_ID)"> @category.Name</button>
+                                    </li>
+                                    index++; 
                                 }
-                                else
-                                {
-                                    @product.Price.ToString("C0", new CultureInfo("en-US"))
-                                }
-                            </h5>
-                        </div>
+                            }
+                            else
+                            {
+                                <li>No categories available</li>
+                            }
+                        </ul>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+
+            <div class="row featured__filter" id="product-list">
+                @foreach (Product product in products)
+                {
+                    <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
+                        <div class="featured__item">
+                            <div class="featured__item__pic set-bg"
+                            data-setbg="@Url.Content("~/Data/Product/" + @product.Avatar)"
+                            style="background-image: url('@Url.Content("~/Data/Product/" + @product.Avatar)');">
+                                <ul class="featured__item__pic__hover">
+                                    <li>
+                                        <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-heart"></i></a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Home" asp-action="Index"><i class="fa fa-retweet"></i></a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="featured__item__text">
+                                <h6 class=" product-name text-wrap" style="white-space: normal; overflow-wrap: break-word;" 
+                               ><a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID">
+                                    @product.Name</a></h6>
+
+                                <h5>
+                                    @if (product?.DiscountPrice != null)
+                                    {
+                                        <span style="text-decoration: line-through; color: gray;">
+                                            @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                        </span>
+                                        <span style="margin-left: 8px; color: red">
+                                            @product.DiscountPrice?.ToString("C0", new CultureInfo("en-US"))
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                    }
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </form>
     </div>
 </section>
 
@@ -268,7 +320,8 @@
                                 </div>
                                 
                                 <div class="col-7 latest-product__item__text">
-                                    <h6 class="product-name text-truncate" style="white-space: normal;">
+                                    <h6 class="product-name text-truncate"
+                                            style="white-space: normal; overflow-wrap: break-word;">
                                                             @product.Name
                                     </h6>
                                     <h5 class="product-price text-danger fw-bold">
@@ -307,7 +360,7 @@
                                     </div>
 
                                     <div class="col-7 latest-product__item__text">
-                                        <h6 class="product-name text-truncate" style="white-space: normal;">
+                                        <h6 class="product-name text-truncate" style="white-space: normal; overflow-wrap: break-word;">
                                             @product.Name
                                         </h6>
                                         <h5 class="product-price text-danger fw-bold">
@@ -347,7 +400,7 @@
                                     </div>
 
                                     <div class="col-7 latest-product__item__text">
-                                        <h6 class="product-name text-truncate" style="white-space: normal;">
+                                        <h6 class="product-name text-truncate" style="white-space: normal; overflow-wrap: break-word;">
                                             @product.Name
                                         </h6>
                                         <h5 class="product-price text-danger fw-bold">
@@ -400,11 +453,13 @@
                                 <ul>
                                     <li><i class="fa fa-calendar-o"></i> @blog.CreatedAt.ToString("MMM dd, yyyy")</li>
                                 </ul>
-                                <h5>@blog.Title</h5>
+                                <h5 style="white-space: normal; overflow-wrap: break-word;">@blog.Title</h5>
                                 <p>
-                                    @(blog.Content.Length > 200
-                                        ? blog.Content.Substring(0, 200) + "..."
-                                        : blog.Content)
+                                    @Html.Raw(
+                                             blog.Content.Length > 200
+                                             ? blog.Content.Substring(0, 200) + "..."
+                                             : blog.Content
+                                             )
                                 </p>
                             </div>
                         </div>
@@ -416,5 +471,24 @@
     </div>
 
 </section>
+@section Scripts {
+<script>
+    function updateAndSubmit(field, value) {
+        let form = document.getElementById('filterForm');
+        let input = document.getElementById(field + 'Input');
+
+        if (input) {
+            if (input.value == value) {
+                input.value = '';
+            } else {
+                input.value = value;
+            }
+        }
+
+        form.submit();
+    }
 
 
+</script>
+
+}
