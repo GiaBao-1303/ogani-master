@@ -30,10 +30,15 @@ namespace ogani_master.Controllers
 
             return favorites;
         }
+        public async Task<List<Category>> getCategories()
+        {
+            return await _context.Categories.ToListAsync(); 
+        }
 
         [HttpGet]
         public async Task<IActionResult> Index()
         {
+            ViewBag.Categories = await getCategories();
             ViewBag.Favorites = await this.getFavorites() ?? new List<FavoritesModel>();
             ViewBag.CurrentUser = await this.GetCurrentUser();
 

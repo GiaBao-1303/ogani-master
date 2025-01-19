@@ -1,4 +1,7 @@
-﻿@{
+﻿@model List<ogani_master.Models.Banner>
+@using System.Globalization
+
+@{
     ViewData["Title"] = "Home Page";
     List<Product> products = ViewBag.Products;
 }
@@ -8,16 +11,23 @@
 } *@
 
 <section class="hero">
-      <div class="container">
+    <div class="container">
         <div class="row">
-          <div class="col-lg-3">
-            <div class="hero__categories">
-              <div class="hero__categories__all">
-                <i class="fa fa-bars"></i>
-                <span>All departments</span>
-              </div>
-              <ul>
-                        @if (ViewBag.Categories != null)
+            <div class="col-lg-3">
+                <div class="hero__categories">
+                    <div class="hero__categories__all">
+                        <i class="fa fa-bars"></i>
+                        @if (ViewBag.AllDepartmentCategory != null)
+                        {
+                            <span>@ViewBag.AllDepartmentCategory.Name</span>
+                        }
+                        else
+                        {
+                            <span>All </span> 
+                        }
+                    </div>
+                    <ul>
+                        @if (ViewBag.Categories != null && ViewBag.Categories.Count > 0)
                         {
                             foreach (var category in ViewBag.Categories)
                             {
@@ -30,112 +40,146 @@
                         {
                             <li>No categories available</li>
                         }
-              </ul>
-            </div>
-          </div>
-          <div class="col-lg-9">
-            <div class="hero__search">
-              <div class="hero__search__form">
-                <form action="#">
-                  <div class="hero__search__categories">
-                    All Categories
-                    <span class="arrow_carrot-down"></span>
-                  </div>
-                  <input type="text" placeholder="What do yo u need?" />
-                  <button type="submit" class="site-btn">SEARCH</button>
-                </form>
-              </div>
-              <div class="hero__search__phone">
-                <div class="hero__search__phone__icon">
-                  <i class="fa fa-phone"></i>
+                    </ul>
                 </div>
-                <div class="hero__search__phone__text">
-                  <h5>+65 11.188.888</h5>
-                  <span>support 24/7 time</span>
+            </div>
+            <div class="col-lg-9">
+                <div class="hero__search">
+                    <div class="hero__search__form">
+                        <form action="#">
+                            <div class="hero__search__categories">
+                                All Categories
+                                @* <span class="arrow_carrot-down"></span> *@
+                            </div>
+                            <input type="text" placeholder="What do yo u need?" />
+                            <button type="submit" class="site-btn">SEARCH</button>
+                        </form>
+                    </div>
+                    <div class="hero__search__phone">
+                        <div class="hero__search__phone__icon">
+                            <i class="fa fa-phone"></i>
+                        </div>
+                        <div class="hero__search__phone__text">
+                            <h5>+65 11.188.888</h5>
+                            <span>support 24/7 time</span>
+                        </div>
+                    </div>
                 </div>
-              </div>
+                @if (ViewBag.MainBanner != null)
+                {
+                    var mainBanner = ViewBag.MainBanner;
+                    <div class="hero__item set-bg" data-setbg="@Url.Content("~/data/banner/" + mainBanner.Image)">
+                        <div class="hero__text">
+                            <span>@mainBanner.Title</span>
+                            <h2>@mainBanner.Title <br />100% Organic</h2>
+                            <a href="@mainBanner.Url" class="primary-btn">SHOP NOW</a>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="hero__item set-bg" data-setbg="@Url.Content("~/data/banner/default-banner.jpg")">
+                        <div class="hero__text">
+                            <span>Default Banner</span>
+                            <h2>Explore <br />Our Organic Products</h2>
+                            <p>No banner available</p>
+                            <a href="#" class="primary-btn">SHOP NOW</a>
+                        </div>
+                    </div>
+                }
             </div>
-                <div class="hero__item set-bg" data-setbg="@Url.Content("~/uploads/hero/banner.jpg")">
-              <div class="hero__text">
-                <span>FRUIT FRESH</span>
-                <h2>Vegetable <br />100% Organic</h2>
-                <p>Free Pickup and Delivery Available</p>
-                <a href="#" class="primary-btn">SHOP NOW</a>
-              </div>
-            </div>
-          </div>
         </div>
-      </div>
+    </div>
 </section>
 
 <section class="categories">
     <div class="container">
         <div class="row">
             <div class="categories__slider owl-carousel">
-                <div class="col-lg-3">
-                    <div class="categories__item set-bg"
-                         data-setbg="@Url.Content("~/uploads/categories/cat-1.jpg")">
-                        <h5><a href="#">Fresh Fruit</a></h5>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="categories__item set-bg"
-                         data-setbg="@Url.Content("~/uploads/categories/cat-2.jpg")">
-                        <h5><a href="#">Dried Fruit</a></h5>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="categories__item set-bg"
-                         data-setbg="@Url.Content("~/uploads/categories/cat-3.jpg")">
-                        <h5><a href="#">Vegetables</a></h5>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="categories__item set-bg"
-                         data-setbg="@Url.Content("~/uploads/categories/cat-4.jpg")">
-                        <h5><a href="#">Drink Fruits</a></h5>
-                    </div>
-                </div>
-                <div class="col-lg-3">
-                    <div class="categories__item set-bg"
-                         data-setbg="@Url.Content("~/uploads/categories/cat-5.jpg")">
-                        <h5><a href="#">Drink Fruits</a></h5>
-                    </div>
-                </div>
+                @if (ViewBag.CategoryWithProducts != null)
+                {
+                    foreach (var item in ViewBag.CategoryWithProducts)
+                    {
+                        if (item.RepresentativeProduct != null)
+                        {
+                            <div class="col-lg-3">
+                                <div class="categories__item set-bg"
+                                data-setbg="@Url.Content("~/Data/Product/" + item.RepresentativeProduct.Avatar)">
+                                    <h5>
+                                        <a asp-controller="ShopGrid" asp-action="Index">
+                                            @item.Category.Name
+                                        </a>
+                                    </h5>
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="col-lg-3">
+                                <div class="categories__item set-bg"
+                                data-setbg="@Url.Content("~/uploads/categories/default.jpg")">
+                                    <h5>
+                                        <a href="#">
+                                            @item.Category.Name
+                                        </a>
+                                    </h5>
+                                </div>
+                            </div>
+                        }
+                    }
+                }
             </div>
         </div>
     </div>
 </section>
 
- <section class="featured spad">
+<section class="featured spad">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
                 <div class="section-title">
-                    <h2>Featured Product</h2>
+                    @if (ViewBag.AllDepartmentCategory != null)
+                    {
+                        <h2>@ViewBag.AllDepartmentCategory.Name</h2>
+                    }
+                    else
+                    {
+                        <span>All Product</span>
+                    }
                 </div>
                 <div class="featured__controls">
                     <ul>
-                        <li class="active" data-filter="*">All</li>
-                        <li data-filter=".oranges">Oranges</li>
-                        <li data-filter=".fresh-meat">Fresh Meat</li>
-                        <li data-filter=".vegetables">Vegetables</li>
-                        <li data-filter=".fastfood">Fastfood</li>
+                        @if (ViewBag.Categories != null && ViewBag.Categories.Count > 0)
+                        {
+                            int index = 0; // Khởi tạo biến đếm để kiểm tra phần tử đầu tiên
+                            foreach (var category in ViewBag.Categories)
+                            {
+                                <li data-category-id="@category.CAT_ID" class="@(index == 0 ? "active" : "")">
+                                    @category.Name
+                                </li>
+                                index++; // Tăng biến đếm
+                            }
+                        }
+                        else
+                        {
+                            <li>No categories available</li>
+                        }
                     </ul>
                 </div>
             </div>
         </div>
-        <div class="row featured__filter">
-            <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
-                <div class="featured__item">
-                    @foreach(Product product in products)
-                    {
+
+        <div class="row featured__filter" id="product-list">
+            @foreach (Product product in products)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
+                    <div class="featured__item">
                         <div class="featured__item__pic set-bg"
-                             data-setbg="@Url.Content("~/Data/Product/" + @product.Avatar)"
-                             style="background-image: url('@Url.Content("~/Data/Product/" + @product.Avatar)');">
+                        data-setbg="@Url.Content("~/Data/Product/" + @product.Avatar)"
+                        style="background-image: url('@Url.Content("~/Data/Product/" + @product.Avatar)');">
                             <ul class="featured__item__pic__hover">
                                 <li>
-                                    <a href="#"><i class="fa fa-heart"></i></a>
+                                    <a ><i class="fa fa-heart"></i></a>
                                 </li>
                                 <li>
                                     <a href="#"><i class="fa fa-retweet"></i></a>
@@ -147,31 +191,64 @@
                         </div>
                         <div class="featured__item__text">
                             <h6><a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID">@product.Name</a></h6>
-                            <h5>$@product.Price</h5>
+                            <h5>
+                                @if (product?.DiscountPrice != null)
+                                {
+                                    <span style="text-decoration: line-through; color: gray;">
+                                        @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                    </span>
+                                    <span style="margin-left: 8px; color: red">
+                                        @product.DiscountPrice.ToString("C0", new CultureInfo("en-US"))
+                                    </span>
+                                }
+                                else
+                                {
+                                    @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                }
+                            </h5>
                         </div>
-                    }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<div class="banner">
+    <div class="container">
+        <div class="row">
+            <div class="banner">
+                <div class="container">
+                    <div class="row">
+                        @if (ViewBag.SideBanners != null && ViewBag.SideBanners.Count >= 2)
+                        {
+                            @for (int i = 0; i < 2; i++)
+                            {
+                                <div class="col-lg-6 col-md-6 col-sm-6">
+                                    <div class="banner__pic">
+                                        <img src="@Url.Content("~/data/banner/" + ViewBag.SideBanners[i].Image)" alt="@ViewBag.SideBanners[i].Title" />
+                                    </div>
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="banner__pic">
+                                    <img src="@Url.Content("~/data/banner/default-banner.jpg")" alt="Default Banner 1" />
+                                </div>
+                            </div>
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="banner__pic">
+                                    <img src="@Url.Content("~/data/banner/default-banner.jpg")" alt="Default Banner 2" />
+                                </div>
+                            </div>
+                        }
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-
-</section>
-
-<div class="banner">
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-6 col-md-6 col-sm-6">
-            <div class="banner__pic">
-              <img src="~/uploads/banner/banner-1.jpg" alt="" />
-            </div>
-          </div>
-          <div class="col-lg-6 col-md-6 col-sm-6">
-            <div class="banner__pic">
-                    <img src="~/uploads/banner/banner-2.jpg" alt="" />
-            </div>
-          </div>
-        </div>
-      </div>
 </div>
 
 <section class="latest-product spad">
@@ -181,64 +258,38 @@
                 <div class="latest-product__text">
                     <h4>Latest Products</h4>
                     <div class="latest-product__slider owl-carousel">
-                        <div class="latest-prdouct__slider__item">
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-1.jpg" alt="" />
+                        @foreach (var product in products)
+                        {
+                        <div class="latest-prdouct__slider__item row justify-content-start align-items-center">
+                            <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID" class="latest-product__item d-flex">
+                              
+                                <div class="col-5 latest-product__item__pic">
+                                    <img src="@Url.Content("~/Data/Product/" + product.Avatar)" class="img-fluid rounded" alt="@product.Name" />
                                 </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-2.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-3.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="latest-prdouct__slider__item">
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-1.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-2.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-3.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
+                                
+                                <div class="col-7 latest-product__item__text">
+                                    <h6 class="product-name text-truncate" style="white-space: normal;">
+                                                            @product.Name
+                                    </h6>
+                                    <h5 class="product-price text-danger fw-bold">
+                                            @if (product?.DiscountPrice != null)
+                                            {
+                                                <span style="text-decoration: line-through; color: gray;">
+                                                                @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                                </span>
+                                                <span style="margin-left: 8px; color: red">
+                                                                @product.DiscountPrice.ToString("C0", new CultureInfo("en-US"))
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                            } 
+                                    </h5>
                                 </div>
                             </a>
                         </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -246,64 +297,39 @@
                 <div class="latest-product__text">
                     <h4>Top Rated Products</h4>
                     <div class="latest-product__slider owl-carousel">
-                        <div class="latest-prdouct__slider__item">
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-1.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-2.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-3.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="latest-prdouct__slider__item">
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-1.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-2.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-3.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                        </div>
+                        @foreach (var product in products)
+                        {
+                            <div class="latest-prdouct__slider__item row justify-content-start align-items-center">
+                                <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID" class="latest-product__item d-flex">
+
+                                    <div class="col-5 latest-product__item__pic">
+                                        <img src="@Url.Content("~/Data/Product/" + product.Avatar)" class="img-fluid rounded" alt="@product.Name" />
+                                    </div>
+
+                                    <div class="col-7 latest-product__item__text">
+                                        <h6 class="product-name text-truncate" style="white-space: normal;">
+                                            @product.Name
+                                        </h6>
+                                        <h5 class="product-price text-danger fw-bold">
+                                            @if (product?.DiscountPrice != null)
+                                            {
+                                            <span style="text-decoration: line-through; color: gray;">
+                                                    @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                            </span>
+                                            <span style="margin-left: 8px; color: red">
+                                                    @product.DiscountPrice.ToString("C0", new CultureInfo("en-US"))
+                                            </span>
+                                            }
+                                            else
+                                            {
+                                                @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                            } 
+                                        </h5>
+                                    </div>
+                                </a>
+                            </div>
+                        }
+                        
                     </div>
                 </div>
             </div>
@@ -311,64 +337,38 @@
                 <div class="latest-product__text">
                     <h4>Review Products</h4>
                     <div class="latest-product__slider owl-carousel">
-                        <div class="latest-prdouct__slider__item">
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-1.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-2.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-3.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                        </div>
-                        <div class="latest-prdouct__slider__item">
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-1.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-2.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                            <a href="#" class="latest-product__item">
-                                <div class="latest-product__item__pic">
-                                    <img src="~/uploads/latest-product/lp-3.jpg" alt="" />
-                                </div>
-                                <div class="latest-product__item__text">
-                                    <h6>Crab Pool Security</h6>
-                                    <span>$30.00</span>
-                                </div>
-                            </a>
-                        </div>
+                        @foreach (var product in products)
+                        {
+                            <div class="latest-prdouct__slider__item row justify-content-start align-items-center">
+                                <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID" class="latest-product__item d-flex">
+
+                                    <div class="col-5 latest-product__item__pic">
+                                        <img src="@Url.Content("~/Data/Product/" + product.Avatar)" class="img-fluid rounded" alt="@product.Name" />
+                                    </div>
+
+                                    <div class="col-7 latest-product__item__text">
+                                        <h6 class="product-name text-truncate" style="white-space: normal;">
+                                            @product.Name
+                                        </h6>
+                                        <h5 class="product-price text-danger fw-bold">
+                                            @if (product?.DiscountPrice != null)
+                                            {
+                                            <span style="text-decoration: line-through; color: gray;">
+                                                    @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                            </span>
+                                            <span style="margin-left: 8px; color: red">
+                                                    @product.DiscountPrice.ToString("C0", new CultureInfo("en-US"))
+                                            </span>
+                                            }
+                                            else
+                                            {
+                                                @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                            } 
+                                        </h5>
+                                    </div>
+                                </a>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
@@ -382,67 +382,39 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="section-title from-blog__title">
-                    <h2>From The Blog</h2>
+                    <h2>Team Blog</h2>
                 </div>
             </div>
         </div>
         <div class="row">
+            @foreach (var blog in (List<ogani_master.Models.Blog>)ViewData["RecentBlogs"])
+{
+
             <div class="col-lg-4 col-md-4 col-sm-6">
-                <div class="blog__item">
-                    <div class="blog__item__pic">
-                        <img src="~/uploads/blog/blog-1.jpg" alt="" />
-                    </div>
-                    <div class="blog__item__text">
-                        <ul>
-                            <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                            <li><i class="fa fa-comment-o"></i> 5</li>
-                        </ul>
-                        <h5><a href="#">Cooking tips make cooking simple</a></h5>
-                        <p>
-                            Sed quia non numquam modi tempora indunt ut labore et dolore
-                            magnam aliquam quaerat
-                        </p>
-                    </div>
-                </div>
+                    <a href="@Url.Action("Detail", "Blog", new { id = blog.BlogId })" class="blog__sidebar__recent__item">
+                        <div class="blog__item">
+                            <div class="blog__item__pic">
+                                <img src="@Url.Content("~/data/blog/" + blog.Image)" alt="@blog.Title" />
+                            </div>
+                            <div class="blog__item__text">
+                                <ul>
+                                    <li><i class="fa fa-calendar-o"></i> @blog.CreatedAt.ToString("MMM dd, yyyy")</li>
+                                </ul>
+                                <h5>@blog.Title</h5>
+                                <p>
+                                    @(blog.Content.Length > 200
+                                        ? blog.Content.Substring(0, 200) + "..."
+                                        : blog.Content)
+                                </p>
+                            </div>
+                        </div>
+                    </a>
             </div>
-            <div class="col-lg-4 col-md-4 col-sm-6">
-                <div class="blog__item">
-                    <div class="blog__item__pic">
-                        <img src="~/uploads/blog/blog-2.jpg" alt="" />
-                    </div>
-                    <div class="blog__item__text">
-                        <ul>
-                            <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                            <li><i class="fa fa-comment-o"></i> 5</li>
-                        </ul>
-                        <h5><a href="#">6 ways to prepare breakfast for 30</a></h5>
-                        <p>
-                            Sed quia non numquam modi tempora indunt ut labore et dolore
-                            magnam aliquam quaerat
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-4 col-sm-6">
-                <div class="blog__item">
-                    <div class="blog__item__pic">
-                        <img src="~/uploads/blog/blog-3.jpg" alt="" />
-                    </div>
-                    <div class="blog__item__text">
-                        <ul>
-                            <li><i class="fa fa-calendar-o"></i> May 4,2019</li>
-                            <li><i class="fa fa-comment-o"></i> 5</li>
-                        </ul>
-                        <h5><a href="#">Visit the clean farm in the US</a></h5>
-                        <p>
-                            Sed quia non numquam modi tempora indunt ut labore et dolore
-                            magnam aliquam quaerat
-                        </p>
-                    </div>
-                </div>
-            </div>
+            
+            }
         </div>
     </div>
 
 </section>
+
 

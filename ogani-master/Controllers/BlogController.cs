@@ -23,6 +23,10 @@ namespace ogani_master.Controllers
 
             return favorites;
         }
+        public async Task<List<Category>> getCategories()
+        {
+            return await _context.Categories.ToListAsync();
+        }
 
         // Action để hiển thị danh sách các bài blog
         public async Task<IActionResult> Index()
@@ -44,6 +48,7 @@ namespace ogani_master.Controllers
             ViewData["MainBlogs"] = mainBlogs;
             ViewData["RecentBlogs"] = recentBlogs;
             ViewBag.Favorites = await this.getFavorites();
+            ViewBag.Categories = await getCategories();
             return View(allBlogs); // Trả về tất cả bài blog để sử dụng nếu cần trong view
         }
 

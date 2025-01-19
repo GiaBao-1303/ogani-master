@@ -29,10 +29,15 @@ namespace ogani_master.Controllers
 
             return favorites;
         }
+        public async Task<List<Category>> getCategories()
+        {
+            return await _context.Categories.ToListAsync();
+        }
         public async Task<IActionResult> Index()
         {
             ViewBag.Favorites = await this.getFavorites() ?? new List<FavoritesModel>();
             ViewBag.CurrentUser = await this.GetCurrentUser();
+            ViewBag.Categories = await getCategories();
             return View();
         }
     }

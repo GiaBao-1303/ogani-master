@@ -1,4 +1,4 @@
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ogani_master.Models;
@@ -35,16 +35,42 @@ namespace ogani_master.Controllers
             return favorites;
         }
 
+
         public async Task<IActionResult> Index()
         {
-
             List<Product> products = context.Products.ToList();
             ViewBag.Products = products;
-            //Category
-            var categoties = context.Categories.OrderBy(c => c.DisplayOrder).ToList();
+
+            var allBlogs = await context.Blogs
+               .OrderByDescending(b => b.CreatedAt)
+               .ToListAsync();
+            var mainBlogs = allBlogs.Take(15).ToList();
+            var recentBlogs = allBlogs.Take(5).ToList();
+            ViewData["MainBlogs"] = mainBlogs;
+            ViewData["RecentBlogs"] = recentBlogs;
+
+            var categories = await context.Categories.OrderBy(c => c.DisplayOrder).ToListAsync();
+
+            ViewBag.AllDepartmentCategory = categories.FirstOrDefault(c => c.DisplayOrder == 1);
+            ViewBag.Categories = categories.Where(c => c.DisplayOrder > 1).ToList();
+
+            var mainBanner = await context.Banners.OrderBy(b => b.DisplayOrder).FirstOrDefaultAsync();
+            ViewBag.MainBanner = mainBanner;
+
+            var sideBanners = await context.Banners.OrderBy(b => b.DisplayOrder).Skip(1).Take(2).ToListAsync();
+            ViewBag.SideBanners = sideBanners;
+
             ViewBag.Favorites = await this.getFavorites();
-            ViewBag.Categories = categoties;
             ViewBag.CurrentUser = await this.GetCurrentUser();
+
+            var categoryWithProducts = categories.Select(cat => new
+            {
+                Category = cat,
+                RepresentativeProduct = products.FirstOrDefault(p => p.CAT_ID == cat.CAT_ID)
+            }).ToList();
+
+            ViewBag.CategoryWithProducts = categoryWithProducts;
+
             return View();
 
         }
