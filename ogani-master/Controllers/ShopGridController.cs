@@ -28,7 +28,12 @@ namespace ogani_master.Controllers
 
             List<Product> listProducts;
 
+            int countOfProducts = await this.context.Products.CountAsync();
+
+            int skip = queryProduct.page ?? 0 * this.numberOfProduct;
+
             var query = this.context.Products
+                .Skip(skip)
                 .Take(this.numberOfProduct)
                 .Where(p => p.DiscountPrice == null);
 
@@ -67,6 +72,8 @@ namespace ogani_master.Controllers
             ViewBag.UnitActive = queryProduct?.unit;
             ViewBag.MinPrice = (int)minPriceDb;
             ViewBag.MaxPrice = (int)maxPriceDb;
+            ViewBag.CountOfProducts = countOfProducts;
+            ViewBag.CurrentPage = queryProduct.page ?? 1;
 
             return View();
         }

@@ -453,6 +453,7 @@ namespace ogani_master.Controllers
 		}
 
 		[HttpPost]
+		[Route("/AddToFavorite")]
 		[AutoValidateAntiforgeryToken]
 		public async Task<IActionResult> AddToFavorite(int? prodID)
 		{

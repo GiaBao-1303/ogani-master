@@ -12,6 +12,31 @@
 
 @section Styles {
      <style>
+         .product__pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .product__pagination button {
+            transition: all 0.3s ease;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product__pagination button:hover {
+            transform: translateY(-2px);
+        }
+
+        .product__pagination .fa {
+            font-size: 14px;
+        }
+
          button {
              border: none;
              outline: none;
@@ -65,6 +90,7 @@
 
         <input type="hidden" name="category" id="categoryInput" value="@categoryActive" />
         <input type="hidden" name="unit" id="unitInput" value="@unitActive" />
+        <input type="hidden" name="page" id="pageInput" value="@ViewBag.CurrentPage" />
 
         <div class="row">
             <div class="col-lg-3 col-md-5">
@@ -232,13 +258,10 @@
                                      data-setbg="@Url.Content("~/Data/product/" + item.Avatar)">
                                     <ul class="product__item__pic__hover">
                                         <li>
-                                            <a href="#"><i class="fa fa-heart"></i></a>
+                                            <a href="#" onclick="submitFakeForm(@item.PRO_ID)"><i class="fa fa-heart"></i></a>
                                         </li>
                                         <li>
-                                            <a href="#"><i class="fa fa-retweet"></i></a>
-                                        </li>
-                                        <li>
-                                            <a href="#"><i class="fa fa-shopping-cart"></i></a>
+                                            <a asp-controller="Product" asp-action="Index" asp-route-uid="@item.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
                                         </li>
                                     </ul>
                                 </div>
@@ -250,21 +273,84 @@
                         </div>
                     }
                 </div>
-                @if(listProducts.Count > 12)
+               @if(ViewBag.CountOfProducts > 12)
                 {
-                    <div class="product__pagination">
-                        <a href="#">1</a>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#"><i class="fa fa-long-arrow-right"></i></a>
-                    </div>
-                }
+                int totalPages = (int)Math.Ceiling(ViewBag.CountOfProducts / 12.0);
+                int currentPage = ViewBag.CurrentPage ?? 1;
+    
+                <div class="product__pagination flex items-center justify-center gap-2 my-4">
+                    @if (currentPage > 1)
+                    {
+                        <button type="button" 
+                                onclick="updatePage(@(currentPage - 1))" 
+                                class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100">
+                            <i class="fa fa-long-arrow-left"></i>
+                        </button>
+                    }
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        if (i == currentPage)
+                        {
+                            <button type="button" 
+                                    class="px-4 py-2 rounded-lg bg-[#7fad39] text-white font-medium">
+                                @i
+                            </button>
+                        }
+                        else if (i <= 3 || i >= totalPages - 2 || Math.Abs(i - currentPage) <= 1)
+                        {
+                            <button type="button" 
+                                    onclick="updatePage(@i)" 
+                                    class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100">
+                                @i
+                            </button>
+                        }
+                        else if (Math.Abs(i - currentPage) == 2)
+                        {
+                            <span class="px-2">...</span>
+                            i = (i < currentPage) ? currentPage - 2 : totalPages - 2;
+                        }
+                    }
+
+                    @if (currentPage < totalPages)
+                    {
+                        <button type="button" 
+                                onclick="updatePage(@(currentPage + 1))" 
+                                class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100">
+                            <i class="fa fa-long-arrow-right"></i>
+                        </button>
+                    }
+            </div>
+}
             </div>
         </div>
     </form>
 </section>
 
 @section Scripts {
+    <script>
+        function updatePage(page) {
+            let pageInput = document.getElementById('pageInput');
+            pageInput.value = page;
+            document.getElementById('filterForm').submit();
+        }
+
+        function submitFakeForm(value) {
+                var form = document.createElement('form');
+                form.method = 'POST'; 
+                form.action = '/AddToFavorite'; 
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'prodID';
+                input.value = value; 
+
+                form.appendChild(input);
+
+                document.body.appendChild(form);
+                form.submit();
+        }
+    </script>
+
     <script>
         function updateAndSubmit(field, value) {
             let form = document.getElementById('filterForm');

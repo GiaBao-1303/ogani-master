@@ -5,7 +5,6 @@
         public int? category {  get; set; }
         public string? unit { get; set; }
 
-        public int? lo {  get; set; }
-        public int? hi { get; set; }
+        public int? page { get; set; }
     }
 }
