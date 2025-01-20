@@ -1,5 +1,72 @@
-﻿@{
+﻿@using System.Globalization;
+
+@{
     ViewData["Title"] = "Shop Page";
+    List<Product> saleOffs = ViewBag.SaleOffs;
+    List<Product> listNewProducts = ViewBag.ListNewProduct;
+    List<Product> listProducts = ViewBag.ListProducts;
+    List<Category> categories = ViewBag.Categories;
+    int? categoryActive = ViewBag.CategoryActive;
+    string? unitActive = ViewBag.UnitActive;
+}
+
+@section Styles {
+     <style>
+         .product__pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+
+        .product__pagination button {
+            transition: all 0.3s ease;
+            min-width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product__pagination button:hover {
+            transform: translateY(-2px);
+        }
+
+        .product__pagination .fa {
+            font-size: 14px;
+        }
+
+         button {
+             border: none;
+             outline: none;
+            background: transparent;
+            color: inherit;
+         }
+
+        .category {
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+         .category.active {
+            background: #7fad39;
+            color: white !important;
+         }
+
+         .sidebar__item__size.active label {
+            background: #7fad39 !important;
+            color: white !important;
+         }
+
+         body .price-input {
+             display: flex;
+         }
+
+         .price-range-wrap .range-slider .price-input input {
+            max-width: unset !important;
+         }
+     </style>
 }
 
 <section class="breadcrumb-section set-bg" data-setbg="@Url.Content("~/uploads/breadcrumb.jpg")">
@@ -15,178 +82,105 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div>>
 </section>
 
 <section class="product spad">
-    <div class="container">
+    <form id="filterForm" asp-controller="ShopGrid" asp-action="Index" method="get" class="container">
+
+        <input type="hidden" name="category" id="categoryInput" value="@categoryActive" />
+        <input type="hidden" name="unit" id="unitInput" value="@unitActive" />
+        <input type="hidden" name="page" id="pageInput" value="@ViewBag.CurrentPage" />
+
         <div class="row">
             <div class="col-lg-3 col-md-5">
                 <div class="sidebar">
                     <div class="sidebar__item">
-                        <h4>Department</h4>
+                        <h4>Categories</h4>
                         <ul>
-                            <li><a href="#">Fresh Meat</a></li>
-                            <li><a href="#">Vegetables</a></li>
-                            <li><a href="#">Fruit & Nut Gifts</a></li>
-                            <li><a href="#">Fresh Berries</a></li>
-                            <li><a href="#">Ocean Foods</a></li>
-                            <li><a href="#">Butter & Eggs</a></li>
-                            <li><a href="#">Fastfood</a></li>
-                            <li><a href="#">Fresh Onion</a></li>
-                            <li><a href="#">Papayaya & Crisps</a></li>
-                            <li><a href="#">Oatmeal</a></li>
+                              @foreach(Category category in categories)
+                              {
+                                  <li class="category @(category.CAT_ID == categoryActive ? "active" : "")">
+                                    <button type="button" onclick="updateAndSubmit('category', @category.CAT_ID)" style="white-space: normal; overflow-wrap: break-word;">@category.Name</button>
+                                 </li>
+                              }
                         </ul>
                     </div>
                     <div class="sidebar__item">
                         <h4>Price</h4>
                         <div class="price-range-wrap">
                             <div class="price-range ui-slider ui-corner-all ui-slider-horizontal ui-widget ui-widget-content"
-                                 data-min="10"
-                                 data-max="540">
+                                 id="price-slider"
+                                 data-min="@(ViewBag.MinPrice ?? 0)"
+                                 data-max="@(ViewBag.MaxPrice ?? 0)">
                                 <div class="ui-slider-range ui-corner-all ui-widget-header"></div>
-                                <span tabindex="0"
-                                      class="ui-slider-handle ui-corner-all ui-state-default"></span>
-                                <span tabindex="0"
-                                      class="ui-slider-handle ui-corner-all ui-state-default"></span>
+                                <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
+                                <span tabindex="0" class="ui-slider-handle ui-corner-all ui-state-default"></span>
                             </div>
                             <div class="range-slider">
                                 <div class="price-input">
-                                    <input type="text" id="minamount" />
-                                    <input type="text" id="maxamount" />
+                                    <input type="text" id="minamount" readonly />
+                                    <input type="text" id="maxamount" readonly />
                                 </div>
                             </div>
-                        </div>
-                    </div>
-                    <div class="sidebar__item sidebar__item__color--option">
-                        <h4>Colors</h4>
-                        <div class="sidebar__item__color sidebar__item__color--white">
-                            <label for="white">
-                                White
-                                <input type="radio" id="white" />
-                            </label>
-                        </div>
-                        <div class="sidebar__item__color sidebar__item__color--gray">
-                            <label for="gray">
-                                Gray
-                                <input type="radio" id="gray" />
-                            </label>
-                        </div>
-                        <div class="sidebar__item__color sidebar__item__color--red">
-                            <label for="red">
-                                Red
-                                <input type="radio" id="red" />
-                            </label>
-                        </div>
-                        <div class="sidebar__item__color sidebar__item__color--black">
-                            <label for="black">
-                                Black
-                                <input type="radio" id="black" />
-                            </label>
-                        </div>
-                        <div class="sidebar__item__color sidebar__item__color--blue">
-                            <label for="blue">
-                                Blue
-                                <input type="radio" id="blue" />
-                            </label>
-                        </div>
-                        <div class="sidebar__item__color sidebar__item__color--green">
-                            <label for="green">
-                                Green
-                                <input type="radio" id="green" />
-                            </label>
                         </div>
                     </div>
                     <div class="sidebar__item">
                         <h4>Popular Size</h4>
-                        <div class="sidebar__item__size">
-                            <label for="large">
-                                Large
-                                <input type="radio" id="large" />
+                        <div class="sidebar__item__size @(unitActive == "KG" ? "active" : "")">
+                            <label onclick="updateAndSubmit('unit', 'KG')" for="KG">
+                                KG
                             </label>
                         </div>
-                        <div class="sidebar__item__size">
-                            <label for="medium">
-                                Medium
-                                <input type="radio" id="medium" />
+                        <div class="sidebar__item__size @(unitActive == "GAM" ? "active" : "")">
+                            <label onclick="updateAndSubmit('unit', 'GAM')" for="GAM">
+                                GAM
                             </label>
                         </div>
-                        <div class="sidebar__item__size">
-                            <label for="small">
-                                Small
-                                <input type="radio" id="small" />
-                            </label>
-                        </div>
-                        <div class="sidebar__item__size">
-                            <label for="tiny">
-                                Tiny
-                                <input type="radio" id="tiny" />
-                            </label>
-                        </div>
+                        
                     </div>
                     <div class="sidebar__item">
                         <div class="latest-product__text">
                             <h4>Latest Products</h4>
+                            @{
+                                int count = 0;
+                            }
                             <div class="latest-product__slider owl-carousel">
-                                <div class="latest-prdouct__slider__item">
-                                    <a href="#" class="latest-product__item">
+                                @foreach (Product newProduct in listNewProducts)
+                                {
+                                    if (count % 3 == 0)
+                                    {
+                                        if (count != 0)
+                                        {
+                                            @Html.Raw("</div>")
+                                        }
+                                        @Html.Raw("<div class=\"latest-prdouct__slider__item\">")
+                                    }
+
+                                    <a asp-controller="Product" asp-action="Index" asp-route-uid="@newProduct.PRO_ID" class="latest-product__item">
                                         <div class="latest-product__item__pic">
-                                            <img src="~/uploads/latest-product/lp-1.jpg" alt="" />
+                                            <img style="height: 80px;object-fit: cover;" src="@Url.Content("~/Data/Product/" + newProduct.Avatar)" alt="" />
                                         </div>
                                         <div class="latest-product__item__text">
-                                            <h6>Crab Pool Security</h6>
-                                            <span>$30.00</span>
+                                            <h6 class="truncate" style="white-space: normal; overflow-wrap: break-word;">@newProduct.Name</h6>
+                                            <span>
+                                                @(newProduct.DiscountPrice.HasValue
+                                                    ? newProduct.DiscountPrice.Value.ToString("C0", new CultureInfo("en-US"))
+                                                    : newProduct.Price.ToString("C0", new CultureInfo("en-US")))
+                                            </span>
                                         </div>
                                     </a>
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="~/uploads/latest-product/lp-2.jpg" alt="" />
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>Crab Pool Security</h6>
-                                            <span>$30.00</span>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="~/uploads/latest-product/lp-3.jpg" alt="" />
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>Crab Pool Security</h6>
-                                            <span>$30.00</span>
-                                        </div>
-                                    </a>
-                                </div>
-                                <div class="latest-prdouct__slider__item">
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="~/uploads/latest-product/lp-1.jpg" alt="" />
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>Crab Pool Security</h6>
-                                            <span>$30.00</span>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="~/uploads/latest-product/lp-2.jpg" alt="" />
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>Crab Pool Security</h6>
-                                            <span>$30.00</span>
-                                        </div>
-                                    </a>
-                                    <a href="#" class="latest-product__item">
-                                        <div class="latest-product__item__pic">
-                                            <img src="~/uploads/latest-product/lp-3.jpg" alt="" />
-                                        </div>
-                                        <div class="latest-product__item__text">
-                                            <h6>Crab Pool Security</h6>
-                                            <span>$30.00</span>
-                                        </div>
-                                    </a>
-                                </div>
+
+                                    count++;
+                                }
+
+
+                                @if (count > 0)
+                                {
+                                    @Html.Raw("</div>");
+                                }
                             </div>
+
                         </div>
                     </div>
                 </div>
@@ -198,162 +192,36 @@
                     </div>
                     <div class="row">
                         <div class="product__discount__slider owl-carousel">
-                            <div class="col-lg-4">
-                                <div class="product__discount__item">
-                                    <div class="product__discount__item__pic set-bg"
-                                         data-setbg="@Url.Content("~/uploads/product/discount/pd-1.jpg")">
-                                        <div class="product__discount__percent">-20%</div>
-                                        <ul class="product__item__pic__hover">
-                                            <li>
-                                                <a href="#"><i class="fa fa-heart"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-retweet"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="product__discount__item__text">
-                                        <span>Dried Fruit</span>
-                                        <h5><a href="#">Raisin’n’nuts</a></h5>
-                                        <div class="product__item__price">
-                                            $30.00 <span>$36.00</span>
+                            @foreach (Product product in saleOffs)
+                            {
+
+                                <div class="col-lg-4">
+                                    <div class="product__discount__item">
+                                        <div class="product__discount__item__pic set-bg"
+                                             data-setbg="@Url.Content("~/Data/product/" + product.Avatar)">
+                                            <div class="product__discount__percent">-@(Math.Round(1 - (double)product?.DiscountPrice / (double)product.Price, 2) * 100)%</div>
+                                            <ul class="product__item__pic__hover">
+                                                <li>
+                                                    <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-heart"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a asp-controller="Product" asp-action="Index"><i class="fa fa-retweet"></i></a>
+                                                </li>
+                                                <li>
+                                                    <a asp-controller ="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        <div class="product__discount__item__text">
+                                            <span style="white-space: normal; overflow-wrap: break-word;">@product.Category?.Name</span>
+                                            <h5 style="white-space: normal; overflow-wrap: break-word;"><a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID">@product.Name</a></h5>
+                                            <div class="product__item__price">
+                                                @product.DiscountPrice?.ToString("C0", new CultureInfo("en-US")) <span>@product.Price.ToString("C0", new CultureInfo("en-US"))</span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="product__discount__item">
-                                    <div class="product__discount__item__pic set-bg"
-                                         data-setbg="@Url.Content("~/uploads/product/discount/pd-2.jpg")">
-                                        <div class="product__discount__percent">-20%</div>
-                                        <ul class="product__item__pic__hover">
-                                            <li>
-                                                <a href="#"><i class="fa fa-heart"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-retweet"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="product__discount__item__text">
-                                        <span>Vegetables</span>
-                                        <h5><a href="#">Vegetables’package</a></h5>
-                                        <div class="product__item__price">
-                                            $30.00 <span>$36.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="product__discount__item">
-                                    <div class="product__discount__item__pic set-bg"
-                                         data-setbg="@Url.Content("~/uploads/product/discount/pd-3.jpg")">
-                                        <div class="product__discount__percent">-20%</div>
-                                        <ul class="product__item__pic__hover">
-                                            <li>
-                                                <a href="#"><i class="fa fa-heart"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-retweet"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="product__discount__item__text">
-                                        <span>Dried Fruit</span>
-                                        <h5><a href="#">Mixed Fruitss</a></h5>
-                                        <div class="product__item__price">
-                                            $30.00 <span>$36.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="product__discount__item">
-                                    <div class="product__discount__item__pic set-bg"
-                                         data-setbg="@Url.Content("~/uploads/product/discount/pd-4.jpg")">
-                                        <div class="product__discount__percent">-20%</div>
-                                        <ul class="product__item__pic__hover">
-                                            <li>
-                                                <a href="#"><i class="fa fa-heart"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-retweet"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="product__discount__item__text">
-                                        <span>Dried Fruit</span>
-                                        <h5><a href="#">Raisin’n’nuts</a></h5>
-                                        <div class="product__item__price">
-                                            $30.00 <span>$36.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="product__discount__item">
-                                    <div class="product__discount__item__pic set-bg"
-                                         data-setbg="@Url.Content("~/uploads/product/discount/pd-5.jpg")">
-                                        <div class="product__discount__percent">-20%</div>
-                                        <ul class="product__item__pic__hover">
-                                            <li>
-                                                <a href="#"><i class="fa fa-heart"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-retweet"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="product__discount__item__text">
-                                        <span>Dried Fruit</span>
-                                        <h5><a href="#">Raisin’n’nuts</a></h5>
-                                        <div class="product__item__price">
-                                            $30.00 <span>$36.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div class="product__discount__item">
-                                    <div class="product__discount__item__pic set-bg"
-                                         data-setbg="@Url.Content("~/uploads/product/discount/pd-6.jpg")">
-                                        <div class="product__discount__percent">-20%</div>
-                                        <ul class="product__item__pic__hover">
-                                            <li>
-                                                <a href="#"><i class="fa fa-heart"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-retweet"></i></a>
-                                            </li>
-                                            <li>
-                                                <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div class="product__discount__item__text">
-                                        <span>Dried Fruit</span>
-                                        <h5><a href="#">Raisin’n’nuts</a></h5>
-                                        <div class="product__item__price">
-                                            $30.00 <span>$36.00</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            }
                         </div>
                     </div>
                 </div>
@@ -370,7 +238,7 @@
                         </div>
                         <div class="col-lg-4 col-md-4">
                             <div class="filter__found">
-                                <h6><span>16</span> Products found</h6>
+                                <h6><span>@listProducts.Count</span> Products found</h6>
                             </div>
                         </div>
                         <div class="col-lg-4 col-md-3">
@@ -382,278 +250,164 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-1.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-2.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
+                    @foreach (Product item in listProducts)
+                    {
+                        <div class="col-lg-4 col-md-6 col-sm-6">
+                            <div class="product__item">
+                                <div class="product__item__pic set-bg"
+                                     data-setbg="@Url.Content("~/Data/product/" + item.Avatar)">
+                                    <ul class="product__item__pic__hover">
+                                        <li>
+                                            <a href="#" onclick="submitFakeForm(@item.PRO_ID)"><i class="fa fa-heart"></i></a>
+                                        </li>
+                                        <li>
+                                            <a asp-controller="Product" asp-action="Index" asp-route-uid="@item.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="product__item__text">
+                                    <h6 style="white-space: normal; overflow-wrap: break-word;"><a asp-controller="Product" asp-action="Index" asp-route-uid="@item.PRO_ID">@item.Name</a></h6>
+                                    <h5>@item.Price.ToString("C0", new CultureInfo("en-US"))</h5>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-3.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-4.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-5.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-6.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-7.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-8.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-9.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-10.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-11.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-4 col-md-6 col-sm-6">
-                        <div class="product__item">
-                            <div class="product__item__pic set-bg"
-                                 data-setbg="@Url.Content("~/uploads/product/product-12.jpg")">
-                                <ul class="product__item__pic__hover">
-                                    <li>
-                                        <a href="#"><i class="fa fa-heart"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-retweet"></i></a>
-                                    </li>
-                                    <li>
-                                        <a href="#"><i class="fa fa-shopping-cart"></i></a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <div class="product__item__text">
-                                <h6><a href="#">Crab Pool Security</a></h6>
-                                <h5>$30.00</h5>
-                            </div>
-                        </div>
-                    </div>
+                    }
                 </div>
-                <div class="product__pagination">
-                    <a href="#">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#"><i class="fa fa-long-arrow-right"></i></a>
-                </div>
+               @if(ViewBag.CountOfProducts > 12)
+                {
+                int totalPages = (int)Math.Ceiling(ViewBag.CountOfProducts / 12.0);
+                int currentPage = ViewBag.CurrentPage ?? 1;
+    
+                <div class="product__pagination flex items-center justify-center gap-2 my-4">
+                    @if (currentPage > 1)
+                    {
+                        <button type="button" 
+                                onclick="updatePage(@(currentPage - 1))" 
+                                class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100">
+                            <i class="fa fa-long-arrow-left"></i>
+                        </button>
+                    }
+
+                    @for (int i = 1; i <= totalPages; i++)
+                    {
+                        if (i == currentPage)
+                        {
+                            <button type="button" 
+                                    class="px-4 py-2 rounded-lg bg-[#7fad39] text-white font-medium">
+                                @i
+                            </button>
+                        }
+                        else if (i <= 3 || i >= totalPages - 2 || Math.Abs(i - currentPage) <= 1)
+                        {
+                            <button type="button" 
+                                    onclick="updatePage(@i)" 
+                                    class="px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-100">
+                                @i
+                            </button>
+                        }
+                        else if (Math.Abs(i - currentPage) == 2)
+                        {
+                            <span class="px-2">...</span>
+                            i = (i < currentPage) ? currentPage - 2 : totalPages - 2;
+                        }
+                    }
+
+                    @if (currentPage < totalPages)
+                    {
+                        <button type="button" 
+                                onclick="updatePage(@(currentPage + 1))" 
+                                class="px-3 py-2 rounded-lg border border-gray-300 hover:bg-gray-100">
+                            <i class="fa fa-long-arrow-right"></i>
+                        </button>
+                    }
+            </div>
+}
             </div>
         </div>
-    </div>
+    </form>
 </section>
+
+@section Scripts {
+    <script>
+        function updatePage(page) {
+            let pageInput = document.getElementById('pageInput');
+            pageInput.value = page;
+            document.getElementById('filterForm').submit();
+        }
+
+        function submitFakeForm(value) {
+                var form = document.createElement('form');
+                form.method = 'POST'; 
+                form.action = '/AddToFavorite'; 
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'prodID';
+                input.value = value; 
+
+                form.appendChild(input);
+
+                document.body.appendChild(form);
+                form.submit();
+        }
+    </script>
+
+    <script>
+        function updateAndSubmit(field, value) {
+            let form = document.getElementById('filterForm');
+            let input = document.getElementById(field + 'Input');
+
+            if (input) {
+                if (input.value == value) {
+                    input.value = '';
+                } else {
+                    input.value = value;
+                }
+            }
+
+            form.submit();
+        }
+
+
+    </script>
+
+     <script>
+        $(document).ready(function() {
+            var minPrice = parseInt($('#price-slider').data('min'));
+            var maxPrice = parseInt($('#price-slider').data('max'));
+
+            $("#price-slider").slider({
+                range: true,
+                min: minPrice,
+                max: maxPrice,
+                values: [minPrice, maxPrice],
+                slide: function(event, ui) {
+                    $("#minamount").val("$" + ui.values[0].toLocaleString());
+                    $("#maxamount").val("$" + ui.values[1].toLocaleString());
+                },
+                stop: function(event, ui) {
+                    filterProducts(ui.values[0], ui.values[1]);
+                }
+            });
+
+            $("#minamount").val("$" + minPrice.toLocaleString());
+            $("#maxamount").val("$" + maxPrice.toLocaleString());
+
+            function filterProducts(minValue, maxValue) {
+                $('.product__item').each(function() {
+                    var priceText = $(this).find('.product__item__text h5').text();
+                    var price = parseInt(priceText.replace(/[^0-9]/g, ''));
+                    
+                    if (price >= minValue && price <= maxValue) {
+                        $(this).parent().fadeIn();
+                    } else {
+                        $(this).parent().fadeOut();
+                    }
+                });
+
+                var visibleProducts = $('.product__item:visible').length;
+                $('.filter__found h6 span').text(visibleProducts);
+            }
+        });
+    </script>
+
+}

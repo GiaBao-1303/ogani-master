@@ -140,7 +140,6 @@ namespace ogani_master.Areas.Admin.Controllers
         private async Task<int> getCountOfCancelOrder()
         {
             int canelOrders = await this.context.Orders.CountAsync(o => o.Status == (int)OrderStatus.Returned || o.Status == (int)OrderStatus.Canceled);
-
             return canelOrders;
         }
 

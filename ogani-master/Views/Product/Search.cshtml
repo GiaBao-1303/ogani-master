@@ -1,0 +1,80 @@
+﻿@model IEnumerable<ogani_master.Models.Product>
+@using System.Globalization
+@{
+    List<Product> products = ViewBag.Products;
+    var settings = ViewBag.Settings as List<ogani_master.Models.Setting>;
+}
+<div class="container">
+    <h2>Search Products</h2>
+    <p>@ViewBag.Message</p>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row featured__filter" id="product-list">
+            @foreach (var product in Model)
+            {
+                <div class="col-lg-3 col-md-4 col-sm-6 mix oranges fresh-meat">
+                    <div class="featured__item">
+                        <!-- Phần hình ảnh sản phẩm -->
+                        <div class="featured__item__pic set-bg"
+                             data-setbg="@Url.Content("~/Data/Product/" + product.Avatar)"
+                             style="background-image: url('@Url.Content("~/Data/Product/" + product.Avatar)');">
+                            <ul class="featured__item__pic__hover">
+                                <li>
+                                    <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-heart"></i></a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Home" asp-action="Index"><i class="fa fa-retweet"></i></a>
+                                </li>
+                                <li>
+                                    <a asp-controller="Product" asp-action="Index" asp-route-uid="@product.PRO_ID"><i class="fa fa-shopping-cart"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Thông tin sản phẩm -->
+                        <div class="featured__item__text">
+                            <h6 class="product-name text-wrap" style="white-space: normal; overflow-wrap: break-word;">
+                                <a asp-controller="Product" asp-action="Details" asp-route-id="@product.PRO_ID">
+                                    @product.Name
+                                </a>
+                            </h6>
+                            <h5>
+                                @if (product?.DiscountPrice != null)
+                                {
+                                    <span style="text-decoration: line-through; color: gray;">
+                                        @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                    </span>
+                                    <span style="margin-left: 8px; color: red">
+                                        @product.DiscountPrice?.ToString("C0", new CultureInfo("en-US"))
+                                    </span>
+                                }
+                                else
+                                {
+                                    @product.Price.ToString("C0", new CultureInfo("en-US"))
+                                }
+                            </h5>
+                            <p class="card-text text-truncate" title="@product.Description">
+                                @Html.Raw(product.Description.Length > 200 ? product.Description.Substring(0,200) + "..." : product.Description)
+                            </p>
+                        </div>
+
+                        <!-- Nút chức năng -->
+                        @* <div class="card-footer d-flex justify-content-between"> *@
+                        @*     <a asp-controller="ShopingCart" asp-action="AddToCart" asp-route-proId="@product.PRO_ID" class="btn btn-primary btn-sm"> *@
+                        @*         Add to Cart *@
+                        @*     </a> *@
+                        @*     <a asp-controller="Product" asp-action="Details" asp-route-id="@product.PRO_ID" class="btn btn-secondary btn-sm"> *@
+                        @*         View Details *@
+                        @*     </a> *@
+                        @* </div> *@
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <p>No products found. Please try a different keyword.</p>
+    }
+</div>

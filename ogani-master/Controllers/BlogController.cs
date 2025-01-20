@@ -15,7 +15,19 @@ namespace ogani_master.Controllers
             _context = context;
         }
 
-        // Action để hiển thị danh sách các bài blog và xử lý tìm kiếm
+        public async Task<List<FavoritesModel>> getFavorites()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+
+            List<FavoritesModel> favorites = await this._context.Favorites.Include(f => f.Product).Where(f => f.UserID == userId).ToListAsync();
+
+            return favorites;
+        }
+        public async Task<List<Category>> getCategories()
+        {
+            return await _context.Categories.ToListAsync();
+        }
+
         public async Task<IActionResult> Index(string query = "")
         {
             var allBlogs = await _context.Blogs
@@ -23,7 +35,7 @@ namespace ogani_master.Controllers
                 .ToListAsync();
 
             int? userId = HttpContext.Session.GetInt32("UserID");
-
+            ViewBag.Settings = _context.Settings.ToList();
             ViewBag.CurrentUser = await this._context.users.FirstOrDefaultAsync(u => u.UserId == userId);
 
             var mainBlogs = allBlogs.Take(15).ToList();
@@ -57,7 +69,8 @@ namespace ogani_master.Controllers
             // Trả về view với dữ liệu từ ViewData
             ViewData["MainBlogs"] = mainBlogs;
             ViewData["RecentBlogs"] = recentBlogs;
-
+            ViewBag.Favorites = await this.getFavorites();
+            ViewBag.Categories = await getCategories();
             return View(allBlogs); // Trả về tất cả bài blog để sử dụng nếu cần trong view
         }
 
@@ -71,14 +84,14 @@ namespace ogani_master.Controllers
             {
                 return NotFound();
             }
-
+            var relatedBlogs = new List<Blog>();
             // Nếu có tìm kiếm từ trang chi tiết
             if (!string.IsNullOrEmpty(query))
             {
                 ViewData["SearchQuery"] = query;
 
                 // Tìm kiếm các blog có liên quan đến từ khóa
-                var relatedBlogs = await _context.Blogs
+                 relatedBlogs = await _context.Blogs
                     .Where(b => b.Title.Contains(query) || b.Content.Contains(query))
                     .OrderByDescending(b => b.CreatedAt)
                     .Take(3)
@@ -94,7 +107,7 @@ namespace ogani_master.Controllers
             else
             {
                 // Nếu không tìm kiếm, lấy 3 bài viết gợi ý (không bao gồm bài viết hiện tại)
-                var relatedBlogs = await _context.Blogs
+                 relatedBlogs = await _context.Blogs
                     .Where(b => b.BlogId != id)
                     .OrderByDescending(b => b.CreatedAt)
                     .Take(3)
@@ -102,7 +115,18 @@ namespace ogani_master.Controllers
 
                 ViewData["RelatedBlogs"] = relatedBlogs;
             }
-
+            // Lấy 3 bài viết gợi ý (không bao gồm bài viết hiện tại)
+             relatedBlogs = await _context.Blogs
+                .Where(b => b.BlogId != id)
+                .OrderByDescending(b => b.CreatedAt)
+                .Take(3)
+                .ToListAsync();
+            int? userId = HttpContext.Session.GetInt32("UserID");
+            ViewBag.Settings = _context.Settings.ToList();
+            ViewBag.CurrentUser = await this._context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+            ViewBag.Favorites = await this.getFavorites();
+            // Truyền dữ liệu sang view
+            ViewData["RelatedBlogs"] = relatedBlogs;
             return View(blog);
         }
     }

@@ -50,8 +50,8 @@ namespace ogani_master.Controllers
                 .Where(o => o.MEM_ID == user.UserId)
                 .ToListAsync();
 
-           
 
+            ViewBag.Settings = context.Settings.ToList();
             ViewBag.CurrentUser = user;
             ViewBag.Carts = carts;
             ViewBag.Orders = orders;
@@ -122,6 +122,7 @@ namespace ogani_master.Controllers
             Cart cart = new Cart
             {
                 Price = product.Price,
+                DiscountPrice = product.DiscountPrice,
                 PRO_ID = product.PRO_ID,
                 Quantity = addToCartDto.amount,
                 UserId = user.UserId,
@@ -234,12 +235,14 @@ namespace ogani_master.Controllers
                     UpdatedDate = DateTime.Now,
                 };
 
+                decimal originPrice = existingProductInCart.Product?.DiscountPrice ?? existingProductInCart.Product.Price;
+
                 MessageMailDto dataMail = new MessageMailDto
                 {
                     companyName = "Ogani-master",
                     customerName = user.LastName + " " + user.FirstName,
                     Email = user.Email,
-                    price = (int)existingProductInCart.Product.Price,
+                    price = (int)originPrice,
                     prodName = existingProductInCart.Product.Name,
                     quantity = o.amount,
                     totalPrice = o.amount * (int)existingProductInCart.Product.Price,

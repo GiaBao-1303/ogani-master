@@ -1,8 +1,12 @@
-﻿@{
+﻿@using System.Globalization;
+
+@{
     ViewData["tittle"] = "Dashboard";
     List<UserBehaviorSummary> userBehaviorSummaries = ViewBag.userBehaviorSummaries;
     DatabaseSizeInfo databaseSizeInfo = ViewBag.databaseSizeInfo;
     int numberOfUsers = ViewBag.numberOfUsers;
+    decimal revenue = ViewBag.Revenue;
+    int cancelOrders = ViewBag.CancelOrders;
 }
 
 @section Styles {
@@ -62,7 +66,7 @@
                                 <div class="col-7 col-md-8">
                                     <div class="numbers">
                                         <p class="card-category">Revenue</p>
-                                        <p class="card-title">$ 1,345<p>
+                                        <p class="card-title">@revenue.ToString("C0", new CultureInfo("en-US"))<p>
                                     </div>
                                 </div>
                             </div>
@@ -88,7 +92,7 @@
                                 <div class="col-7 col-md-8">
                                     <div class="numbers">
                                         <p class="card-category">Errors</p>
-                                        <p class="card-title">23<p>
+                                        <p class="card-title">@cancelOrders<p>
                                     </div>
                                 </div>
                             </div>

@@ -32,16 +32,10 @@ namespace ogani_master.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(string searchQuery, int? page)
         {
-            //var products = await _context.Products.Include(p => p.Category).ToListAsync();
-            //ViewBag.CurrentUser = await GetCurrentUser();
-            //return View(products);
+           
             int pageSize = 12; // Số sản phẩm trên mỗi trang
             int pageNumber = page ?? 1;
-
-            // Tạo truy vấn IQueryable
             var query = _context.Products.Include(p => p.Category).AsQueryable();
-
-            // Tìm kiếm nếu có searchQuery
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 query = query.Where(p =>
@@ -49,13 +43,9 @@ namespace ogani_master.Areas.Admin.Controllers
                     (!string.IsNullOrEmpty(p.Description) && p.Description.Contains(searchQuery, StringComparison.OrdinalIgnoreCase))
                 );
             }
-
             ViewBag.SearchQuery = searchQuery;
             ViewBag.CurrentUser = await GetCurrentUser();
-
-         
             var pagedProducts = query.OrderBy(p => p.PRO_ID).ToPagedList(pageNumber, pageSize);
-
             return View(pagedProducts); 
         }
 
@@ -68,6 +58,7 @@ namespace ogani_master.Areas.Admin.Controllers
             if (product == null) return NotFound();
 
             ViewBag.CurrentUser = await GetCurrentUser();
+
             return View(product);
         }
 
@@ -205,7 +196,6 @@ namespace ogani_master.Areas.Admin.Controllers
                 existingProduct.Details = productdto.Details ?? "No details provided.";
                 existingProduct.UpdatedBy = (await GetCurrentUser())?.UserName;
                 existingProduct.UpdatedDate = DateTime.Now;
-
                 // Nếu người dùng upload ảnh mới thì thay ảnh, nếu không thì giữ nguyên ảnh cũ
                 if (productdto.Avatar != null && productdto.Avatar.Length > 0)
                 {
@@ -226,15 +216,12 @@ namespace ogani_master.Areas.Admin.Controllers
                             System.IO.File.Delete(oldFilePath);
                         }
                     }
-
                     existingProduct.Avatar = newFileName;
                 }
                 else
                 {
-                    // Không làm gì nếu người dùng không chọn ảnh mới
                     existingProduct.Avatar = existingProduct.Avatar;
                 }
-
                 _context.Update(existingProduct);
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Product updated successfully!";
@@ -248,8 +235,6 @@ namespace ogani_master.Areas.Admin.Controllers
                 throw;
             }
         }
-
-
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -266,6 +251,19 @@ namespace ogani_master.Areas.Admin.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // xoá yêu thích trước khi xoá sản phẩm
+            var favorites = _context.Favorites.Where(f => f.ProductId == id);
+            _context.Favorites.RemoveRange(favorites);
+            // xử lý côt pro_id = null thì xoá đươc products
+            //var orders = _context.Orders.Where(o => o.PROD_ID == id);
+            //foreach (var order in orders)
+            //{
+            //    order.PROD_ID = null;
+            //}
+
+            //await _context.SaveChangesAsync();
+
+            //xoá sản phẩm
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();
             /// Xoá ảnh 

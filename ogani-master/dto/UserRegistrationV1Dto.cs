@@ -31,5 +31,9 @@ namespace ogani_master.dto
         [Required]
         [MaxLength(100)]
         public string Address { get; set; }
+
+        public string? otpCode { get; set; }
+
+        public DateTime? otp_expired { get; set; }
     }
 }
