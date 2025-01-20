@@ -15,8 +15,9 @@
 
                     <div class="form-group">
                         <label for="Content">Content</label>
-                        <textarea class="form-control" id="Content" rows="4" readonly>@Model.Content</textarea>
+                        <span class="form-control" id="Content" rows="4" readonly>@Html.Raw(Model.Content)</span>
                     </div>
+
 
                     <!-- Hiển thị ảnh nếu có -->
                     <div class="form-group">

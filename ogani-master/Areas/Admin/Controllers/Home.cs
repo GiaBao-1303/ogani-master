@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using ogani_master.enums;
 using ogani_master.Models;
 
 
@@ -86,10 +87,11 @@ namespace ogani_master.Areas.Admin.Controllers
                     }
                 }
             }
-            finally
+            catch
             {
-                context.Database.CloseConnection();
             }
+
+            context.Database.CloseConnection();
 
             DatabaseSizeInfo databaseSizeInfo = new DatabaseSizeInfo
             {
@@ -110,19 +112,36 @@ namespace ogani_master.Areas.Admin.Controllers
                 .GroupBy(log => log.Timestamp.Hour)
                 .Select(group => new UserBehaviorSummary
                 {
-                    Hour = group.Key < 0 ? 0 : group.Key, 
+                    Hour = group.Key < 0 ? 0 : group.Key,
                     Count = group.Count()
                 })
-                .OrderBy(g => g.Hour)       
+                .OrderBy(g => g.Hour)
                 .ToList();
 
             return data;
         }
 
+        private async Task<decimal> getRevenue()
+        {
+
+            List<Order> listDevivered = await this.context.Orders.Where(o => o.Status == (int)OrderStatus.Delivered).ToListAsync();
+
+            decimal revenue = listDevivered.Sum(o => o.TotalPrice);
+
+            return revenue;
+        }
+
         private int getNumberOfUsers()
         {
-            int numberOfUsers =  this.context.users.Count();
+            int numberOfUsers = this.context.users.Count();
             return numberOfUsers;
+        }
+
+        private async Task<int> getCountOfCancelOrder()
+        {
+            int canelOrders = await this.context.Orders.CountAsync(o => o.Status == (int)OrderStatus.Returned || o.Status == (int)OrderStatus.Canceled);
+
+            return canelOrders;
         }
 
         public async Task<IActionResult> Index()
@@ -130,12 +149,14 @@ namespace ogani_master.Areas.Admin.Controllers
             DatabaseSizeInfo databaseSizeInfo = this.GetDatabaseSize();
             List<UserBehaviorSummary> userBehaviorSummaries = this.GetUserBehavior();
             int numberOfUsers = this.getNumberOfUsers();
-            
 
+
+            ViewBag.Revenue = await this.getRevenue();
             ViewBag.userBehaviorSummaries = userBehaviorSummaries;
             ViewBag.databaseSizeInfo = databaseSizeInfo;
             ViewBag.numberOfUsers = numberOfUsers;
             ViewBag.CurrentUser = await this.GetCurrentUser();
+            ViewBag.CancelOrders = await this.getCountOfCancelOrder();
 
             return View(databaseSizeInfo);
         }

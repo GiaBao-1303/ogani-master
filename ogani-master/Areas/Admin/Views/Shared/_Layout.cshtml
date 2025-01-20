@@ -26,7 +26,7 @@
     <link rel="stylesheet" href="~/Admin/plugins/font-awesome/css/all.css" />
     <link rel="stylesheet" href="~/Admin/css/adminlte.css" />
     <link rel="stylesheet" href="~/Admin/css/custom.css" />
-
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
     <style>
        
         body .truncate {
@@ -225,6 +225,17 @@
                                 </i>
                                 <p>
                                     Blogs
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item @Html.IsActive("ContactAd", "Index")">
+
+                            <a asp-area="Admin" asp-controller="ContactAd" asp-action="Index" class="nav-link">
+
+                                <i class="nav-icon fa-light fa-layer-group">
+                                </i>
+                                <p>
+                                    Contact
                                 </p>
                             </a>
                         </li>

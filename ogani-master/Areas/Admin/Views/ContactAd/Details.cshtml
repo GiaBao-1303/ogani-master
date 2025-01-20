@@ -1,0 +1,78 @@
+﻿@model ogani_master.Models.ContactAd
+
+@{
+    ViewData["Title"] = "Contact Detail";
+}
+
+<div class="app-content">
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-success card-outline">
+                    <div class="card-header">
+                        <h3 class="card-title">Contact Detail</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <p><strong>Name:</strong> @Model.Name</p>
+                                <p><strong>Email:</strong> @Model.Email</p>
+                                <p><strong>Message:</strong></p>
+                                <div>@Html.Raw(Model.Message)</div>
+                                <p><strong>Created At:</strong> @Model.SentAt</p>
+                            </div>
+                            <div class="col-md-6">
+                                <!-- Trạng thái hiện tại -->
+                                <h5>
+                                    Status: <span id="statusText" class="status-text @(Model.Status == "Unseen" ? "text-danger" : "text-success")">
+                                        @(Model.Status == "Unseen" ? "Chưa xem" : "Đã xem")
+                                    </span>
+                                </h5>
+                                <!-- Nút chuyển trạng thái -->
+                                <button id="toggleStatusBtn" class="btn @(Model.Status == "Unseen" ? "btn-warning" : "btn-success")">
+                                    <i class="fas @(Model.Status == "Unseen" ? "fa-check-circle" : "fa-times-circle")"></i>
+                                    @(Model.Status == "Unseen" ? "Mark as Seen" : "Mark as Unseen")
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <a href="@Url.Action("Index", "ContactAd", new { area = "Admin" })" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Xử lý sự kiện khi thay đổi trạng thái
+    document.getElementById('toggleStatusBtn').onclick = function () {
+        var contactId = @Model.ContactId;
+        var currentStatus = document.getElementById('statusText').innerText.trim();
+        var newStatus = currentStatus === "Chưa xem" ? "Đã xem" : "Chưa xem";
+        var newClass = newStatus === "Chưa xem" ? "text-danger" : "text-success";
+        var newButtonClass = newStatus === "Chưa xem" ? "btn-warning" : "btn-success";
+        var newButtonText = newStatus === "Chưa xem" ? "Mark as Seen" : "Mark as Unseen";
+
+        // Gửi AJAX yêu cầu thay đổi trạng thái
+        $.ajax({
+            url: '/Admin/ContactAd/ChangeStatus',
+            type: 'POST',
+            data: { id: contactId },
+            success: function (response) {
+                if (response.success) {
+                    // Cập nhật trạng thái trên giao diện
+                    document.getElementById('statusText').innerText = newStatus;
+                    document.getElementById('statusText').className = "status-text " + newClass;
+                    document.getElementById('toggleStatusBtn').className = "btn " + newButtonClass;
+                    document.getElementById('toggleStatusBtn').innerHTML = "<i class='fas " + (newStatus === "Chưa xem" ? "fa-check-circle" : "fa-times-circle") + "'></i> " + newButtonText;
+                } else {
+                    alert("Error changing status");
+                }
+            }
+        });
+    }
+</script>

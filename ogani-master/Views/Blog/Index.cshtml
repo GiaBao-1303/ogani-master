@@ -90,11 +90,11 @@
                 <div class="blog__sidebar">
                     <!-- Search Widget -->
                     <div class="blog__sidebar__search">
-                        <form action="#">
-                            <input type="text" placeholder="Search..." />
-                            <button type="submit">
-                                <span class="icon_search"></span>
-                            </button>
+                        <form method="get" action="@Url.Action("Index", "Blog")">
+                            <div class="input-group">
+                                <input type="text" class="form-control" name="query" placeholder="Search blogs..." value="@ViewData["SearchQuery"]" />
+                                <button class="btn btn-primary" type="submit"><i class="fa fa-search"></i></button>
+                            </div>
                         </form>
                     </div>
 
@@ -147,38 +147,47 @@
             <!-- Main Blog Content Section -->
             <div class="col-lg-8 col-md-7">
                 <div class="row">
-                    @foreach (var blog in (List<ogani_master.Models.Blog>)ViewData["MainBlogs"])
+                    @if (((List<ogani_master.Models.Blog>)ViewData["MainBlogs"]).Count == 0)
                     {
-                        <div class="col-lg-6 col-md-6 col-sm-6">
-                            <div class="blog__item">
-                                <div class="blog__item__pic">
-                                    <img src="@Url.Content("~/data/blog/" + blog.Image)" alt="@blog.Title" class="zoom-effect" />
-                                </div>
-                                <div class="blog__item__text">
-                                    <ul>
-                                        <li><i class="fa fa-calendar-o"></i> @blog.CreatedAt.ToString("MMM dd, yyyy")</li>
-                                        <li><i class="fa fa-comment-o"></i> 0</li>
-                                    </ul>
-                                    <h5><a href="@Url.Action("Detail", "Blog", new { id = blog.BlogId })">@blog.Title</a></h5>
-                                    <p>
-                                        @if (!string.IsNullOrEmpty(blog.Content) && blog.Content.Length > 100)
-                                        {
-
-                                            @Html.Raw(@blog.Content.Substring(0, 100) + "...")
-                                        }
-                                        else
-                                        {
-                                            @Html.Raw(blog.Content)
-                                        }
-                                    </p>
-                                    <a href="@Url.Action("Detail", "Blog", new { id = blog.BlogId })" class="blog__btn">
-                                        READ MORE <span class="arrow_right"></span>
-                                    </a>
-                                </div>
+                        <div class="col-lg-12">
+                            <div class="alert alert-warning" role="alert">
+                                Không tìm thấy bài viết nào phù hợp với tìm kiếm của bạn.
                             </div>
                         </div>
                     }
-                    
+                    else
+                    {
+                        @foreach (var blog in (List<ogani_master.Models.Blog>)ViewData["MainBlogs"])
+                        {
+                            <div class="col-lg-6 col-md-6 col-sm-6">
+                                <div class="blog__item">
+                                    <div class="blog__item__pic">
+                                        <img src="@Url.Content("~/data/blog/" + blog.Image)" alt="@blog.Title" class="zoom-effect" />
+                                    </div>
+                                    <div class="blog__item__text">
+                                        <ul>
+                                            <li><i class="fa fa-calendar-o"></i> @blog.CreatedAt.ToString("MMM dd, yyyy")</li>
+                                            <li><i class="fa fa-comment-o"></i> 0</li>
+                                        </ul>
+                                        <h5><a href="@Url.Action("Detail", "Blog", new { id = blog.BlogId })">@blog.Title</a></h5>
+                                        <p>
+                                            @if (!string.IsNullOrEmpty(blog.Content) && blog.Content.Length > 100)
+                                            {
+                                                @Html.Raw(@blog.Content.Substring(0, 100) + "...")
+                                            }
+                                            else
+                                            {
+                                                @Html.Raw(blog.Content)
+                                            }
+                                        </p>
+                                        <a href="@Url.Action("Detail", "Blog", new { id = blog.BlogId })" class="blog__btn">
+                                            READ MORE <span class="arrow_right"></span>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
 
                     <!-- Pagination (optional) -->
                     <div class="col-lg-12">
@@ -186,10 +195,12 @@
                             <a href="#">1</a>
                             <a href="#">2</a>
                             <a href="#">3</a>
-                    
                             <a href="#"><i class="fa fa-long-arrow-right"></i></a>
                         </div>
                     </div>
+                </div>
+            </div>
+
                 </div>
             </div>
         </div>

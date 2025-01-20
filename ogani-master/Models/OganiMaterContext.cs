@@ -18,6 +18,7 @@ namespace ogani_master.Models
         public DbSet<User> users { get; set; }
         public DbSet<Cart> Carts { get; set; }
         public DbSet<Order> Orders { get; set; }
+        public DbSet<ContactAd> Contacts { get; set; }
 
         public DbSet<Blog> Blogs { get; set; }
 

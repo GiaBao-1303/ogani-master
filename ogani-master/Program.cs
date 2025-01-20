@@ -46,7 +46,7 @@ namespace ogani_master
 
             app.UseSession();
 
-            app.UseMiddleware<UserBehaviorLoggingMiddleware>();
+            //app.UseMiddleware<UserBehaviorLoggingMiddleware>();
             app.UseMiddleware<AdminAccessControlMiddleware>();
 
             // Configure the HTTP request pipeline.
