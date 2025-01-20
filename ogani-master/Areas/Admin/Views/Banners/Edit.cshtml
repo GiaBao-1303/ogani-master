@@ -22,6 +22,7 @@
                                 <input asp-for="Title" class="form-control" />
                                 <span asp-validation-for="Title" class="text-danger"></span>
                             </div>
+                            
 
                             <div class="form-group">
                                 <label class="mt-2 mb-2">Current Image</label>
@@ -37,21 +38,24 @@
                                 }
                             </div>
                             <div class="form-group">
+                                <label for="Image" class="control-label mt-2 mb-2">Upload New Image <label class="text-danger"><i>Recommended image size is 1000px x 1000px</i> </label></label>
+                                <input type="file" asp-for="Image" class="form-control" id="Image" />
+                                <span asp-validation-for="Image" class="text-danger"></span>
+                            </div>
+                            <div class="form-group">
+                                <label class="mt-2 mb-2">Preview New Image</label>
+                                <img id="imgPreview" src="" alt="Image Preview" style="max-width: 200px; height: 200px; margin-top: 10px; margin-bottom: 10px;" />
+                            </div>
+                            <div class="form-group">
                                 <label asp-for="Url" class="control-label mt-2 mb-2">URL</label>
                                 <input asp-for="Url" class="form-control" />
                                 <span asp-validation-for="Url" class="text-danger"></span>
                             </div>
                             <div class="form-group">
-                                <label for="Image" class="control-label mt-2 mb-2">Upload New Image <label class="text-danger"><i>Recommended image size is 1000px x 1000px</i> </label></label>
-                                <input type="file" asp-for="Image" class="form-control" id="Image" />
-                                <span asp-validation-for="Image" class="text-danger"></span>
+                                <label asp-for="DisplayOrder" class="control-label mt-2 mb-2">DisplayOrder</label>
+                                <input asp-for="DisplayOrder" type="number" class="form-control" />
+                                <span asp-validation-for="DisplayOrder" class="text-danger"></span>
                             </div>
-
-                            <div class="form-group">
-                                <label class="mt-2 mb-2">Preview New Image</label>
-                                <img id="imgPreview" src="" alt="Image Preview" style="max-width: 200px; height: 200px; margin-top: 10px; margin-bottom: 10px;" />
-                            </div>
-
                             <div class="form-group text-center">
                                 <input type="submit" value="Save" class="btn btn-success" />
                                 <a asp-action="Index" class="btn btn-secondary ms-3">Back to List</a>

@@ -20,6 +20,8 @@ namespace ogani_master.Models
         public DbSet<Order> Orders { get; set; }
         public DbSet<ContactAd> Contacts { get; set; }
 
+        public DbSet<FavoritesModel> Favorites { get; set; }
+
         public DbSet<Blog> Blogs { get; set; }
 
 

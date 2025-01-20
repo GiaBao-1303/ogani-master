@@ -12,6 +12,7 @@ using Microsoft.Extensions.Primitives;
 using ogani_master.Areas.Admin.DTO;
 using ogani_master.utils;
 using Microsoft.AspNetCore.DataProtection;
+using System.Linq;
 
 
 namespace ogani_master.Controllers
@@ -19,7 +20,8 @@ namespace ogani_master.Controllers
 	public class AuthController : Controller
 	{
 		private readonly OganiMaterContext context;
-        private readonly IWebHostEnvironment _hostEnv;
+		private readonly IWebHostEnvironment _hostEnv;
+		private readonly List<string> _roleAccess = new List<string> { "Admin", "Moderator" };
         public AuthController(OganiMaterContext _context, IWebHostEnvironment hostEnv) {
 			context = _context;
             _hostEnv = hostEnv;
@@ -119,7 +121,7 @@ namespace ogani_master.Controllers
                 HttpContext.Session.SetInt32("UserID", existingUser.UserId);
 				HttpContext.Session.SetString("role", role.ToString());
 
-				if (existingUser.Role == (int)UserRole.Admin)
+				if (_roleAccess.Contains(role.ToString()))
 				{
 					return Redirect("/Admin");
 				}
@@ -152,7 +154,7 @@ namespace ogani_master.Controllers
 		[Route("SignUp/v1")]
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public IActionResult VerifySignUpV1(UserRegistrationV1Dto userRegistrationV1Dto)
+		public async Task<IActionResult> VerifySignUpV1(UserRegistrationV1Dto userRegistrationV1Dto)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -164,12 +166,84 @@ namespace ogani_master.Controllers
 				throw new Exception("The key is not available");
 			}
 
+            Guid newGuid = Guid.NewGuid();
+            byte[] guidBytes = new byte[16]; 
+            newGuid.TryWriteBytes(guidBytes);
+            byte[] fourByteArray = new byte[4];
+            Array.Copy(guidBytes, 0, fourByteArray, 0, 4);
+            string hexString = BitConverter.ToString(fourByteArray).Replace("-", "").ToLower();
+
+            userRegistrationV1Dto.otpCode = hexString;
+			userRegistrationV1Dto.otp_expired = DateTime.Now.AddMinutes(3);
+
+            var encryptedBacsicInfo = EncryptionHelper.Encrypt(JsonConvert.SerializeObject(userRegistrationV1Dto), key);
+
+            HttpContext.Session.SetString("BasicInfo", encryptedBacsicInfo);
+			HttpContext.Session.SetString("Step", "v2");
+
+			string fullname = userRegistrationV1Dto.FirstName + " " + userRegistrationV1Dto.LastName;
+
+			bool isSuccess = await MailUtils.SendMailGoogleSmtpConfirmEmailAsync(userRegistrationV1Dto.Email, "Xác thực Email", fullname, hexString);
+
+			if(!isSuccess)
+			{
+				HttpContext.Session.Clear();
+				TempData["ErrorMessage"] = "Internal server error";
+				return RedirectToAction("SignInPage", "Auth");
+            }
+
+
+
+			return RedirectToAction("SignUpV2");
+		}
+
+		[HttpPost]
+		[AutoValidateAntiforgeryToken]
+		public async Task<IActionResult> SendOtp()
+		{
+			string? key = Environment.GetEnvironmentVariable("EncryptionKey");
+			if (string.IsNullOrEmpty(key)) throw new Exception("The key is not available");
+
+			string? dataEncrypted = HttpContext.Session.GetString("BasicInfo");
+			if (string.IsNullOrEmpty(dataEncrypted))
+			{
+				return RedirectToAction("SignUp");
+			}
+
+			var DecryptData = EncryptionHelper.Decrypt(dataEncrypted, key);
+			UserRegistrationV1Dto? userRegistrationV1Dto = JsonConvert.DeserializeObject<UserRegistrationV1Dto>(DecryptData);
+
+			if (userRegistrationV1Dto == null || !TryValidateModel(userRegistrationV1Dto))
+			{
+				return RedirectToAction("SignUp");
+			}
+
+			Guid newGuid = Guid.NewGuid();
+			byte[] guidBytes = new byte[16];
+			newGuid.TryWriteBytes(guidBytes);
+			byte[] fourByteArray = new byte[4];
+			Array.Copy(guidBytes, 0, fourByteArray, 0, 4);
+			string hexString = BitConverter.ToString(fourByteArray).Replace("-", "").ToLower();
+
+			userRegistrationV1Dto.otpCode = hexString;
+			userRegistrationV1Dto.otp_expired = DateTime.Now.AddMinutes(3);
+
 			var encryptedBacsicInfo = EncryptionHelper.Encrypt(JsonConvert.SerializeObject(userRegistrationV1Dto), key);
 
 			HttpContext.Session.SetString("BasicInfo", encryptedBacsicInfo);
-			HttpContext.Session.SetString("Step", "v2");
 
-			return RedirectToAction("SignUpV2");
+			string fullname = userRegistrationV1Dto.FirstName + " " + userRegistrationV1Dto.LastName;
+			bool isSuccess = await MailUtils.SendMailGoogleSmtpConfirmEmailAsync(userRegistrationV1Dto.Email, "Xác thực Email", fullname, hexString);
+
+			if (!isSuccess)
+			{
+				HttpContext.Session.Clear();
+				TempData["ErrorMessage"] = "Internal server error";
+				return RedirectToAction("SignInPage", "Auth");
+			}
+
+			TempData["SuccessMessage"] = "The otp has sent";;
+			return RedirectToAction("SignUpV2", "Auth");
 		}
 
 		[Route("SignUp/v2")]
@@ -210,6 +284,20 @@ namespace ogani_master.Controllers
 				if (userRegistrationV1Dto == null || !TryValidateModel(userRegistrationV1Dto))
 				{
 					return RedirectToAction("SignUp");
+				}
+
+				if(userRegistrationV1Dto.otpCode != userRegistrationV2Dto.otp)
+				{
+                    ModelState.AddModelError("otp", "The otp is not valid");
+                    ViewBag.userRegistrationV2Dto = userRegistrationV2Dto;
+                    return View("~/Views/SignUp/v2.cshtml");
+                }
+
+				if (userRegistrationV1Dto.otp_expired <= DateTime.Now)
+				{
+					ModelState.AddModelError("otp", "The otp has expired");
+					ViewBag.userRegistrationV2Dto = userRegistrationV2Dto;
+					return View("~/Views/SignUp/v2.cshtml");
 				}
 
 				var hashedPassword = BCrypt.Net.BCrypt.HashPassword(userRegistrationV2Dto.Password, 12);
@@ -362,6 +450,54 @@ namespace ogani_master.Controllers
 			catch (Exception ex) {
 				return RedirectToAction("Index", "Home");
 			}
+		}
+
+		[HttpPost]
+		[Route("/AddToFavorite")]
+		[AutoValidateAntiforgeryToken]
+		public async Task<IActionResult> AddToFavorite(int? prodID)
+		{
+			User? user = await this.getCurrentUser();
+
+			string? role = HttpContext.Session.GetString("role");
+
+			if (user == null) return RedirectToAction("SignInPage", "Auth");
+
+			Product? existingProduct = await this.context.Products.FirstOrDefaultAsync(p => p.PRO_ID == prodID);
+
+			if (existingProduct == null) return NotFound();
+
+			FavoritesModel? existingFavorite = await this.context.Favorites.FirstOrDefaultAsync(f => f.UserID == user.UserId && f.ProductId == prodID);
+
+			if(existingFavorite != null)
+			{
+				this.context.Favorites.Remove(existingFavorite);
+				await this.context.SaveChangesAsync();
+
+                return RedirectToAction("Index", "Product", new { uid = prodID });
+            }
+
+			FavoritesModel favorite = new FavoritesModel
+			{
+				ProductId = existingProduct.PRO_ID,
+				UserID = user.UserId,
+				CreatedBy = role,
+				UpdatedBy = role,
+				CreatedDate = DateTime.Now,
+				UpdatedDate = DateTime.Now,
+			};
+
+			this.context.Favorites.Add(favorite);
+
+			await this.context.SaveChangesAsync();
+
+			return RedirectToAction("Index", "Product", new { uid = prodID });
+		}
+
+		[Route("/AccessDenied")]
+		public IActionResult AccessDenied()
+		{
+			return View("~/Views/Access/Denied.cshtml");
 		}
     }
 }

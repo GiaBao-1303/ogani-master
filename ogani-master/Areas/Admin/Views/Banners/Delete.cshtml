@@ -22,6 +22,10 @@
                                         <td>@Html.DisplayFor(model => model.Title)</td>
                                     </tr>
                                     <tr>
+                                        <th>@Html.DisplayNameFor(model => model.DisplayOrder)</th>
+                                        <td>@Html.DisplayFor(model => model.DisplayOrder)</td>
+                                    </tr>
+                                    <tr>
                                         <th>@Html.DisplayNameFor(model => model.Image)</th>
                                         <td>
                                             <img src="@Url.Content("~/Data/Banner/" + Model.Image)" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd;" /></p>

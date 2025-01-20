@@ -12,8 +12,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 	<link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
-	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+	<link rel="stylesheet" href="~/Admin/plugins/font-awesome/css/all.css" />
+	<link rel="stylesheet" href="~/css/font-awesome.min.css" type="text/css" />
 
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@fontsource/source-sans-3@5.0.12/index.css" />
 
@@ -21,6 +23,11 @@
 
 </head>
 <body class="img js-fullheight" style="background-image: url(@Url.Content("~/User/images/bg-signUpV2.jpg")); filter: drop-shadow(2px 4px 6px black);">
+
+	<form class="d-none" asp-controller="Auth" asp-action="SendOtp" method="post">
+		@Html.AntiForgeryToken()
+		<button type="submit" id="reSendMail"></button>
+	</form>
 	<section class="ftco-section">
 		<div class="container">
 			<div class="row justify-content-center">
@@ -48,6 +55,22 @@
 								<span toggle="#confirm-password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
 								<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
 							</div>
+
+							<div style="position: relative" class="form-group">
+								<input asp-for="otp" id="confirm-password-field" type="text" class="form-control" placeholder="Otp" required>
+								<div style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%)">
+									<label for="reSendMail" class="fa-solid fa-rotate-right"></label>
+								</div>
+								<span asp-validation-for="otp" class="text-danger"></span>
+							</div>
+
+							@if(TempData["SuccessMessage"] != null)
+							{
+								<div class="alert alert-success" role="alert">
+									<i class="fa-solid fa-check"></i>
+									@TempData["SuccessMessage"]
+								</div>
+							}
 
 							<div class="form-group">
 								<button type="submit" class="form-control btn btn-primary submit px-3">SIGNUP</button>

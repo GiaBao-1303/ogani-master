@@ -91,7 +91,7 @@
                                         </div>
                                         <div class="col-sm-4">
                                             <label class="text-muted small">Discount Price</label>
-                                            <p class="text-danger fw-bold">@order.Product.DiscountPrice.ToString("C0", new CultureInfo("en-US"))</p>
+                                            <p class="text-danger fw-bold">@order.Product.DiscountPrice?.ToString("C0", new CultureInfo("en-US"))</p>
                                         </div>
                                         <div class="col-sm-4">
                                             <label class="text-muted small">Quantity</label>

@@ -71,7 +71,7 @@
                                                 @(carts[i].Product.Price.ToString("C0", new CultureInfo("en-US")))
                                             </span>
                                             <span style="margin-left: 8px; color: red;" id="price-@carts[i].ORDD_ID">
-                                                @(carts[i].Product.DiscountPrice.ToString("C0", new CultureInfo("en-US")))
+                                                @(carts[i].Product.DiscountPrice?.ToString("C0", new CultureInfo("en-US")))
                                             </span>
                                         }
                                         else
@@ -163,7 +163,7 @@
                                                 @(order.Product.Price.ToString("C0", new CultureInfo("en-US")))
                                             </span>
                                             <span style="margin-left: 8px; color: red;">
-                                                @(order.Product.DiscountPrice.ToString("C0", new CultureInfo("en-US")))
+                                                @(order.Product.DiscountPrice?.ToString("C0", new CultureInfo("en-US")))
                                             </span>
                                         }
                                         else

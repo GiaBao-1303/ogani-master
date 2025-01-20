@@ -27,6 +27,7 @@
                                 <thead>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.Title)</th>
+                                        <th>@Html.DisplayNameFor(model => model.DisplayOrder)</th>
                                         <th>@Html.DisplayNameFor(model => model.Image)</th>
                                         <th>@Html.DisplayNameFor(model => model.Url)</th>
                                         <th>@Html.DisplayNameFor(model => model.CreatedBy)</th>
@@ -52,6 +53,7 @@
                                                     <i>No Title</i>
                                                 }
                                             </td>
+                                            <td>@Html.DisplayFor(modelItem => item.DisplayOrder)</td>
                                             <td>
                                                 <img src="@Url.Content("~/data/banner/" + item.Image)" style="max-width: 100px; max-height: 100px; border: 1px solid #ddd;" />
 
