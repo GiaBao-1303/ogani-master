@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = Model.Title;
     var relatedBlogs = (List<ogani_master.Models.Blog>)ViewData["RelatedBlogs"];
+    var settings = ViewBag.Settings as List<ogani_master.Models.Setting>;
 }
 
 <section class="blog-details-hero set-bg"

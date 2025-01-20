@@ -4,6 +4,7 @@
 @{
     User CurrentUser = ViewBag.CurrentUser;
     List<FavoritesModel> favorites = ViewBag.Favorites;
+    var settings = ViewBag.Settings as List<ogani_master.Models.Setting>;
 }
 
 <!DOCTYPE html>
@@ -12,7 +13,7 @@
     <meta charset="utf-8" />
     <title>@ViewData["Title"]</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@200;300;400;600;900&display=swap"
-          rel="stylesheet" />
+    rel="stylesheet" />
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
 
@@ -36,313 +37,320 @@
             overflow: hidden;
         }
         #root {
-            display: flex !important;
-            flex-direction: column !important;
-            min-height: 100vh;
+        display: flex !important;
+        flex-direction: column !important;
+        min-height: 100vh;
         }
 
         #root section {
-            flex: 1 !important;
+        flex: 1 !important;
         }
 
         .header__menu__dropdown li.active a {
-            color: #7fad39 !important;
+        color: #7fad39 !important;
         }
 
         .profile-dropdown {
-            position: relative;
+        position: relative;
         }
 
         .profile-trigger {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            padding: 5px;
-            border-radius: 50px;
-            transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        padding: 5px;
+        border-radius: 50px;
+        transition: all 0.3s ease;
         }
 
         .profile-trigger:hover {
-            background-color: rgba(0, 0, 0, 0.05);
+        background-color: rgba(0, 0, 0, 0.05);
         }
 
         .profile-image {
-            width: 35px;
-            height: 35px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid #fff;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .fa-chevron-down {
-            font-size: 12px;
-            color: #666;
-            margin-right: 5px;
+        font-size: 12px;
+        color: #666;
+        margin-right: 5px;
         }
 
         .profile-menu {
-            width: 250px;
-            padding: 0;
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            margin-top: 10px;
-            animation: fadeIn 0.2s ease-in-out;
+        width: 250px;
+        padding: 0;
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        margin-top: 10px;
+        animation: fadeIn 0.2s ease-in-out;
         }
 
         .dropdown-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            background-color: #f8f9fa;
-            border-radius: 12px 12px 0 0;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 15px;
+        border-bottom: 1px solid #eee;
+        background-color: #f8f9fa;
+        border-radius: 12px 12px 0 0;
         }
 
         .menu-profile-image {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            object-fit: cover;
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        object-fit: cover;
         }
 
         .user-info {
-            flex: 1;
+        flex: 1;
         }
 
         .user-info h6 {
-            margin: 0;
-            color: #333;
-            font-weight: 600;
+        margin: 0;
+        color: #333;
+        font-weight: 600;
         }
 
         .user-info small {
-            color: #666;
+        color: #666;
         }
 
         .dropdown-item {
-            padding: 12px 15px;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: all 0.2s ease;
+        padding: 12px 15px;
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.2s ease;
         }
 
         .dropdown-item:hover {
-            background-color: #f8f9fa;
-            color: #007bff;
+        background-color: #f8f9fa;
+        color: #007bff;
         }
 
         .dropdown-item i {
-            width: 16px;
-            text-align: center;
-            color: #666;
+        width: 16px;
+        text-align: center;
+        color: #666;
         }
 
         .dropdown-item:hover i {
-            color: #007bff;
+        color: #007bff;
         }
 
         .logout-form {
-            padding: 0;
-            margin: 0;
+        padding: 0;
+        margin: 0;
         }
 
         .logout-button {
-            width: 100%;
-            padding: 12px 15px;
-            background: none;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #dc3545;
-            cursor: pointer;
-            transition: all 0.2s ease;
+        width: 100%;
+        padding: 12px 15px;
+        background: none;
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        color: #dc3545;
+        cursor: pointer;
+        transition: all 0.2s ease;
         }
 
         .logout-button:hover {
-            background-color: #fff1f1;
+        background-color: #fff1f1;
         }
 
         .logout-button i {
-            width: 16px;
-            text-align: center;
+        width: 16px;
+        text-align: center;
         }
 
         keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(-10px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        from
+
+        {
+        opacity: 0;
+        transform: translateY(-10px);
+        }
+
+        to {
+        opacity: 1;
+        transform: translateY(0);
+        }
+
         }
 
         media (max-width: 768px) {
-            .profile-menu {
-                width: 200px;
-            }
+        .profile-menu
+
+        {
+        width: 200px;
+        }
+
         }
 
 
         .favorite-dropdown {
-            position: relative;
+        position: relative;
         }
 
         .favorite-menu {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            width: 300px;
-            background: #ffffff;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
-            display: none;
-            z-index: 1000;
-            margin-top: 10px;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        width: 300px;
+        background: #ffffff;
+        padding: 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        display: none;
+        z-index: 1000;
+        margin-top: 10px;
         }
 
-            .favorite-menu.show {
-                display: block;
-                animation: fadeIn 0.3s ease;
-            }
+        .favorite-menu.show {
+        display: block;
+        animation: fadeIn 0.3s ease;
+        }
 
         .favorite-items {
-            max-height: 300px;
-            overflow-y: auto;
+        max-height: 300px;
+        overflow-y: auto;
         }
 
         .favorite-item {
-            display: flex;
-            align-items: center;
-            padding: 10px 0;
-            border-bottom: 1px solid #f5f5f5;
-            position: relative;
+        display: flex;
+        align-items: center;
+        padding: 10px 0;
+        border-bottom: 1px solid #f5f5f5;
+        position: relative;
         }
 
-            .favorite-item:last-child {
-                border-bottom: none;
-            }
+        .favorite-item:last-child {
+        border-bottom: none;
+        }
 
-            .favorite-item img {
-                width: 60px;
-                height: 60px;
-                object-fit: cover;
-                border-radius: 4px;
-                margin-right: 12px;
-            }
+        .favorite-item img {
+        width: 60px;
+        height: 60px;
+        object-fit: cover;
+        border-radius: 4px;
+        margin-right: 12px;
+        }
 
         .favorite-item-info {
-            flex: 1;
-            padding-right: 25px;
+        flex: 1;
+        padding-right: 25px;
         }
 
         .favorite-item-title {
-            font-size: 14px;
-            margin: 0 0 5px 0;
+        font-size: 14px;
+        margin: 0 0 5px 0;
         }
 
-            .favorite-item-title a {
-                color: #333;
-                text-decoration: none;
-            }
+        .favorite-item-title a {
+        color: #333;
+        text-decoration: none;
+        }
 
-                .favorite-item-title a:hover {
-                    color: #7fad39;
-                }
+        .favorite-item-title a:hover {
+        color: #7fad39;
+        }
 
         .favorite-item-price {
-            font-size: 14px;
-            color: #7fad39;
-            font-weight: 600;
-            display: block;
+        font-size: 14px;
+        color: #7fad39;
+        font-weight: 600;
+        display: block;
         }
 
         .btn-remove {
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #999;
-            cursor: pointer;
-            padding: 5px;
-            transition: color 0.2s;
+        position: absolute;
+        right: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        background: none;
+        border: none;
+        color: #999;
+        cursor: pointer;
+        padding: 5px;
+        transition: color 0.2s;
         }
 
-            .btn-remove:hover {
-                color: #dc3545;
-            }
+        .btn-remove:hover {
+        color: #dc3545;
+        }
 
         .favorite-empty {
-            text-align: center;
-            padding: 30px 0;
-            color: #666;
+        text-align: center;
+        padding: 30px 0;
+        color: #666;
         }
 
-            .favorite-empty i {
-                font-size: 40px;
-                color: #ddd;
-                margin-bottom: 10px;
-            }
+        .favorite-empty i {
+        font-size: 40px;
+        color: #ddd;
+        margin-bottom: 10px;
+        }
 
-            .favorite-empty p {
-                margin: 0;
-                font-size: 14px;
-            }
+        .favorite-empty p {
+        margin: 0;
+        font-size: 14px;
+        }
 
         .favorite-footer {
-            text-align: center;
-            padding-top: 15px;
-            border-top: 1px solid #f5f5f5;
-            margin-top: 10px;
+        text-align: center;
+        padding-top: 15px;
+        border-top: 1px solid #f5f5f5;
+        margin-top: 10px;
         }
 
         .view-all {
-            color: #7fad39;
-            font-size: 14px;
-            font-weight: 500;
-            text-decoration: none;
+        color: #7fad39;
+        font-size: 14px;
+        font-weight: 500;
+        text-decoration: none;
         }
 
         .view-all:hover {
-               text-decoration: underline;
-            }
+        text-decoration: underline;
+        }
 
         .favorite-items::-webkit-scrollbar {
-            width: 6px;
+        width: 6px;
         }
 
         .favorite-items::-webkit-scrollbar-track {
-            background: #f1f1f1;
-            border-radius: 3px;
+        background: #f1f1f1;
+        border-radius: 3px;
         }
 
         .favorite-items::-webkit-scrollbar-thumb {
-            background: #7fad39;
-            border-radius: 3px;
+        background: #7fad39;
+        border-radius: 3px;
         }
 
-            .favorite-items::-webkit-scrollbar-thumb:hover {
-                background: #6a9230;
-            }
+        .favorite-items::-webkit-scrollbar-thumb:hover {
+        background: #6a9230;
+        }
 
     </style>
 
 </head>
 <body>
-     <div id="preloder">
-         <div class="loader"></div>
-     </div>
+    <div id="preloder">
+        <div class="loader"></div>
+    </div>
 
     <main id="root">
         <header class="header">
@@ -352,18 +360,59 @@
                         <div class="col-lg-6 col-md-6">
                             <div class="header__top__left">
                                 <ul>
-                                    <li><i class="fa fa-envelope"></i> hello@colorlib.com</li>
-                                    <li>Free Shipping for all Order of $99</li>
+                                    @if (settings != null && settings.Any())
+                                    {
+                                        @foreach (var setting in settings)
+                                        {
+                                            if (setting.Name.Equals("Email", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <li><i class="fa fa-envelope"></i> @setting.Value</li>
+                                            }
+                                            else if (setting.Name.Equals("FreeShippingMessage", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <li>@setting.Value</li>
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li>No settings available</li>
+                                    }
                                 </ul>
                             </div>
                         </div>
                         <div class="col-lg-6 col-md-6 d-flex justify-content-end">
                             <div class="header__top__right d-flex align-items-center">
                                 <div class="header__top__right__social d-flex align-items-center">
-                                    <a href="#"><i class="fa fa-facebook"></i></a>
-                                    <a href="#"><i class="fa fa-twitter"></i></a>
-                                    <a href="#"><i class="fa fa-linkedin"></i></a>
-                                    <a href="#"><i class="fa fa-pinterest-p"></i></a>
+                                    @if (settings != null && settings.Any())
+                                    {
+                                        @foreach (var link in settings)
+                                        {
+                                            if (link.Name.Equals("Facebook", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <a href="@link.Value" target="_blank"><i class="fa fa-facebook"></i></a>
+                                            }
+                                            else if (link.Name.Equals("Instagram", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <a href="@link.Value" target="_blank"><i class="fa fa-instagram"></i></a>
+                                            }
+                                            else if (link.Name.Equals("Twitter", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <a href="@link.Value" target="_blank"><i class="fa fa-twitter"></i></a>
+                                            }
+                                            else if (link.Name.Equals("Pinterest", StringComparison.OrdinalIgnoreCase))
+                                            {
+                                                <a href="@link.Value" target="_blank"><i class="fa fa-pinterest"></i></a>
+                                            }
+                                        }
+                                    }
+
+                                    <!-- Hiển thị mặc định các biểu tượng khi không có dữ liệu -->
+                                    <a href="https://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
+                                    <a href="https://instagram.com" target="_blank"><i class="fa fa-instagram"></i></a>
+                                    <a href="https://twitter.com" target="_blank"><i class="fa fa-twitter"></i></a>
+                                    <a href="https://pinterest.com" target="_blank"><i class="fa fa-pinterest"></i></a>
+
                                 </div>
                                 <div class="header__top__right__language d-flex align-items-center">
                                     <img src="~/uploads/language.png" alt="" />
@@ -406,12 +455,14 @@
                                             </div>
                                         </div>
                                     </div>
-                                } else {
+                                }
+                                else
+                                {
                                     <div class="header__top__right__auth">
                                         <a asp-controller="Auth" asp-action="SignInPage"><i class="fa fa-user"></i> Login</a>
                                     </div>
                                 }
-                               
+
                             </div>
                         </div>
                     </div>
@@ -429,7 +480,7 @@
                             <ul>
                                 <li class="@Html.IsActive("Home", "Index")"><a href="@Url.Action("Index", "Home")">Home</a></li>
                                 <li class="@Html.IsActive("ShopGrid", "Index")"><a href="@Url.Action("Index", "ShopGrid")">Products</a></li>
-                               
+
                                 <li class="@Html.IsActive("Blog", "Index")"><a href="@Url.Action("Index", "Blog")">Blog</a></li>
                                 <li class="@Html.IsActive("Contact", "Index")"><a href="@Url.Action("Index", "Contact")">Contact</a></li>
                             </ul>
@@ -491,41 +542,61 @@
             </div>
         </header>
 
-        @if(Context.Request.Path != "/")
+        @if (Context.Request.Path != "/")
         {
             <section class="hero hero-normal">
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-3">
                             <div class="hero__categories">
+                                @{
+                                    // Ép kiểu ViewBag.Categories thành List<Category>
+                                    var categories = ViewBag.Categories as List<ogani_master.Models.Category>;
+
+                                    var displayOrder1Category = categories?.FirstOrDefault(c => c.DisplayOrder == 1);
+                                }
                                 <div class="hero__categories__all">
                                     <i class="fa fa-bars"></i>
-                                    <span>All departments</span>
+
+                                    @if (displayOrder1Category != null)
+                                    {
+                                        <span class="text-white">
+                                                @displayOrder1Category.Name
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span>All Departments</span>
+                                    }
                                 </div>
-                                <ul>
-                                    <li><a href="#">Fresh Meat</a></li>
-                                    <li><a href="#">Vegetables</a></li>
-                                    <li><a href="#">Fruit & Nut Gifts</a></li>
-                                    <li><a href="#">Fresh Berries</a></li>
-                                    <li><a href="#">Ocean Foods</a></li>
-                                    <li><a href="#">Butter & Eggs</a></li>
-                                    <li><a href="#">Fastfood</a></li>
-                                    <li><a href="#">Fresh Onion</a></li>
-                                    <li><a href="#">Papayaya & Crisps</a></li>
-                                    <li><a href="#">Oatmeal</a></li>
-                                    <li><a href="#">Fresh Bananas</a></li>
-                                </ul>
+                                    <ul>
+                                        @if (categories != null && categories.Count > 0)
+                                        {
+                                            foreach (var category in categories.Where(c => c.DisplayOrder != 1))
+                                            {
+                                                <li>
+                                                    <a asp-controller="Products" asp-action="Index" asp-route-categoryId="@category.CAT_ID">
+                                                        @category.Name
+                                                    </a>
+                                                </li>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <li>No categories available</li>
+                                        }
+                                    </ul>
                             </div>
                         </div>
                         <div class="col-lg-9">
                             <div class="hero__search">
                                 <div class="hero__search__form">
-                                    <form action="#">
+                                    <form asp-controller="Product" asp-action="Search" method="get" class="container">
                                         <div class="hero__search__categories">
                                             All Categories
-                                            <span class="arrow_carrot-down"></span>
+                                            @* <span class="arrow_carrot-down"></span> *@
                                         </div>
-                                        <input type="text" placeholder="What do yo u need?" />
+                                        <input type="text" name="query" placeholder="What do yo u need?" />
                                         <button type="submit" class="site-btn">SEARCH</button>
                                     </form>
                                 </div>
@@ -534,7 +605,20 @@
                                         <i class="fa fa-phone"></i>
                                     </div>
                                     <div class="hero__search__phone__text">
-                                        <h5>+65 11.188.888</h5>
+                                        @if (settings != null && settings.Any())
+                                        {
+                                            @foreach (var setting in settings)
+                                            {
+                                                if (setting.Name.Equals("Phone", StringComparison.OrdinalIgnoreCase))
+                                                {
+                                                    <h5>@setting.Value</h5>
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <h5>No phone number available</h5>
+                                        }
                                         <span>support 24/7 time</span>
                                     </div>
                                 </div>
@@ -558,30 +642,49 @@
                                 <a href="./index.html"><img src="~/uploads/logo.png" alt="" /></a>
                             </div>
                             <ul>
-                                <li>Address: 60-49 Road 11378 New York</li>
-                                <li>Phone: +65 11.188.888</li>
-                                <li>Email: hello@colorlib.com</li>
+                                @if (settings != null && settings.Any())
+                                {
+                                    @foreach (var setting in settings)
+                                    {
+                                        if (setting.Name.Equals("Email", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <li><i class="fa fa-envelope"></i> @setting.Value</li>
+                                        }
+                                        else if (setting.Name.Equals("Phone", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <li><i class="fa fa-phone"></i> @setting.Value</li>
+                                        }
+                                        else if (setting.Name.Equals("Address", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <li><i class="fa fa-map-marker"></i> @setting.Value</li>
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    <li>No settings available</li>
+                                }
                             </ul>
                         </div>
                     </div>
                     <div class="col-lg-4 col-md-6 col-sm-6 offset-lg-1">
                         <div class="footer__widget">
-                            <h6>Useful Links</h6>
+                            <h6><a asp-controller="Home" asp-action="Index" style="text-decoration: none; color: inherit;">Home</a></h6>
                             <ul>
-                                <li><a href="#">About Us</a></li>
-                                <li><a href="#">About Our Shop</a></li>
-                                <li><a href="#">Secure Shopping</a></li>
-                                <li><a href="#">Delivery infomation</a></li>
-                                <li><a href="#">Privacy Policy</a></li>
-                                <li><a href="#">Our Sitemap</a></li>
+                                <li><a asp-controller="Blog" asp-action="Index">About Us</a></li>
+                                <li><a asp-controller="Contact" asp-action="Index">About Our Shop</a></li>
+                                <li><a asp-controller="Home" asp-action="Index">Secure Shopping</a></li>
+                                <li><a asp-controller="Product" asp-action="Index">Delivery infomation</a></li>
+                                <li><a asp-controller="Product" asp-action="Index">Privacy Policy</a></li>
+                                <li><a asp-controller="Product" asp-action="Index">Our Sitemap</a></li>
                             </ul>
                             <ul>
-                                <li><a href="#">Who We Are</a></li>
-                                <li><a href="#">Our Services</a></li>
-                                <li><a href="#">Projects</a></li>
-                                <li><a href="#">Contact</a></li>
-                                <li><a href="#">Innovation</a></li>
-                                <li><a href="#">Testimonials</a></li>
+                                <li><a asp-controller="Contact" asp-action="Index">Who We Are</a></li>
+                                <li><a asp-controller="Blog" asp-action="Index">Our Services</a></li>
+                                <li><a asp-controller="Contact" asp-action="Index">Projects</a></li>
+                                <li><a asp-controller="Contact" asp-action="Index">Contact</a></li>
+                                <li><a asp-controller="Product" asp-action="Index">Innovation</a></li>
+                                <li><a asp-controller="Product" asp-action="Index">Testimonials</a></li>
                             </ul>
                         </div>
                     </div>
@@ -596,10 +699,35 @@
                                 <button type="submit" class="site-btn">Subscribe</button>
                             </form>
                             <div class="footer__widget__social">
-                                <a href="#"><i class="fa fa-facebook"></i></a>
-                                <a href="#"><i class="fa fa-instagram"></i></a>
-                                <a href="#"><i class="fa fa-twitter"></i></a>
-                                <a href="#"><i class="fa fa-pinterest"></i></a>
+                                @if (settings != null && settings.Any())
+                                {
+                                    @foreach (var link in settings)
+                                    {
+                                        if (link.Name.Equals("Facebook", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <a href="@link.Value" target="_blank"><i class="fa fa-facebook"></i></a>
+                                        }
+                                        else if (link.Name.Equals("Instagram", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <a href="@link.Value" target="_blank"><i class="fa fa-instagram"></i></a>
+                                        }
+                                        else if (link.Name.Equals("Twitter", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <a href="@link.Value" target="_blank"><i class="fa fa-twitter"></i></a>
+                                        }
+                                        else if (link.Name.Equals("Pinterest", StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            <a href="@link.Value" target="_blank"><i class="fa fa-pinterest"></i></a>
+                                        }
+                                    }
+                                }
+
+                                <!-- Hiển thị mặc định các biểu tượng khi không có dữ liệu -->
+                                <a href="https://facebook.com" target="_blank"><i class="fa fa-facebook"></i></a>
+                                <a href="https://instagram.com" target="_blank"><i class="fa fa-instagram"></i></a>
+                                <a href="https://twitter.com" target="_blank"><i class="fa fa-twitter"></i></a>
+                                <a href="https://pinterest.com" target="_blank"><i class="fa fa-pinterest"></i></a>
+
                             </div>
                         </div>
                     </div>

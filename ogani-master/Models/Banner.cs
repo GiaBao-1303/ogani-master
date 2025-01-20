@@ -10,6 +10,7 @@ namespace ogani_master.Models
         [Key]
         public int BAN_ID { get; set; }
         public required string Title { get; set; }
+        public int? DisplayOrder { get; set; }
         public string? Image { get; set; }
         public string? Url { get; set; }
     }

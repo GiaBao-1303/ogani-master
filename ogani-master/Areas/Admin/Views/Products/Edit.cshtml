@@ -17,7 +17,7 @@
                         <!-- Avatar -->
                         <div class="row mb-3">
                             <div class="col">
-                                <label asp-for="Avatar" class="form-lable fw-bold">Product Photos </label>
+                                <label asp-for="Avatar" class="form-label fw-bold">Product Photos </label>
                                 @* Hiển thị ảnh nếu có ảnh  *@
                                 @if (!string.IsNullOrEmpty(Model.Avatar))
                                 {
@@ -37,8 +37,6 @@
                             </div>
                         </div>
                         <!-- Category -->
-                       
-
                         <!-- Name -->
                         <div class="mb-3">
                             <label asp-for="Name" class="form-label fw-bold">Name</label>
@@ -52,44 +50,43 @@
                             <input asp-for="Intro" class="form-control" />
                             <span asp-validation-for="Intro" class="text-danger"></span>
                         </div>
-
                         <div class=" form-group row">
                             <div class="col-md-3 mb-3">
-                                <label asp-for="Price" class="form-label fw-bold">Price</label>
-                                <input asp-for="Price" type="number" class="form-control" oninput="formatPrice(this)" value="@Model.Price.ToString("#,0.##")" id="PriceInput" />
+                                <label asp-for="Price" class="form-label fw-bold">Price</label> 
+                                <input asp-for="Price" class="form-control" type="number" value="@Model.Price.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)" id="PriceInput" />
+                                @* <input asp-for="Price" type="number" value="@Model.Price.ToString("#,0.##")" class="form-control" id="PriceInput" /> *@
                                 <span asp-validation-for="Price" class="text-danger"></span>
                             </div>
                             <div class="col-md-3 mb-3">
                                 <label asp-for="DiscountPrice" class="form-label fw-bold">Discount Price</label>
-                                <input asp-for="DiscountPrice" id="DiscountPrice" class="form-control" oninput="formatPrice(this)" value="@Model.DiscountPrice?.ToString("#,0.##")" id="DiscountPriceInput" />
+                                <input asp-for="DiscountPrice" type="number" class="form-control" value="@Model.DiscountPrice?.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)" id="DiscountPriceInput" />
                                 <span asp-validation-for="DiscountPrice" class="text-danger"></span>
-                        </div>
-                            <div class="form-group row">
-                                <div class="col-md-4 mb-3">
-                                    <label asp-for="quantity" class="form-label fw-bold">Quantity</label>
-                                    <input asp-for="quantity" type="number" min="0" class="form-control" oninput="formatPrice(this)" id="QuantityInput" />
-                                    <span asp-validation-for="quantity" class="text-danger"></span>
-                                </div>
-                                <div class="col-md-4 mb-3">
-                                    <label asp-for="CAT_ID" class="control-label form-label fw-bold mb-2">Categories</label>
-                                    @Html.DropDownListFor(
-                                             model => model.CAT_ID,
-                                             (SelectList)ViewData["CAT_ID"],
-                                             "Chọn danh mục", // Dòng placeholder
-                                             new { @class = "form-control" } // Thêm class CSS nếu cần
-                                             )
-                                    @Html.ValidationMessageFor(model => model.CAT_ID, "", new { @class = "text-danger" })
-                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="quantity" class="form-label fw-bold">Quantity</label>
+                                <input asp-for="quantity" type="number" min="0" class="form-control" oninput="formatPrice(this)" id="QuantityInput" />
+                                <span asp-validation-for="quantity" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label asp-for="CAT_ID" class="control-label form-label fw-bold mb-2">Categories</label>
+                                @Html.DropDownListFor(
+                                         model => model.CAT_ID,
+                                         (SelectList)ViewData["CAT_ID"],
+                                         "Chọn danh mục", // Dòng placeholder
+                                         new { @class = "form-control" } // Thêm class CSS nếu cần
+                                         )
+                                @Html.ValidationMessageFor(model => model.CAT_ID, "", new { @class = "text-danger" })
+                            </div>
                         </div>
                         <div class="form-group row mt-1 ">
                             <div class="form-group row mt-1">
                                 <!-- Dropdown chọn đơn vị và ô nhập đơn vị khác trên cùng một hàng -->
                                 <div class="col-md-8 d-flex align-items-start">
                                     <div class="form-group me-3 " style="flex: 1;">
-                                            <label asp-for="Unit" class="control-label form-label fw-bold">Unit</label>
+                                        <label asp-for="Unit" class="control-label form-label fw-bold">Unit</label>
                                         <div class="input-group">
                                             <select asp-for="Unit" class="form-control" id="unitSelect">
-                                                    <option value="KG">Kilogram (Kg)</option>
+                                                <option value="KG">Kilogram (Kg)</option>
                                                 <option value="Gram">Gram (Gr)</option>
                                                 <option value="Other">Other</option>
                                             </select>
@@ -163,92 +160,10 @@
 @section Header {
     <link rel="stylesheet" href="~/Admin/plugins/ckeditor5/ckeditor5.css">
 }
-
-
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
-
-    <script>
-                document.addEventListener("DOMContentLoaded", function () {
-            const form = document.getElementById("EditForm");
-            const formInputs = form.querySelectorAll("input, select, textarea");
-
-            function validateInput(input) {
-                let value = input.value.trim();
-                let isValid = true;
-
-                // Kiểm tra các trường hợp cụ thể
-                if (input.id === "PriceInput") {
-                    const price = parseFloat(value);
-                    if (isNaN(price) || price <= 0) {
-                        input.classList.add("is-invalid");
-                        isValid = false;
-                    } else {
-                        input.classList.remove("is-invalid");
-                    }
-                }
-
-                if (input.id === "DiscountPriceInput") {
-                    const discountPrice = parseFloat(value);
-                    const price = parseFloat(document.getElementById("PriceInput").value);
-                    if (isNaN(discountPrice) || discountPrice > price) {
-                        input.classList.add("is-invalid");
-                        isValid = false;
-                    } else {
-                        input.classList.remove("is-invalid");
-                    }
-                }
-
-                if (input.id === "QuantityInput") {
-                    const quantity = parseInt(value);
-                    if (isNaN(quantity) || quantity < 0) {
-                        input.classList.add("is-invalid");
-                        isValid = false;
-                    } else {
-                        input.classList.remove("is-invalid");
-                    }
-                }
-
-                // Kiểm tra trường trống
-                if (value === "" && input.required) {
-                    input.classList.add("is-invalid");
-                    isValid = false;
-                } else {
-                    input.classList.remove("is-invalid");
-                }
-
-                return isValid;
-            }
-
-            // Sự kiện blur kiểm tra khi rời khỏi input
-            formInputs.forEach(input => {
-                input.addEventListener("blur", () => validateInput(input));
-            });
-
-            // Kiểm tra tất cả khi submit form
-            form.addEventListener("submit", function (e) {
-                let isFormValid = true;
-
-                formInputs.forEach(input => {
-                    if (!validateInput(input)) {
-                        isFormValid = false;
-                    }
-                });
-
-                if (!isFormValid) {
-                    e.preventDefault(); // Ngăn submit nếu có lỗi
-                    alert("Vui lòng kiểm tra các trường dữ liệu có lỗi trước khi gửi.");
-                }
-            });
-        });
-
-
-    </script>
-
-
     <script type="importmap">
         {
             "imports": {
@@ -369,23 +284,19 @@
             });
     </script>
 
-    @* Xử lý maxlength và show hide  *@
     <script>
         $(document).ready(function () {
-            // Check if 'Other' is selected by default
+          
             if ($('#unitSelect').val() === 'Other') {
-                $('#otherUnitContainer').show();  // Show input for 'Other'
+                $('#otherUnitContainer').show();   
             } else {
-                $('#otherUnitContainer').hide();  // Hide input for 'Other'
-            }
-
-            // When 'Unit' dropdown changes
+                $('#otherUnitContainer').hide();   
             $('#unitSelect').change(function () {
                 if ($(this).val() === 'Other') {
-                    $('#otherUnitContainer').show();  // Show input for 'Other'
+                    $('#otherUnitContainer').show();  
                 } else {
-                    $('#otherUnitContainer').hide();  // Hide input for 'Other'
-                    $('#OtherUnit').val('');  // Clear 'Other' input if not selected
+                    $('#otherUnitContainer').hide(); 
+                    $('#OtherUnit').val('');   
                 }
             });
 
@@ -401,26 +312,22 @@
             });
         });
     </script>
-    @* xử lý định dạng số price *@
-    <script>
-        function formatPrice(input) {
-            let value = input.value;
+    // <script>
+    //                    document.addEventListener("DOMContentLoaded", function () {
+    //         const priceInput = document.getElementById("PriceInput");
+    //         priceInput.addEventListener("input", function () {
+    //             this.value = this.value.replace(/[^0-9]/g, '');  // Loại bỏ ký tự không phải số
+    //         });
+    //         priceInput.addEventListener("blur", function () {
+    //             const value = this.value.replace(/,/g, '');
+    //             if (value) {
+    //                 this.value = parseFloat(value).toLocaleString('en-US');  // Format số có dấu phẩy
+    //             }
+    //         });
+    //         document.getElementById("EditForm").addEventListener("submit", function () {
+    //             priceInput.value = priceInput.value.replace(/,/g, '');  // Loại bỏ dấu `,` trước khi submit
+    //         });
+    //     });
+    // </script>
 
-            // Xóa các ký tự không phải là số và dấu phẩy
-            value = value.replace(/[^0-9.]/g, '');
-
-            // Nếu có dấu thập phân, chỉ giữ lại một phần thập phân tối đa
-            let parts = value.split('.');
-            parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');  // Thêm dấu phân cách hàng nghìn
-
-            // Nếu phần thập phân có giá trị là '00', loại bỏ nó
-            if (parts[1] === '00') {
-                value = parts[0]; // chỉ giữ phần nguyên
-            } else {
-                value = parts.join('.');
-            }
-
-            input.value = value;
-        }
-    </script>
 }

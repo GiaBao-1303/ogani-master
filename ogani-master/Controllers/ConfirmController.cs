@@ -27,7 +27,7 @@ namespace ogani_master.Controllers
 				ViewBag.token = token;
 				return View("~/Views/Confirm/Index.cshtml");
             }
-
+            ViewBag.Settings = context.Settings.ToList();
             return View("~/Views/Confirm/Expired.cshtml");
 		}
 

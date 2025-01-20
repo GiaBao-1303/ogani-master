@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ogani_master.dto;
+
 using ogani_master.Models;
 
 namespace ogani_master.Controllers
 {
     public class ShopGridController : Controller
     {
+        
         private readonly int numberOfSaleOffs = 6;
         private readonly int numberOfNewProduct = 6;
         private readonly int numberOfProduct = 12;
@@ -63,7 +65,7 @@ namespace ogani_master.Controllers
 
             decimal minPriceDb = await this.context.Products.MinAsync(p => p.Price);
             decimal maxPriceDb = await this.context.Products.MaxAsync(p => p.Price);
-
+            ViewBag.Settings = context.Settings.ToList();
             ViewBag.SaleOffs = saleOffs;
             ViewBag.ListProducts = listProducts;
             ViewBag.ListNewProduct = listNewProducts;

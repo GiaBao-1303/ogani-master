@@ -83,6 +83,7 @@ namespace ogani_master.Areas.Admin.Controllers
             {
                 BAN_ID = _banner.BAN_ID,
                 Title = _banner.Title,
+                DisplayOrder = _banner.DisplayOrder,
                 Url = _banner.Url,
                 CreatedBy = currentUser?.UserName ?? "System", // gán createdBy
                 
@@ -153,6 +154,7 @@ namespace ogani_master.Areas.Admin.Controllers
 
                     existingBanner.Title = bannerDto.Title;
                     existingBanner.Url = bannerDto.Url;
+                    existingBanner.DisplayOrder = bannerDto.DisplayOrder;
 
                     if (bannerDto.Image != null && bannerDto.Image is { Length: > 0 })
                     {

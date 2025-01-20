@@ -12,13 +12,16 @@
                         <h3 class="card-title">Banner Details</h3>
                     </div>
                     <div class="card-body">
-                        <h4>Banner Information</h4>
                         <div class="table-responsive">
                             <table class="table table-bordered">
                                 <tbody>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.Title)</th>
                                         <td>@Html.DisplayFor(model => model.Title)</td>
+                                    </tr>
+                                    <tr>
+                                        <th>@Html.DisplayNameFor(model => model.DisplayOrder)</th>
+                                        <td>@Html.DisplayFor(model => model.DisplayOrder)</td>
                                     </tr>
                                     <tr>
                                         <th>@Html.DisplayNameFor(model => model.Image)</th>
@@ -51,8 +54,8 @@
                         </div>
 
                         <div>
-                            <a asp-action="Edit" asp-route-id="@Model?.BAN_ID" class="btn btn-primary">Edit</a> |
-                            <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+                            <a asp-action="Edit" asp-route-id="@Model?.BAN_ID" class="btn btn-primary">Edit</a> 
+                            <a asp-action="Index" class="btn btn-secondary me-3">Back to List</a>
                         </div>
                     </div>
                 </div>

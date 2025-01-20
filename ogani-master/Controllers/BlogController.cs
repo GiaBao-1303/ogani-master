@@ -15,7 +15,18 @@ namespace ogani_master.Controllers
             _context = context;
         }
 
-      
+        public async Task<List<FavoritesModel>> getFavorites()
+        {
+            int? userId = HttpContext.Session.GetInt32("UserID");
+
+            List<FavoritesModel> favorites = await this._context.Favorites.Include(f => f.Product).Where(f => f.UserID == userId).ToListAsync();
+
+            return favorites;
+        }
+        public async Task<List<Category>> getCategories()
+        {
+            return await _context.Categories.ToListAsync();
+        }
 
         // Action để hiển thị danh sách các bài blog
         public async Task<IActionResult> Index()
@@ -25,7 +36,7 @@ namespace ogani_master.Controllers
                 .ToListAsync();
 
             int? userId = HttpContext.Session.GetInt32("UserID");
-
+            ViewBag.Settings = _context.Settings.ToList();
             ViewBag.CurrentUser = await this._context.users.FirstOrDefaultAsync(u => u.UserId == userId);
            
             var mainBlogs = allBlogs.Take(15).ToList();
@@ -36,7 +47,8 @@ namespace ogani_master.Controllers
             // Trả về view với dữ liệu từ ViewData
             ViewData["MainBlogs"] = mainBlogs;
             ViewData["RecentBlogs"] = recentBlogs;
-
+            ViewBag.Favorites = await this.getFavorites();
+            ViewBag.Categories = await getCategories();
             return View(allBlogs); // Trả về tất cả bài blog để sử dụng nếu cần trong view
         }
 
@@ -58,8 +70,9 @@ namespace ogani_master.Controllers
                 .Take(3)
                 .ToListAsync();
             int? userId = HttpContext.Session.GetInt32("UserID");
-
+            ViewBag.Settings = _context.Settings.ToList();
             ViewBag.CurrentUser = await this._context.users.FirstOrDefaultAsync(u => u.UserId == userId);
+            ViewBag.Favorites = await this.getFavorites();
             // Truyền dữ liệu sang view
             ViewData["RelatedBlogs"] = relatedBlogs;
             return View(blog);
